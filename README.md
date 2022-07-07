@@ -13,6 +13,12 @@ To install the `anypay-wallet` command line program run `npm link` or `npm insta
 
 To run the API server run `npm start`
 
+```
+docker-compose up
+
+open http://localhost:3000
+```
+
 ## Testing
 
 To run tests run `npm run test`
