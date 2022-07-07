@@ -7,6 +7,7 @@ services:
       context: .
     environment:
       loki_host: http://loki:3100
+      LOKI_HOST: http://loki:3100
     ports:
       - 5200
 
