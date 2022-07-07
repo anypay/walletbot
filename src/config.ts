@@ -1,5 +1,6 @@
+require('dotenv').config()
 
-import { log } from './log'
+//import { log } from './log'
 
 const nconf = require('nconf')
 
@@ -29,15 +30,15 @@ nconf.add('global_file', { type: 'file', file: global_file, transform })
 
 export function loadFromFiles() {
 
-  log.info('config.file.project.load', { path: project_file })
+  //log.info('config.file.project.load', { path: project_file })
 
   nconf.use('project_file', { type: 'file', file: project_file, transform })
 
-  log.info('config.file.user.load', { path: user_file })
+  //log.info('config.file.user.load', { path: user_file })
 
   nconf.use('user_file', { type: 'file', file: user_file, transform })
 
-  log.info('config.file.global.load', { path: global_file })
+  //log.info('config.file.global.load', { path: global_file })
 
   nconf.use('global_file', { type: 'file', file: global_file, transform })
 
@@ -62,7 +63,8 @@ nconf.defaults({
   postgres_enabled: false,
   database_url: 'postgres://postgres:password@postgres:5432/rabbi',
   amqp_url: 'amqp://guest:guest@rabbitmq:5672/rabbi',
-  amqp_exchange: 'rabbi'
+  amqp_exchange: 'rabbi',
+  loki_label_job: 'anypay-wallet'
 })
 
 export default nconf
