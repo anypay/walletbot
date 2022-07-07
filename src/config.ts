@@ -64,8 +64,11 @@ nconf.defaults({
   database_url: 'postgres://postgres:password@postgres:5432/rabbi',
   amqp_url: 'amqp://guest:guest@rabbitmq:5672/rabbi',
   amqp_exchange: 'rabbi',
-  loki_label_job: 'anypay-wallet'
+  loki_label_job: 'anypay-wallet',
+  api_base: 'https://api.anypayx.com'
 })
+
+nconf.required(['anypay_api_token'])
 
 export default nconf
 
