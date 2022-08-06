@@ -13,3 +13,5 @@ get402.json
 *.swp
 dist/
 .rabbi/config.json
+.wallet-bot
+wallet.json

@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:12
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
@@ -13,8 +13,6 @@ RUN npm install
 # Bundle app source
 COPY . /usr/src/app
 
-RUN npm run build
+ENTRYPOINT [ "ts-node", "/usr/src/app/src/bin/cli.ts" ] 
 
-RUN npm link
-
-CMD rabbi start
+#CMD npm start

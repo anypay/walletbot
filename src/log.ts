@@ -44,5 +44,7 @@ if (config.get('loki_host')) {
 
 }
 
+export default log
+
 export { log }
 

@@ -1,6 +1,8 @@
 
 import config from './config'
 
+import { load as loadWallet } from './wallet'
+
 import { log } from './log'
 
 import { start as server } from './server'
@@ -13,9 +15,12 @@ import { listUnpaid } from './invoices'
 
 export async function start() {
 
+  const wallet = await loadWallet()
+
   cron.schedule('* * * * * ', () => { // every minute
 
     log.info('wallet.balances.update')
+
     log.error('wallet.balances.update.notimplemented')
 
   })

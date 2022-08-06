@@ -16,11 +16,11 @@ nconf.env({
   transform
 })
 
-const global_file = `/etc/rabbi/config.json`
+const global_file = `/etc/wallet-bot/wallet-bot.json`
 
-const user_file = `${os.homedir()}/.rabbi/config.json`
+const user_file = `${os.homedir()}/.wallet-bot/wallet-bot.json`
 
-const project_file = `${process.cwd()}/.rabbi/config.json`
+const project_file = `${process.cwd()}/.wallet-bot/wallet-bot.json`
 
 nconf.add('project_file', { type: 'file', file: project_file, transform })
 
@@ -30,15 +30,9 @@ nconf.add('global_file', { type: 'file', file: global_file, transform })
 
 export function loadFromFiles() {
 
-  //log.info('config.file.project.load', { path: project_file })
-
   nconf.use('project_file', { type: 'file', file: project_file, transform })
 
-  //log.info('config.file.user.load', { path: user_file })
-
   nconf.use('user_file', { type: 'file', file: user_file, transform })
-
-  //log.info('config.file.global.load', { path: global_file })
 
   nconf.use('global_file', { type: 'file', file: global_file, transform })
 
@@ -53,11 +47,11 @@ process.on('SIGHUP', () => {
 })
 
 nconf.defaults({
-  config: null,
+  config: '/etc/wallet-bot/wallet-bot.json',
   host: '0.0.0.0',
   port: '5200',
   prometheus_enabled: true,
-  amqp_enabled: true,
+  amqp_enabled: false,
   http_api_enabled: true,
   swagger_enabled: true,
   postgres_enabled: false,
@@ -65,7 +59,8 @@ nconf.defaults({
   amqp_url: 'amqp://guest:guest@rabbitmq:5672/rabbi',
   amqp_exchange: 'rabbi',
   loki_label_job: 'anypay-wallet',
-  api_base: 'https://api.anypayx.com'
+  api_base: 'https://api.anypayx.com',
+  wallets: []
 })
 
 nconf.required(['anypay_api_token'])

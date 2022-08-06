@@ -1,10 +1,10 @@
 {
-   "name": "rabbi_cli_app",
+   "name": "wallet-bot",
    "version": "0.2.0",
-   "private": true,
+   "private": false,
    "description": "",
    "scripts": {
-      "start": "ts-node src/main.ts",
+      "start": "ts-node ./src/bin/cli.ts",
       "test": "NODE_ENV=test mocha --require=ts-node/register --timeout=20000 __tests__/**/*_test.ts --exit",
       "runtest": "NODE_ENV=test mocha --require=ts-node/register --timeout=20000 $1",
       "build": "tsc",
@@ -13,17 +13,20 @@
       "commit": "npx cz"
    },
    "bin": {
-      "rabbi": "./dist/bin/cli.js"
+      "wallet-bot": "./src/bin/cli.ts"
    },
    "keywords": [],
    "author": "Zyler",
    "license": "",
    "dependencies": {
+      "@dashevo/dashcore-mnemonic": "^1.6.1",
       "@hapi/hapi": "^20.2.2",
       "@hapi/inert": "^6.0.5",
       "@hapi/joi": "^17.1.1",
       "@hapi/vision": "^6.1.0",
+      "anypay-simple-wallet": "^0.4.0",
       "axios": "^0.27.2",
+      "bitcoinme": "^1.0.0",
       "commander": "^9.3.0",
       "dotenv": "^10.0.0",
       "hapi-swagger": "^14.3.0",

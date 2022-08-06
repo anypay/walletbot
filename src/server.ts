@@ -32,7 +32,7 @@ export const server = new Server({
 
 if (config.get('prometheus_enabled')) {
 
-  log.info('server.metrics.prometheus', { path: '/metrics' })
+  log.debug('server.metrics.prometheus', { path: '/metrics' })
 
   const { register: prometheus } = require('./metrics')
 
@@ -62,6 +62,46 @@ server.route({
         status: Joi.string().valid('OK', 'ERROR').required(),
         error: Joi.string().optional()
       }).label('ServerStatus')
+    }
+  }
+})
+
+server.route({
+  method: 'GET', path: '/api/v1/balances',
+  handler: handlers.Balances.index,
+  options: {
+    description: 'List coin balances available',
+    tags: ['api', 'system'],
+    response: {
+      failAction: 'log',
+      schema: Joi.object({
+        balances: Joi.array().items(Joi.object({
+          currency: Joi.string().required(),
+          value: Joi.number().required(),
+          usd_value: Joi.number().required(),
+          threshold_minimum: Joi.number().optional(),
+          address: Joi.string().optional(),
+          last_updated: Joi.date()
+        }))
+        
+      }).label('ServerStatus')
+    }
+  }
+})
+
+server.route({
+  method: 'GET', path: '/api/v1/payments',
+  handler: handlers.Payments.index,
+  options: {
+    description: 'List payments sent by the bot app account',
+    tags: ['api', 'system'],
+    response: {
+      failAction: 'log',
+      schema: Joi.object({
+        payments: Joi.array().items(Joi.object({
+
+        }))
+      }).label('ListPayments')
     }
   }
 })
