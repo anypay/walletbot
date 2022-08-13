@@ -11,7 +11,8 @@
 		"sourceRoot": "./src"
   },
   "include": [
-    "src"
+    "src",
+    "./wallet-bot-cli/src"
   ],
   "exclude": [
     "node_modules",

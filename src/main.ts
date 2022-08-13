@@ -13,11 +13,36 @@ import * as cron from 'node-cron'
 
 import { listUnpaid } from './invoices'
 
+import { connect as connectWebsocket } from './socket.io'
+
+import { listBalances } from './balances'
+
 export async function start() {
 
   const wallet = await loadWallet()
 
-  cron.schedule('* * * * * ', () => { // every minute
+  // Connect Websocket to Anypay via Socket.io
+  // Will display Status = 'connected' at https://anypayx.com/apps/wallet-bot
+  connectWebsocket()
+  
+  try {
+
+    let balances = await listBalances()
+
+    console.log(balances)
+
+  } catch(error) {
+ 
+    console.error('__list balances error', error)
+
+  }
+
+
+  cron.schedule('* * * * * ', async () => { // every minute
+
+    let balances = await listBalances()
+
+    console.log(balances)
 
     log.info('wallet.balances.update')
 
@@ -28,8 +53,6 @@ export async function start() {
   cron.schedule('*/5 * * * * * ', async () => {
 
     let unpaid = await listUnpaid()
-
-    console.log(unpaid)
 
     log.info('invoices.unpaid.list', { count: unpaid.length })
 
@@ -52,8 +75,6 @@ export async function start() {
     actors();
 
   }
-
-  log.error('profit.required', { amount: 'more' })
 
 }
 

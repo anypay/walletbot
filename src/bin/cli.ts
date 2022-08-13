@@ -12,11 +12,15 @@ import { program } from 'commander'
 
 import { listBalances } from '../balances'
 
+import { createInvoice } from '../invoices'
+
 import { start } from '../main'
 
 import { existsSync, writeFileSync } from 'fs'
 
 import { getBitcore } from '../wallet'
+
+import * as delay from 'delay'
 
 program
   .version(version)
@@ -74,6 +78,48 @@ program
     process.exit(0)
 
   })
+
+program
+  .command('newinvoice')
+  .requiredOption('-c, --currency <currency>', 'coin to collect')
+  .requiredOption('-a, --address <address>', 'crypto receiving address')
+  .requiredOption('-v, --value <value>', 'amount to collect', (value) => parseFloat(value))
+  .option('-d, --denomination <currency>', 'base currency for value ie USD, EUR, JPY, BRL', 'USD')
+  .action(async (options) => {
+
+    const { currency ,address, value, denomination } = options
+
+    const invoice = await createInvoice({
+
+      currency, address, value, denomination
+
+    })
+
+    console.log(invoice)
+
+    process.exit(0)
+
+  })
+
+import { connect } from '../socket.io'
+
+program
+  .command('socket.io [token]')
+  .action(async (token) => {
+
+    try {
+
+      let socket = await connect(token)
+
+    } catch(error) {
+
+      console.log('error', error)
+
+    }
+
+  })
+
+
 
 
 program

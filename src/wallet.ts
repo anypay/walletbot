@@ -1,5 +1,5 @@
 
-import { loadWallet, getBitcore } from '../includes/simple-wallet/src'
+import { loadWallet, getBitcore } from './simple-wallet/src'
 
 export { getBitcore } 
 
