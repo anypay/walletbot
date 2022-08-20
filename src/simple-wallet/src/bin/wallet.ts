@@ -136,7 +136,7 @@ program
   .command('paymentrequest <uri> <currency>')
   .action(async (uri, currency) => {
 
-    let client = new Client(uri)
+    let client: any = new Client(uri)
 
     try {
       

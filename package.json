@@ -3,20 +3,21 @@
    "version": "0.2.0",
    "private": false,
    "description": "",
+   "main": "./dist/wallet-bot/src/index.js",
    "scripts": {
       "start": "ts-node ./src/bin/cli.ts start",
       "test": "NODE_ENV=test mocha --require=ts-node/register --timeout=20000 __tests__/**/*_test.ts --exit",
       "runtest": "NODE_ENV=test mocha --require=ts-node/register --timeout=20000 $1",
       "build": "tsc",
-      "postbuild": "shebang-trim dist/bin/cli.js && chmod +x dist/bin/cli.js",
+      "postbuild": "shebang-trim dist/src/bin/cli.js && chmod +x dist/src/bin/cli.js",
       "ci": "circleci local execute --job build",
       "commit": "npx cz"
    },
    "bin": {
-      "wallet-bot": "./src/bin/cli.ts"
+      "wallet-bot": "./dist/src/bin/cli.js"
    },
    "keywords": [],
-   "author": "Zyler",
+   "author": "Anypay",
    "license": "",
    "dependencies": {
       "@dashevo/dashcore-mnemonic": "^1.6.1",
@@ -27,6 +28,7 @@
       "anypay": "^0.1.0",
       "anypay-simple-wallet": "^0.4.0",
       "axios": "^0.27.2",
+      "bip39": "^3.0.4",
       "bitcoinme": "^1.0.0",
       "commander": "^9.3.0",
       "dotenv": "^10.0.0",
