@@ -1,20 +1,20 @@
 {
    "name": "wallet-bot",
-   "version": "0.3.0",
+   "version": "0.3.3",
    "private": false,
-   "description": "",
+   "description": "Your Money-Sending Robot Friend",
    "main": "./dist/wallet-bot/src/index.js",
    "scripts": {
       "start": "ts-node ./src/bin/cli.ts start",
       "test": "NODE_ENV=test mocha --require=ts-node/register --timeout=20000 __tests__/**/*_test.ts --exit",
       "runtest": "NODE_ENV=test mocha --require=ts-node/register --timeout=20000 $1",
       "build": "tsc",
-      "postbuild": "shebang-trim dist/src/bin/cli.js && chmod +x dist/src/bin/cli.js",
+      "postbuild": "shebang-trim dist/wallet-bot/src/bin/cli.js && chmod +x dist/wallet-bot/src/bin/cli.js",
       "ci": "circleci local execute --job build",
       "commit": "npx cz"
    },
    "bin": {
-      "wallet-bot": "./dist/src/bin/cli.js"
+      "wallet-bot": "dist/wallet-bot/src/bin/cli.js"
    },
    "keywords": [],
    "author": "Anypay",

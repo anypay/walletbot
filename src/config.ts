@@ -61,12 +61,10 @@ nconf.defaults({
   loki_label_job: 'anypay-wallet',
   api_base: 'https://api.anypayx.com',
   wallets: [],
-  socket_io_host: 'ws://127.0.0.1:5200',
+  socket_io_host: 'wss://api.anypayx.com',
   socket_io_path: '/v1/apps/wallet-bot',
   socket_io_reconnection_delay_max: 10000
 })
-
-nconf.required(['anypay_access_token'])
 
 export default nconf
 
