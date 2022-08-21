@@ -5,14 +5,14 @@ import config from './config'
 
 import { log } from './log'
 
-const handlers = require('require-all')({
+/*const handlers = require('require-all')({
 
   dirname: `${__dirname}/websockets/handlers`,
 
   filter:  /(.+)\.ts$/,
 
   resolve: (handler) => handler.default
-});
+});*/
 
 export async function connect(token?: string): Promise<Socket> {
 
@@ -37,7 +37,7 @@ export async function connect(token?: string): Promise<Socket> {
 
     log.info('socket.io.connected')
 
-    handlers['inventory.balances'](socket)
+    //handlers['inventory.listBalances'](socket)
 
   })
 
@@ -85,13 +85,13 @@ export async function connect(token?: string): Promise<Socket> {
 
   })
 
-  Object.keys(handlers).forEach(event => {
+  /*Object.keys(handlers).forEach(event => {
 
     socket.on(event, message => {
       handlers[event](socket, message)
     })
 
-  })
+  })*/
 
   return socket
 
