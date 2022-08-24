@@ -15,9 +15,13 @@ export async function connect(token?: string): Promise<Socket> {
 
   }
 
+  const host = config.get('socket_io_host') || 'wss://api.anypayx.com'
+
+  const path = config.get('socket_io_path') || '/v1/apps/wallet-bot'
+
   log.info('socket.io.connect', {
-    host: config.get('socket_io_host'),
-    path: config.get('socket_io_path'),
+    host,
+    path,
     transports: ['websocket'],
     reconnectionDelayMax: config.get('socket_io_reconnection_delay_max'),
     extraHeaders: {
@@ -25,8 +29,8 @@ export async function connect(token?: string): Promise<Socket> {
     }
   })
 
-  const socket = io(config.get('socket_io_host'), {
-    path: config.get('socket_io_path'),
+  const socket = io(host, {
+    path,
     transports: ['websocket'],
     reconnectionDelayMax: config.get('socket_io_reconnection_delay_max'),
     extraHeaders: {
