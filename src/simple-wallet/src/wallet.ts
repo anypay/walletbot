@@ -285,11 +285,13 @@ export class Card {
 
   constructor(params: {
     asset: string,
-    privatekey: string
+    privatekey: string,
+    address?: string;
   }) {
     this.unspent = []
     this.asset = params.asset
     this.privatekey = params.privatekey
+    this.address = params.address
 
     let bitcore = getBitcore(this.asset)
 
@@ -330,56 +332,62 @@ export class Card {
 
 }
 
-export async function loadWallet(loadCards: LoadCard[] = []) {
+export async function loadWallet(loadCards?: LoadCard[]) {
 
   let cards: Card[] = []
 
-  /*for (let loadCard of loadCards) {
+  if (loadCards) {
 
-    cards.push(new Card(loadCard))
+    for (let loadCard of loadCards) {
 
-  }*/
+      cards.push(new Card(loadCard))
 
-  if (process.env.LTC_PRIVATE_KEY) {
-    cards.push(new Card({
-      asset: 'LTC',
-      privatekey: process.env.LTC_PRIVATE_KEY
-    }))
-  }
+    }
+    
+  } else {
 
-  if (process.env.DOGE_PRIVATE_KEY) {
-    cards.push(new Card({
-      asset: 'DOGE',
-      privatekey: process.env.DOGE_PRIVATE_KEY
-    }))
-  }
+    if (process.env.LTC_PRIVATE_KEY) {
+      cards.push(new Card({
+        asset: 'LTC',
+        privatekey: process.env.LTC_PRIVATE_KEY
+      }))
+    }
+  
+    if (process.env.DOGE_PRIVATE_KEY) {
+      cards.push(new Card({
+        asset: 'DOGE',
+        privatekey: process.env.DOGE_PRIVATE_KEY
+      }))
+    }
+  
+    if (process.env.DASH_PRIVATE_KEY) {
+      cards.push(new Card({
+        asset: 'DASH',
+        privatekey: process.env.DASH_PRIVATE_KEY
+      }))
+    }
+  
+    if (process.env.BCH_PRIVATE_KEY) {
+      cards.push(new Card({
+        asset: 'BCH',
+        privatekey: process.env.BCH_PRIVATE_KEY
+      }))
+    }
+  
+    if (process.env.BTC_PRIVATE_KEY) {
+      cards.push(new Card({
+        asset: 'BTC',
+        privatekey: process.env.BTC_PRIVATE_KEY
+      }))
+    }
+  
+    if (process.env.BSV_PRIVATE_KEY) {
+      cards.push(new Card({
+        asset: 'BSV',
+        privatekey: process.env.BSV_PRIVATE_KEY
+      }))
+    }
 
-  if (process.env.DASH_PRIVATE_KEY) {
-    cards.push(new Card({
-      asset: 'DASH',
-      privatekey: process.env.DASH_PRIVATE_KEY
-    }))
-  }
-
-  if (process.env.BCH_PRIVATE_KEY) {
-    cards.push(new Card({
-      asset: 'BCH',
-      privatekey: process.env.BCH_PRIVATE_KEY
-    }))
-  }
-
-  if (process.env.BTC_PRIVATE_KEY) {
-    cards.push(new Card({
-      asset: 'BTC',
-      privatekey: process.env.BTC_PRIVATE_KEY
-    }))
-  }
-
-  if (process.env.BSV_PRIVATE_KEY) {
-    cards.push(new Card({
-      asset: 'BSV',
-      privatekey: process.env.BSV_PRIVATE_KEY
-    }))
   }
 
   /*if (process.env.XMR_SIMPLE_WALLET_SEED) {

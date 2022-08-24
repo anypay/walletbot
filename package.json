@@ -1,17 +1,18 @@
 {
    "name": "wallet-bot",
-   "version": "0.3.5",
+   "version": "0.4.0",
    "private": false,
    "description": "Your Money-Sending Robot Friend",
    "main": "./dist/wallet-bot/src/index.js",
    "scripts": {
-      "start": "ts-node ./src/bin/cli.ts start",
+      "start": "ts-node src/main.ts",
       "test": "NODE_ENV=test mocha --require=ts-node/register --timeout=20000 __tests__/**/*_test.ts --exit",
       "runtest": "NODE_ENV=test mocha --require=ts-node/register --timeout=20000 $1",
       "build": "tsc",
       "postbuild": "shebang-trim dist/wallet-bot/src/bin/cli.js && chmod +x dist/wallet-bot/src/bin/cli.js",
       "ci": "circleci local execute --job build",
-      "commit": "npx cz"
+      "commit": "npx cz",
+      "seed-phrase": "seed-phrase"
    },
    "bin": {
       "wallet-bot": "dist/wallet-bot/src/bin/cli.js"
@@ -41,6 +42,7 @@
       "prom-client": "^14.0.1",
       "prompt-async": "^0.9.9",
       "rabbi": "^1.19.4",
+      "seed-phrase": "^1.0.0",
       "socket.io-client": "^4.5.1",
       "winston": "^3.3.3",
       "winston-loki": "^6.0.5",

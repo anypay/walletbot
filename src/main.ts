@@ -1,78 +1,43 @@
 
-import config from './config'
-
-import { load as loadWallet } from './wallet'
-
-import { log } from './log'
-
-import { start as server } from './server'
-
-import { start as actors } from './rabbi/actors'
-
-import * as cron from 'node-cron'
-
-import { listUnpaid } from './invoices'
-
-import { connect as connectWebsocket } from './socket.io'
-
-import { listBalances } from './balances'
+import { connect, MnemonicWallet, config, log } from './'
 
 export async function start() {
 
-  const wallet = await loadWallet()
+  const token = config.get('anypay_access_token')
 
-  // Connect Websocket to Anypay via Socket.io
-  // Will display Status = 'connected' at https://anypayx.com/apps/wallet-bot
-  connectWebsocket()
-  
-  try {
+  if (token) {
 
-    let balances = await listBalances()
+    connect(token)
 
-    console.log(balances)
+  } else {
 
-  } catch(error) {
- 
-    console.error('__list balances error', error)
+    log.error(`anypay_access_token config variable not set`)
+
+    log.error(`Please visit https://anypayx.com/dashboard/apps/wallet-bot to get your token`)
+
+    process.exit(1)
 
   }
 
+  const mnemonic = config.get('wallet_bot_backup_seed_phrase')
 
-  cron.schedule('* * * * * ', async () => { // every minute
+  if (mnemonic) {
 
-    let balances = await listBalances()
+    const mnemonicWallet = new MnemonicWallet(mnemonic)
 
-    console.log(balances)
+    for (let wallet of mnemonicWallet.wallets) {
 
-    log.info('wallet.balances.update')
-
-    log.error('wallet.balances.update.notimplemented')
-
-  })
-
-  cron.schedule('*/5 * * * * * ', async () => {
-
-    let unpaid = await listUnpaid()
-
-    log.info('invoices.unpaid.list', { count: unpaid.length })
-
-    for (let invoice of unpaid) {
-
-      log.info('invoice.unpaid', invoice)
+      log.info(wallet)
 
     }
 
-  })
+  } else {
 
-  if (config.get('http_api_enabled')) {
+    log.error('no wallet_bot_backup_seed_phrase config variable set')
 
-    server();
+    log.error("Please run `docker run wallet-bot seed-phrase` to generate a new empty wallet")
 
-  }
-
-  if (config.get('amqp_enabled')) {
-
-    actors();
+    process.exit(1)
 
   }
 

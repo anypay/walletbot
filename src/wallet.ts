@@ -3,25 +3,31 @@ import { loadWallet, getBitcore } from './simple-wallet/src'
 
 export { getBitcore } 
 
-export var wallet;
+import { Card, Wallet } from './simple-wallet/src/wallet';
 
-var isLoading = false
+import { MnemonicWallet } from './mnemonic_wallet';
 
-import config from './config'
+import config from './config';
 
-export async function load() {
+export async function load(): Promise<Wallet> {
 
-  const cards = config.get('cards')
+  const mnemonic = config.get('wallet_bot_backup_seed_phrase')
 
-  if (cards) {
+  const mnemonicWallet = new MnemonicWallet(mnemonic)
 
-    return loadWallet(cards)
+  const cards = mnemonicWallet.wallets.map(wallet => {
 
-  } else {
+    const card: Card = new Card({
+      asset: wallet.currency,
+      privatekey: wallet.privatekey,
+      address: wallet.address
+    })
 
-    return loadWallet()
+    return card
 
-  }
+  })
+
+  return loadWallet(cards)
 
 }
 

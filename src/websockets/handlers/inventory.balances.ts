@@ -5,7 +5,7 @@ import { listBalances } from '../../balances'
 
 import { log } from '../../log'
 
-export default async function (socket: Socket, json: any) {
+export default async function (socket: Socket, json?: any) {
 
     log.info(`wallet-bot.websocket.handlers.inventory.balances`, json)
 

@@ -3,8 +3,6 @@ import { BigNumber } from 'bignumber.js';
 
 import { join } from 'path'
 
-require('bitcore-lib')
-require('bsv')
 
 const assets = require('require-all')({
   dirname: join(__dirname, 'assets'),

@@ -5,14 +5,7 @@ import config from './config'
 
 import { log } from './log'
 
-/*const handlers = require('require-all')({
-
-  dirname: `${__dirname}/websockets/handlers`,
-
-  filter:  /(.+)\.ts$/,
-
-  resolve: (handler) => handler.default
-});*/
+import { listBalances } from './websockets'
 
 export async function connect(token?: string): Promise<Socket> {
 
@@ -22,7 +15,15 @@ export async function connect(token?: string): Promise<Socket> {
 
   }
 
-  log.info('socket.io.connect')
+  log.info('socket.io.connect', {
+    host: config.get('socket_io_host'),
+    path: config.get('socket_io_path'),
+    transports: ['websocket'],
+    reconnectionDelayMax: config.get('socket_io_reconnection_delay_max'),
+    extraHeaders: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
 
   const socket = io(config.get('socket_io_host'), {
     path: config.get('socket_io_path'),
@@ -35,15 +36,21 @@ export async function connect(token?: string): Promise<Socket> {
 
   socket.on('connect', () => {
 
-    log.info('socket.io.connected')
+    log.info('socket.io.connecteded')
 
-    //handlers['inventory.listBalances'](socket)
+    listBalances(socket)
 
   })
 
   socket.on('disconnect', (event) => {
 
     log.info('socket.io.disconnected', event)
+
+  })
+
+  socket.on('connect_error', (error: Error) => {
+
+    log.info('socket.io.connect_error', error)
 
   })
 
