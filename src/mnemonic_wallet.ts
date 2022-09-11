@@ -63,6 +63,10 @@ export class MnemonicWallet {
         address: this.btchdprivatekey.privateKey.toAddress().toString(),
         privatekey: this.btchdprivatekey.privateKey.toWIF()
       }, {
+        currency: 'BCH',
+        address: this.bchhdprivatekey.privateKey.toAddress().toString(),
+        privatekey: this.bchhdprivatekey.privateKey.toWIF()
+      }, {
         currency: 'DASH',
         address: this.dashhdprivatekey.privateKey.toAddress().toString(),
         privatekey: this.dashhdprivatekey.privateKey.toWIF()

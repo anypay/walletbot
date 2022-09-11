@@ -11,7 +11,11 @@ export default async function (socket: Socket, json?: any) {
 
     const balances = await listBalances()
 
-    log.info('wallet-bot.balances', balances)
+    for (let balance of balances) {
+
+        log.info('wallet-bot.balance', balance)
+    }
+    console.log(balances)
 
     socket.emit('inventory.balances', balances)
 

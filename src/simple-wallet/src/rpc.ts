@@ -1,12 +1,12 @@
 require('dotenv').config()
 
-import * as bsv from './assets/bsv/rpc'
-import * as bch from './assets/bch/rpc'
+import { rpc as bsv } from './assets/bsv'
+import { rpc as bch } from './assets/bch'
 import { rpc as dash } from './assets/dash'
-import * as ltc from './assets/ltc/rpc'
-import * as doge from './assets/doge/rpc'
-import * as btc from './assets/btc/rpc'
-import * as xmr from './assets/xmr'
+import { rpc as ltc } from './assets/ltc'
+import { rpc as doge } from './assets/doge'
+import { rpc as btc } from './assets/btc'
+import { rpc as xmr } from './assets/xmr'
 
 export function getRPC(currency) {
 
@@ -24,7 +24,7 @@ export function getRPC(currency) {
     case 'DOGE':
       return doge
     case 'XMR':
-      return xmr.rpc
+      return xmr;
     default:
       throw new Error('rpc for currency not found')
   }

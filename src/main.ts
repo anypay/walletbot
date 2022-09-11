@@ -32,11 +32,7 @@ export async function start() {
 
   const mnemonic = config.get('wallet_bot_backup_seed_phrase')
 
-  if (mnemonic) {
-
-    new MnemonicWallet(mnemonic)
-
-  } else {
+  if (!mnemonic) {
 
     log.error('no wallet_bot_backup_seed_phrase config variable set')
 
@@ -46,12 +42,11 @@ export async function start() {
 
   }
 
-  const card: Card = new Card({
-    asset: 'DASH',
-    privatekey: 'XFYKXs3pv7cMsRHVSjvsdp6sBEuzUZB173wFHYfE4XGbGorAN2Be',
-  })
+  const { wallets } = new MnemonicWallet(mnemonic)
 
-  const wallet = await loadWallet([card])
+  //const card: Card = wallets.filter(wallet => wallet.currency === 'DASH').filter(w => !!w)[0]
+
+  const wallet = await loadWallet()
 
   while (true) {
 

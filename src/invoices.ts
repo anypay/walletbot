@@ -3,7 +3,7 @@ import axios from 'axios'
 
 import config from './config'
 
-const base = config.get('api_base') || 'http://localhost:8000' || 'https://api.anypayx.com'
+const base = config.get('api_base') || 'https://api.anypayx.com'
 
 import { log } from './log'
 

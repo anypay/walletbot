@@ -59,6 +59,7 @@ var assets = require('require-all')({
 const XMR = require('./assets/xmr')
 
 import { getRecommendedFees } from './mempool.space'
+import log from '../../log'
 
 export interface Utxo {
   txid: string;
@@ -78,6 +79,7 @@ export interface Balance {
   address: string;
   value: number;
   value_usd?: number;
+  errors?: Error[];
 }
 
 interface LoadCard {
@@ -357,22 +359,70 @@ export class Card {
 
     var value;
 
+    const errors = []
+
+
+    if (this.asset === 'BTC') {
+      
+      console.log("BTC RPC", rpc)
+
+    }
+
+    console.log("R__RPC", rpc)
+
+
     if (rpc['getBalance']) {
+
+      console.log("BTC GET BALANCE")
 
       value = await rpc['getBalance'](this.address)
 
     } else {
 
-      value = await blockchair.getBalance(this.asset, this.address)
+      try {
+
+        value = await blockchair.getBalance(this.asset, this.address)
+
+      } catch(error) {
+
+        errors.push(error)
+
+        error.asset = this.asset
+        error.address = this.address
+
+        log.error('blockchair.getBalance.error', error)
+
+      }
+      
     }
 
+
+
     if (rpc['listUnspent']) {
+
+      console.log("BTC LIST UNSPENT")
 
       this.unspent = await rpc['listUnspent'](this.address)
 
     } else {
 
-      this.unspent = await blockchair.listUnspent(this.asset, this.address)
+      try {
+
+        this.unspent = await blockchair.listUnspent(this.asset, this.address)
+
+
+      } catch(error) {
+
+        errors.push(error)
+
+        error.asset = this.asset
+        error.address = this.address
+
+        log.error('blockchair.listUnspent.error', error)
+
+        this.unspent = []
+
+      }
       
     }
 
@@ -386,10 +436,16 @@ export class Card {
 
     }
 
+    if (errors.length > 0 && !value) {
+
+      value = false
+    }
+
     return {
       asset: this.asset,
       value: value,
-      address: this.address
+      address: this.address,
+      errors
     }
 
   }

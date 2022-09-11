@@ -5,10 +5,22 @@ import { v4 as uuid } from 'uuid'
 
 import log from './log'
 
-
 import { Balance } from './simple-wallet/src/wallet'
 
 import config from './config'
+
+const currencies = {
+  'BCH': 'bitcoin-cash',
+  'BSV': 'bitcoin-sv',
+  'BTC': 'bitcoin',
+  'DASH': 'dash',
+  'LTC': 'litecoin',
+  'DOGE': 'dogecoin'
+}
+
+const key = config.get('blockchair_api_key')
+
+export class BlockchairApiError extends Error {}
 
 export async function getAddress(coin: string, address: string) {
 
@@ -24,46 +36,48 @@ export async function getAddress(coin: string, address: string) {
 
     return data
 
-  } catch(error) {
+  } catch(err) {
 
-    log.debug('blockchair.api.dashboards.error', { error, trace })
+    const error = new BlockchairApiError(err.message)
 
     log.error('blockchair.api.dashboards', error)
+
+    throw error
 
   }
 
 }
 
-const currencies = {
-  'BCH': 'bitcoin-cash',
-  'BSV': 'bitcoin-sv',
-  'BTC': 'bitcoin',
-  'DASH': 'dash',
-  'LTC': 'litecoin',
-  'DOGE': 'dogecoin'
-}
-
-const key = config.get('blockchair_api_key')
-
 export async function getBalance(asset: string, address: string): Promise<Balance> {
 
-  log.info('blockchair.getBalance', { asset, address })
+  try {
 
-  const currency = currencies[asset]
+    log.info('blockchair.getBalance', { asset, address })
 
-  const url = `https://api.blockchair.com/${currency}/dashboards/address/${address}?key=${key}`
+    const currency = currencies[asset]
 
-  const response = await axios.get(`https://api.blockchair.com/${currency}/dashboards/address/${address}?key=${key}`)
+    const url = `https://api.blockchair.com/${currency}/dashboards/address/${address}?key=${key}`
 
-  const { data } = response
+    const response = await axios.get(url)
 
-  log.debug('blockchair.getBalance.result', data)
+    const { data } = response
 
-  const { balance: value, balance_usd: value_usd } = data['data'][address]['address']
+    log.debug('blockchair.getBalance.result', data)
 
-  const utxos = data['data'][address]['utxo']
+    const { balance: value, balance_usd: value_usd } = data['data'][address]['address']
 
-  return { asset, address, value: parseFloat(value), value_usd: parseFloat(value_usd.toFixed(2)) }
+    const utxos = data['data'][address]['utxo']
+
+    return { asset, address, value: parseFloat(value), value_usd: parseFloat(value_usd.toFixed(2)) }
+
+  } catch(err) {
+
+    const error = new BlockchairApiError(err.message)
+
+    log.error('blockchair.api.getBalance.error', error)
+
+    throw error
+  }
 
 }
 
@@ -82,35 +96,58 @@ interface Utxo {
 
 export async function listUnspent(asset: string, address: string): Promise<Utxo[]> {
 
-  log.info('blockchair.listUnspent', { asset, address })
+  try {
 
-  const currency = currencies[asset]
+    log.info('blockchair.listUnspent', { asset, address })
 
-  const { data } = await axios.get(`https://api.blockchair.com/${currency}/dashboards/address/${address}?key=${key}`)
+    const currency = currencies[asset]
 
-  log.debug('blockchair.listUnspent.result', data)
+    const { data } = await axios.get(`https://api.blockchair.com/${currency}/dashboards/address/${address}?key=${key}`)
 
-  const utxos: BlockchairUtxo[] = data['data'][address]['utxo']
+    log.debug('blockchair.listUnspent.result', data)
 
-  return utxos.map(utxo => {
-    return {
-      txid: utxo.transaction_hash,
-      vout: utxo.index,
-      value: utxo.value
-    }
-  })
+    const utxos: BlockchairUtxo[] = data['data'][address]['utxo']
+
+    return utxos.map(utxo => {
+      return {
+        txid: utxo.transaction_hash,
+        vout: utxo.index,
+        value: utxo.value
+      }
+    })
+
+
+  } catch(err) {
+
+    const error = new BlockchairApiError(err.message)
+
+    log.error('blockchair.api.listUnspent.error', error)
+
+    throw error
+  }
 
 }
 
 export async function getRawTx(asset: string, txid: string): Promise<any> {
 
-  const currency = currencies[asset]
+  try {
 
-  const { data } = await axios.get(`https://api.blockchair.com/${currency}/raw/transaction/${txid}?key=${key}`)
+    const currency = currencies[asset]
 
-  log.info('blockchair.rawTx.result', { data, asset, txid })
+    const { data } = await axios.get(`https://api.blockchair.com/${currency}/raw/transaction/${txid}?key=${key}`)
 
-  return data['data'][txid]['decoded_raw_transaction']
+    log.info('blockchair.rawTx.result', { data, asset, txid })
+
+    return data['data'][txid]['decoded_raw_transaction']
+
+  } catch(err) {
+
+    const error = new BlockchairApiError(err.message)
+
+    log.error('blockchair.api.getRawTx.error', error)
+
+    throw error
+  }
 
 }
 

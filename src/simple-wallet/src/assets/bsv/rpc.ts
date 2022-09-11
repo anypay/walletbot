@@ -49,25 +49,29 @@ export class RpcClient {
 
 import { getBalance as blockchair_getBalance, listUnspent as blockchair_listUnspent, BlockchairUtxo } from '../../../../blockchair'
 
+import { run, RunUtxo } from '../../run'
 
-/*export async function listUnspent(address): Promise<BlockchairUtxo[]> {
+export async function listUnspent(address): Promise<Utxo[]> {
 
-  const utxos = await blockchair_listUnspent('BSV', address)
+  const utxos: RunUtxo[]  = await run.blockchain.utxos(address)
 
   return utxos.map(utxo => {
     return {
-      txid: utxo.transaction_hash,
-      vout: utxo.index,
-      value: utxo.value
+      txid: utxo.txid,
+      vout: utxo.vout,
+      value: utxo.satoshis,
+      scriptPubKey: utxo.script
     }
   })
 
-}*/
+}
 
-import { Balance } from '../../wallet'
+import { Utxo } from '../../wallet'
 
-export async function getBalance(address): Promise<Balance> {
+export async function getBalance(address): Promise<number> {
 
-  return blockchair_getBalance('BSV', address)
+  const utxos: Utxo[] = await listUnspent(address)
+
+  return utxos.reduce((sum, {value}) => sum + value, 0)
 
 }
