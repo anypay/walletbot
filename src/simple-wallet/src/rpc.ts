@@ -2,7 +2,7 @@ require('dotenv').config()
 
 import * as bsv from './assets/bsv/rpc'
 import * as bch from './assets/bch/rpc'
-import * as dash from './assets/dash/rpc'
+import { rpc as dash } from './assets/dash'
 import * as ltc from './assets/ltc/rpc'
 import * as doge from './assets/doge/rpc'
 import * as btc from './assets/btc/rpc'

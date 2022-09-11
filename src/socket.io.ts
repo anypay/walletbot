@@ -1,11 +1,14 @@
 
 import { io, Socket } from "socket.io-client";
+import { Logform } from "winston";
 
 import config from './config'
 
 import { log } from './log'
 
 import { listBalances } from './websockets'
+
+import { handlers, Log, Context } from './websockets/handlers'
 
 export async function connect(token?: string): Promise<Socket> {
 
@@ -19,7 +22,7 @@ export async function connect(token?: string): Promise<Socket> {
 
   const path = config.get('socket_io_path') || '/v1/apps/wallet-bot'
 
-  log.info('socket.io.connect', {
+  log.debug('socket.io.connect', {
     host,
     path,
     transports: ['websocket'],
@@ -40,7 +43,7 @@ export async function connect(token?: string): Promise<Socket> {
 
   socket.on('connect', () => {
 
-    log.info('socket.io.connecteded')
+    log.info('socket.io.connected')
 
     listBalances(socket)
 
@@ -96,13 +99,29 @@ export async function connect(token?: string): Promise<Socket> {
 
   })
 
-  /*Object.keys(handlers).forEach(event => {
+  Object.keys(handlers).forEach(event => {
 
     socket.on(event, message => {
-      handlers[event](socket, message)
+
+      const handler = handlers[event]
+
+      if (handler) {
+
+        const log = new Log({socket})
+
+        const context: Context<any> = {
+          socket,
+          log,
+          message
+        }
+
+        handler(context)
+
+      }
+
     })
 
-  })*/
+  })
 
   return socket
 

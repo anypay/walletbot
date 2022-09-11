@@ -27,7 +27,9 @@ export async function load(): Promise<Wallet> {
 
   })
 
-  return loadWallet(cards)
+  const card = cards.filter(card => card.asset === 'DASH')[0]
+
+  return loadWallet([card])
 
 }
 

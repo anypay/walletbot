@@ -15,19 +15,19 @@ import * as bsv from 'bsv'
 
 export class MnemonicWallet {
 
-    mnemonic: SelectionMode;
+    mnemonic: string;
 
-    btchdprivatekey: btc.HDPrivateKey;
+    btchdprivatekey: any;//btc.HDPrivateKey;
 
-    dashhdprivatekey: dash.HDPrivateKey;
+    dashhdprivatekey: any;//dash.HDPrivateKey;
 
-    bsvhdprivatekey: bsv.HDPrivateKey;
+    bsvhdprivatekey: any;//bsv.HDPrivateKey;
 
-    ltchdprivatekey: ltc.HDPrivateKey;
+    ltchdprivatekey: any;//ltc.HDPrivateKey;
 
-    dogehdprivatekey: doge.HDPrivateKey;
+    dogehdprivatekey: any;//doge.HDPrivateKey;
 
-    bchhdprivatekey: bch.HDPrivateKey;
+    bchhdprivatekey: any;//bch.HDPrivateKey;
 
 
     constructor(mnemonic) {
@@ -42,7 +42,7 @@ export class MnemonicWallet {
   
       const seed = bip39.mnemonicToSeedSync(this.mnemonic).toString('hex')
   
-      this.btchdprivatekey = btc.HDPrivateKey.fromSeed(seed)
+      this.btchdprivatekey = btc.HDPrivateKey['fromSeed'](seed)
   
       this.dashhdprivatekey = dash.HDPrivateKey.fromSeed(seed)
   

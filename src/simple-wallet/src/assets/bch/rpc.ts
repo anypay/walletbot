@@ -64,16 +64,4 @@ export class RpcClient {
 }
 
 
-export async function getBalance(address): Promise<Balance> {
-
-  return blockchair_getBalance('BCH', address)
-
-}
-
-export async function listUnspent(address): Promise<BlockchairUtxo[]> {
-
-  return blockchair_listUnspent('BCH', address)
-
-}
-
 

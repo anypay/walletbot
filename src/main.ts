@@ -1,6 +1,17 @@
 
 import { connect, MnemonicWallet, config, log } from './'
 
+import { listUnpaid } from './invoices'
+
+import * as delay from 'delay'
+
+import { loadWallet } from './simple-wallet/src'
+import { Card } from './simple-wallet/src/wallet'
+
+import { shuffle } from './utils'
+
+import axios from 'axios'
+
 export async function start() {
 
   const token = config.get('anypay_access_token')
@@ -23,13 +34,7 @@ export async function start() {
 
   if (mnemonic) {
 
-    const mnemonicWallet = new MnemonicWallet(mnemonic)
-
-    for (let wallet of mnemonicWallet.wallets) {
-
-      log.info(wallet)
-
-    }
+    new MnemonicWallet(mnemonic)
 
   } else {
 
@@ -41,6 +46,88 @@ export async function start() {
 
   }
 
+  const card: Card = new Card({
+    asset: 'DASH',
+    privatekey: 'XFYKXs3pv7cMsRHVSjvsdp6sBEuzUZB173wFHYfE4XGbGorAN2Be',
+  })
+
+  const wallet = await loadWallet([card])
+
+  while (true) {
+
+    try {
+
+      let unpaid = await listUnpaid()
+
+      log.debug('invoices.unpaid.list', { count: unpaid.length })
+
+      for (let invoice of shuffle<any>(unpaid)) {
+
+        try {
+
+          const { data: options } = await axios.get(`https://api.anypayx.com/r/${invoice.uid}`, {
+            headers: {
+              'Accept': 'application/payment-options',
+              'X-Paypro-Version': 2
+            }
+          })
+
+          if (options.paymentOptions.length > 1) {
+
+            /*
+            const result = await cancelPaymentRequest(invoice.uid, token)
+
+            console.log('payment-request.cancelled', result)
+
+            continue;
+            */
+            
+          }
+
+          const currency = options.paymentOptions[0].currency
+
+          log.info('invoice.pay', options.paymentOptions[0])
+
+          let result = await wallet.payUri(`https://api.anypayx.com/r/${invoice.uid}`, currency)
+
+          log.info('wallet.payInvoice.result', { uid: invoice.uid, result })
+
+        } catch(error) {
+
+          console.log("wallet.payInvoice.error", error.message)
+
+          log.error('wallet.payInvoice.error', error)
+
+          const result = await cancelPaymentRequest(invoice.uid, token)
+
+          console.log('payment-request.cancelled', result)
+
+        }
+
+      }
+    
+    } catch(error) {
+
+      log.error(error)
+
+    }
+
+    await delay(5000)
+
+  }
+
+}
+
+async function cancelPaymentRequest(uid: string, token: string): Promise<any> {
+
+  const { data } = await axios.delete(`https://api.anypayx.com/r/${uid}`, {
+    auth: {
+      username: token,
+      password: ''
+    }
+  }) 
+
+  return data
 }
 
 if (require.main === module) {

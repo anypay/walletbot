@@ -59,11 +59,7 @@ export async function buildPayment(paymentRequest: PaymentRequest): Promise<Buil
 
     const transferResult = await transfer(destinations)
 
-    console.log({ transferResult })
-
     let { tx_blob, tx_key, tx_hash } =  transferResult
-
-    console.log({ tx_blob, tx_key, tx_hash })
 
     return { tx_blob, tx_key, tx_hash }
   
@@ -77,8 +73,6 @@ export async function buildPayment(paymentRequest: PaymentRequest): Promise<Buil
 }
 
 export async function call(method: string, params: any): Promise<any> {
-
-  console.log('call', JSON.stringify({ method, params }))
 
   let { data } = await axios.post(process.env.XMR_RPC_URL, {
     jsonrpc:"2.0",
@@ -126,8 +120,6 @@ export async function transfer(destinations: Destination[]) {
     unlock_time: 0,
     destinations
   })
-
-  console.log('transfer.result', result)
 
   return result
 

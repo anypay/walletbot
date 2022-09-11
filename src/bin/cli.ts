@@ -18,7 +18,7 @@ import { start } from '../main'
 
 import { existsSync, writeFileSync } from 'fs'
 
-import { getBitcore } from '../wallet'
+import { getBitcore, load } from '../wallet'
 
 import * as delay from 'delay'
 
@@ -70,10 +70,22 @@ program
   })
 
 program
+  .command('payinvoice <invoice_uid> <currency>')
+  .action(async (invoice_uid, currency) => {
+
+    const wallet = await load()
+
+  })
+
+program
   .command('balance <currency>')
-  .action((currency) => {
+  .action(async (currency) => {
 
     console.log(`show ${currency} balance`)
+
+    const wallet = await load();
+
+    console.log(wallet)
 
     process.exit(0)
 

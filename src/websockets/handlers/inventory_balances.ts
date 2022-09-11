@@ -15,4 +15,6 @@ export default async function (socket: Socket, json?: any) {
 
     socket.emit('inventory.balances', balances)
 
+    return balances
+
 }

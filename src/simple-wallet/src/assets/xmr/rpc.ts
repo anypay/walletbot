@@ -78,11 +78,7 @@ export class RpcClient {
 
     const params = { tx_as_hex }
 
-    console.log('send_raw_transaction', params)
-
     const { data } = await axios.post(this.url, params)
-
-    console.log(data)
 
     return data
 
@@ -94,17 +90,11 @@ export class RpcClient {
 
     const params = { tx_as_hex }
 
-    console.log('submit_transfer', params)
-
     const { data } = await axios.post(`http://67.223.119.106:18081`, params)
-
-    console.log(data)
 
     return data
 
   }
-
-
 
 }
 

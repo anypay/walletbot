@@ -18,7 +18,7 @@ if (config.get('loki_host')) {
     host: config.get('loki_host'),
     json: true,
     batching: false,
-    labels: { job: config.get('loki-label-job') }
+    labels: { app: config.get('loki_label_app') }
   }
 
   if (config.get('loki_basic_auth')) {

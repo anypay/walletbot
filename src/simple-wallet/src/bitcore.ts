@@ -4,15 +4,29 @@ import { BigNumber } from 'bignumber.js';
 import { join } from 'path'
 
 
-const assets = require('require-all')({
+const assetsTs = require('require-all')({
   dirname: join(__dirname, 'assets'),
   filter      :  /\index.ts/,
   recursive: true
 })
 
+const assetsJs = require('require-all')({
+  dirname: join(__dirname, 'assets'),
+  filter      :  /\index.js/,
+  recursive: true
+})
+
 export function getBitcore(asset): any {
 
-  let bitcore = assets[asset.toLowerCase()]['index.ts'].bitcore
+  const tsAsset = assetsTs[asset.toLowerCase()]
+  
+  const jsAsset = assetsJs[asset.toLowerCase()]
+
+  const bitcore = tsAsset ? (
+    tsAsset['index.ts'].bitcore
+  ) : (
+    jsAsset['index.js'].bitcore
+  )
 
   if (!bitcore) {
 

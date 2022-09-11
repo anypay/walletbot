@@ -93,8 +93,6 @@ export class Client {
 
     }
 
-    console.log('__PAYMENT', payment)
-
     let { data } = await axios.post(this.url, payment, {
       headers: {
         'x-paypro-version': 2,

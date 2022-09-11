@@ -54,24 +54,3 @@ export class RpcClient {
 
 }
 
-export async function listUnspent(address): Promise<UTXO[]> {
-
-  let rpc = new RpcClient({
-    url: process.env.LTC_RPC_URL
-  })
-
-  return rpc.listUnspent(address)
-
-}
-
-
-
-import { Balance } from '../../wallet'
-
-import { getBalance as blockchair_getBalance } from '../../../../blockchair'
-
-export async function getBalance(address): Promise<Balance> {
-
-  return blockchair_getBalance('LTC', address)
-
-}

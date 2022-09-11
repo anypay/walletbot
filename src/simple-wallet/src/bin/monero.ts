@@ -26,8 +26,6 @@ program
 
       const paymentRequest = await client.selectPaymentOption({ currency: 'XMR', chain: 'XMR' })
 
-      console.log({paymentRequest})
-
       const payment = await xmr.buildPayment(paymentRequest)
 
       if (!paymentRequest) {
@@ -35,8 +33,6 @@ program
         throw new Error('XMR is not a payment option')
 
       }
-
-      console.log({payment})
 
       // get payment request details
       //
@@ -51,8 +47,6 @@ program
       let transmitPaymentResult = await client.transmitPayment(paymentRequest, tx_blob, {
         tx_hash, tx_key
       })
-
-      console.log({ transmitPaymentResult })
 
       process.exit(0)
  

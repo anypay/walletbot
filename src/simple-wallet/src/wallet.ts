@@ -12,6 +12,8 @@ import { Invoice, Payment } from './invoice'
 
 import { Client } from './client'
 
+import * as blockchair from '../../blockchair'
+
 import axios from 'axios'
 
 export class UnsufficientFundsError extends Error {
@@ -58,6 +60,13 @@ const XMR = require('./assets/xmr')
 
 import { getRecommendedFees } from './mempool.space'
 
+export interface Utxo {
+  txid: string;
+  vout: number;
+  value: number;
+  scriptPubKey?: string;
+}
+
 interface PaymentTx {
   tx_hex: string;
   tx_hash?: string;
@@ -91,9 +100,11 @@ export class Wallet {
 
   }
 
-  async balances() {
+  async balances(): Promise<Balance[]> {
 
     let balances = await Promise.all(this.cards.map(async card => {
+
+      if (card.asset === 'DOGE') { return }
  
       try {
 
@@ -102,6 +113,8 @@ export class Wallet {
         return balance
 
       } catch(error) {
+
+        console.error(error)
 
         return null
 
@@ -177,7 +190,7 @@ export class Wallet {
 
     if (asset === 'LTC') {
 
-      let inputs = wallet.unspent.map(output => {
+      let inputs = wallet.unspent.map((output: any) => {
 
         let satoshis = new BigNumber(output.amount).times(100000000).toNumber()
 
@@ -198,16 +211,44 @@ export class Wallet {
 
     } else {
 
+      const unspent = await Promise.all(wallet.unspent.map(async utxo => {
 
-      tx = new bitcore.Transaction()
-        .from(wallet.unspent)
-        .change(wallet.address)
+        if (utxo.scriptPubKey) {
+          return utxo
+        }
+
+        const raw_transaction = await blockchair.getRawTx(wallet.asset, utxo.txid)
+
+        return Object.assign(utxo, {
+          scriptPubKey: raw_transaction['vout'][utxo.vout].scriptPubKey.hex,
+        })
+      }))
+
+      try {
+
+        tx = new bitcore.Transaction()
+          .from(unspent.map(utxo => {
+            const result = {
+              txId: utxo.txid,
+              outputIndex: utxo.vout,
+              satoshis: utxo.value,
+              scriptPubKey: utxo.scriptPubKey
+            }
+
+            return result
+          }))
+          .change(wallet.address)
+
+      } catch(error) {
+
+        console.error(error)
+      }
 
     }
 
     totalInput = wallet.unspent.reduce((sum, input) => {
 
-      let satoshis = new BigNumber(input.amount).times(100000000).toNumber()
+      let satoshis = new BigNumber(input.value).times(100000000).toNumber()
 
       return sum.plus(satoshis)
 
@@ -281,7 +322,7 @@ export class Card {
   asset: string;
   privatekey: string;
   address: string;
-  unspent: any[];
+  unspent: Utxo[];
 
   constructor(params: {
     asset: string,
@@ -301,30 +342,53 @@ export class Card {
     
   }
   
-  async listUnspent() {
+  async getUnspent() {
+
+    const blockchairUnspent = await blockchair.listUnspent(this.asset, this.address)
+
+    this.unspent = blockchairUnspent
   }
 
   async balance(): Promise<Balance> {
 
+    const asset = this.asset
+
     let rpc = getRPC(this.asset)
+
+    var value;
 
     if (rpc['getBalance']) {
 
-      return rpc['getBalance'](this.address)
+      value = await rpc['getBalance'](this.address)
+
+    } else {
+
+      value = await blockchair.getBalance(this.asset, this.address)
+    }
+
+    if (rpc['listUnspent']) {
+
+      this.unspent = await rpc['listUnspent'](this.address)
+
+    } else {
+
+      this.unspent = await blockchair.listUnspent(this.asset, this.address)
+      
+    }
+
+    if (!value) {
+
+      value = this.unspent.reduce((sum, output) => {
+
+        return sum.plus(output.value)
+  
+      }, new BigNumber(0)).toNumber()
 
     }
 
-    this.unspent = await rpc.listUnspent(this.address)
-
-    let value = this.unspent.reduce((sum, output) => {
-
-      return sum.plus(output.amount)
-
-    }, new BigNumber(0)).toNumber()
-
     return {
       asset: this.asset,
-      value,
+      value: value,
       address: this.address
     }
 

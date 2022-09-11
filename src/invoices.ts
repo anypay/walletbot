@@ -3,22 +3,31 @@ import axios from 'axios'
 
 import config from './config'
 
-const base = config.get('api_base')
+const base = config.get('api_base') || 'http://localhost:8000' || 'https://api.anypayx.com'
 
-import { app } from 'anypay'
+import { log } from './log'
 
-const anypay = app(config.get('anypay_access_token'))
+import anypay from './anypay'
 
 export async function listUnpaid(): Promise<any[]> {
 
-  let { data } = await axios.get(`${base}/v0/api/apps/wallet-bot/invoices`, {
-    auth: {
-      username: config.get('anypay_access_token'),
-      password: ''
-    }
-  })
+  try {
 
-  return data.invoices
+    let { data } = await axios.get(`${base}/v0/api/apps/wallet-bot/invoices`, {
+      auth: {
+        username: config.get('anypay_access_token'),
+        password: ''
+      }
+    })
+  
+    return data.invoices
+
+  } catch(error) {
+
+    log.error('invoices.listUnpaid.error', error)
+
+    return []
+  }
 
 }
 
@@ -31,8 +40,6 @@ interface NewInvoice {
 
 export async function createInvoice(params: NewInvoice): Promise<any> {
 
-  console.log({ params })
-
   const { currency, address, denomination, value } = params
 
   const paymentRequest = await anypay.request([{
@@ -43,8 +50,6 @@ export async function createInvoice(params: NewInvoice): Promise<any> {
       currency: denomination
     }]
   }])
-
-  console.log(paymentRequest)
 
   return paymentRequest
 
