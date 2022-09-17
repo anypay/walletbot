@@ -60,6 +60,7 @@ const XMR = require('./assets/xmr')
 
 import { getRecommendedFees } from './mempool.space'
 import log from '../../log'
+import { convertBalance } from './balance'
 
 export interface Utxo {
   txid: string;
@@ -116,7 +117,7 @@ export class Wallet {
 
       } catch(error) {
 
-        console.error(error)
+        log.error('balances.error', error)
 
         return null
 
@@ -243,7 +244,7 @@ export class Wallet {
 
       } catch(error) {
 
-        console.error(error)
+        log.error('buildPayment', error)
       }
 
     }
@@ -361,19 +362,7 @@ export class Card {
 
     const errors = []
 
-
-    if (this.asset === 'BTC') {
-      
-      console.log("BTC RPC", rpc)
-
-    }
-
-    console.log("R__RPC", rpc)
-
-
     if (rpc['getBalance']) {
-
-      console.log("BTC GET BALANCE")
 
       value = await rpc['getBalance'](this.address)
 
@@ -399,8 +388,6 @@ export class Card {
 
 
     if (rpc['listUnspent']) {
-
-      console.log("BTC LIST UNSPENT")
 
       this.unspent = await rpc['listUnspent'](this.address)
 
@@ -441,9 +428,15 @@ export class Card {
       value = false
     }
 
+    const { amount: value_usd } = await convertBalance({
+      currency: this.asset,
+      amount: value / 100000000
+    }, 'USD')
+
     return {
       asset: this.asset,
       value: value,
+      value_usd,
       address: this.address,
       errors
     }

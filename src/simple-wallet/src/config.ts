@@ -3,8 +3,6 @@ require('dotenv').config()
 
 var config = require('nconf');
 
-import { join } from 'path'
-
 config.argv()
    .env()
 

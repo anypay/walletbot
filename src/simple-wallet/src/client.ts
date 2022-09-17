@@ -3,10 +3,6 @@ import axios from 'axios'
 
 import * as protocol from './protocol'
 
-import { Wallet } from './wallet'
-
-import { broadcast } from './run'
-
 export class Client {
 
   url: string;

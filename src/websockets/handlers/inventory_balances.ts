@@ -15,7 +15,6 @@ export default async function (socket: Socket, json?: any) {
 
         log.info('wallet-bot.balance', balance)
     }
-    console.log(balances)
 
     socket.emit('inventory.balances', balances)
 

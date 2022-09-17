@@ -10,6 +10,8 @@ import { listBalances } from './websockets'
 
 import { handlers, Log, Context } from './websockets/handlers'
 
+export var socket;
+
 export async function connect(token?: string): Promise<Socket> {
 
   if (!token) {
@@ -32,7 +34,7 @@ export async function connect(token?: string): Promise<Socket> {
     }
   })
 
-  const socket = io(host, {
+  socket = io(host, {
     path,
     transports: ['websocket'],
     reconnectionDelayMax: config.get('socket_io_reconnection_delay_max'),

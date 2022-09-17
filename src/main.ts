@@ -6,21 +6,17 @@ import { listUnpaid } from './invoices'
 import * as delay from 'delay'
 
 import { loadWallet } from './simple-wallet/src'
-import { Card } from './simple-wallet/src/wallet'
 
 import { shuffle } from './utils'
 
 import axios from 'axios'
+import { listBalances } from './websockets'
 
 export async function start() {
 
   const token = config.get('anypay_access_token')
 
-  if (token) {
-
-    connect(token)
-
-  } else {
+  if (!token) {
 
     log.error(`anypay_access_token config variable not set`)
 
@@ -29,6 +25,8 @@ export async function start() {
     process.exit(1)
 
   }
+
+  const socket = await connect(token)
 
   const mnemonic = config.get('wallet_bot_backup_seed_phrase')
 
@@ -60,7 +58,7 @@ export async function start() {
 
         try {
 
-          const { data: options } = await axios.get(`https://api.anypayx.com/r/${invoice.uid}`, {
+          const { data: options } = await axios.get(`${config.get('api_base')}/r/${invoice.uid}`, {
             headers: {
               'Accept': 'application/payment-options',
               'X-Paypro-Version': 2
@@ -86,6 +84,8 @@ export async function start() {
           let result = await wallet.payUri(`https://api.anypayx.com/r/${invoice.uid}`, currency)
 
           log.info('wallet.payInvoice.result', { uid: invoice.uid, result })
+
+          listBalances(socket)
 
         } catch(error) {
 
