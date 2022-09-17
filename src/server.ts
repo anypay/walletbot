@@ -30,6 +30,31 @@ export const server = new Server({
   }
 });
 
+server.register(require('@hapi/basic'));
+
+server.auth.strategy('prometheus', 'basic', {
+
+  validate: async (req, password) => {
+
+    if (config.get('prometheus_password') == undefined) {
+
+      return { isValid: true, credentials: {id: 'public'} }
+
+    }
+
+    if (password === config.get('prometheus_password')) {
+
+      return { isValid: true, credentials: {id: 'prometheus'} }
+
+    } else {
+
+      return { isValid: false, credentials: null }
+
+    }
+
+  }
+})
+
 if (config.get('prometheus_enabled')) {
 
   log.debug('server.metrics.prometheus', { path: '/metrics' })
@@ -44,7 +69,8 @@ if (config.get('prometheus_enabled')) {
     },
     options: {
       description: 'Prometheus Metrics about Node.js Process & Business-Level Metrics',
-      tags: ['system']
+      tags: ['system'],
+      auth: 'prometheus'
     }
   })
 

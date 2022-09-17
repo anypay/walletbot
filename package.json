@@ -1,6 +1,6 @@
 {
    "name": "wallet-bot",
-   "version": "0.4.2",
+   "version": "0.5.0",
    "private": false,
    "description": "Your Money-Sending Robot Friend",
    "main": "./dist/wallet-bot/src/index.js",
@@ -23,6 +23,7 @@
    "license": "",
    "dependencies": {
       "@dashevo/dashcore-mnemonic": "^1.6.1",
+      "@hapi/basic": "^7.0.0",
       "@hapi/hapi": "^20.2.2",
       "@hapi/inert": "^6.0.5",
       "@hapi/joi": "^17.1.1",
@@ -75,9 +76,9 @@
       "check-coverage": false,
       "all": true,
       "include": [
-        "src/**.ts"
+         "src/**.ts"
       ],
       "reporter": "lcov",
       "report-dir": "./coverage"
-    }
+   }
 }

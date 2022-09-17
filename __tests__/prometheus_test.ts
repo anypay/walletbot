@@ -1,7 +1,13 @@
 
+import config from '../src/config'
+
+config.set('prometheus_enabled', true)
+
+config.set('prometheus_password', 'letmein')
+
 import { server, start } from '../src/server'
 
-import { expect } from './utils'
+import { expect, authRequest } from './utils'
 
 describe('Scraping Prometheus Metrics', () => {
 
@@ -11,9 +17,21 @@ describe('Scraping Prometheus Metrics', () => {
 
   })
 
-  it('GET /metrics should provide the metrics', async () => {
+  it('GET /metrics should not provide the metrics without a password', async () => {
 
     const response = await server.inject({
+      method: 'GET',
+      url: '/metrics'
+    })
+
+    expect(response.statusCode).to.be.equal(401)
+
+  })
+
+
+  it('GET /metrics should provide the metrics with a password', async () => {
+
+    const response = await authRequest(server, 'letmein', {
       method: 'GET',
       url: '/metrics'
     })
@@ -22,26 +40,5 @@ describe('Scraping Prometheus Metrics', () => {
 
   })
 
-  it.skip('GET /liveness should return success', async () => {
-
-    const response = await server.inject({
-      method: 'GET',
-      url: '/liveness'
-    })
-
-    expect(response.statusCode).to.be.equal(200)
-
-  })
-
-  it.skip('GET /readiness should return success', async () => {
-
-    const response = await server.inject({
-      method: 'GET',
-      url: '/readiness'
-    })
-
-    expect(response.statusCode).to.be.equal(200)
-
-  })
 
 })
