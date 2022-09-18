@@ -132,10 +132,22 @@ export class Wallet {
 
   async payInvoice(invoice_uid: string, asset:string, {transmit}:{transmit: boolean}={transmit:true}): Promise<PaymentTx> {
 
+    log.info(`wallet-bot.simple-wallet.payInvoice`, {
+      invoice_uid,
+      asset,
+      transmit
+    })
+
     return this.payUri(`${config.get('API_BASE')}/i/${invoice_uid}`, asset, { transmit })
   }
 
   async payUri(uri: string, asset:string, {transmit}:{transmit: boolean}={transmit:true}): Promise<PaymentTx> {
+
+    log.info(`wallet-bot.simple-wallet.payUri`, {
+      uri,
+      asset,
+      transmit
+    })
 
     let client = new Client(uri)
 
@@ -206,7 +218,6 @@ export class Wallet {
           satoshis
         }
       })
-
 
       tx = new bitcore.Transaction()
         .from(inputs)
@@ -306,11 +317,6 @@ export class Wallet {
 
   }
 
-
-  async pay(uri: string, asset: string): Promise<Payment> {
-    return new Payment()
-  }
-
   async getInvoice(uid: string): Promise<any> {
 
     let { data } = await axios.get(`${config.get('API_BASE')}/invoices/${uid}`)
@@ -329,7 +335,7 @@ export class Card {
 
   constructor(params: {
     asset: string,
-    privatekey: string,
+    privatekey?: string,
     address?: string;
   }) {
     this.unspent = []
@@ -430,7 +436,7 @@ export class Card {
 
     const { amount: value_usd } = await convertBalance({
       currency: this.asset,
-      amount: value / 100000000
+      amount: this.asset === 'XMR' ? value : value / 100000000
     }, 'USD')
 
     return {
@@ -503,13 +509,19 @@ export async function loadWallet(loadCards?: LoadCard[]) {
 
   }
 
-  /*if (process.env.XMR_SIMPLE_WALLET_SEED) {
+  if (config.get('monero_wallet_rpc_url')) {
+
+    console.log('MONERO!', {
+      asset: 'XMR',      
+      privatekey: config.get('monero_wallet_rpc_password')
+    })
+
     cards.push(new Card({
       asset: 'XMR',
-      privatekey: process.env.XMR_SIMPLE_WALLET_SEED
+      address: config.get('monero_wallet_rpc_username'),
+      privatekey: config.get('monero_wallet_rpc_password')
     }))
   }
-  */
 
   if (process.env.XRP_PRIVATE_KEY) {
     cards.push(new Card({

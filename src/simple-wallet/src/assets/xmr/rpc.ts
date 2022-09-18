@@ -3,6 +3,9 @@ require('dotenv').config()
 import axios from 'axios'
 
 import BigNumber from 'bignumber.js'
+import config from '../../config';
+
+import { log } from '../../log'
 
 export interface UTXO {
   txid: string;
@@ -39,18 +42,22 @@ export class RpcClient {
       "address_indices":[0,1]
     }
 
-    let { data } = await axios.post(this.url, {method,params}, {
-      auth: {
-        username: process.env.XMR_RPC_USER,
-        password: process.env.XMR_RPC_PASSWORD
-      }
+    log.info('wallet-bot.simple-wallet.xmr.rpc.getBalance', { url: this.url, method, params })
+
+    let { data } = await axios.post(this.url, {method , params}, {
+      /*auth: {
+        username: config.get('monero_wallet_rpc_username'),
+        password: config.get('monero_wallet_rpc_password')
+      }*/
     })
 
     let { balance } = data.result
 
     balance = new BigNumber(data.result.balance).dividedBy(1000000000000).toNumber()
 
-    return { asset: 'XMR', amount: balance }
+    log.info('wallet-bot.simple-wallet.xmr.rpc.getBalance.result', { amount: balance })
+
+    return balance
 
   }
 
@@ -63,8 +70,8 @@ export class RpcClient {
 
     let { data } = await axios.post(this.url, {method,params}, {
       auth: {
-        username: process.env.XMR_RPC_USER,
-        password: process.env.XMR_RPC_PASSWORD
+        username: config.get('monero_wallet_rpc_username'),
+        password: config.get('monero_wallet_rpc_password')
       }
     })
 
@@ -90,7 +97,11 @@ export class RpcClient {
 
     const params = { tx_as_hex }
 
-    const { data } = await axios.post(`http://67.223.119.106:18081`, params)
+    if (!config.get('monerod_rpc_url')) {
+      log.error('monerod_rpc_url config value not set')
+    }
+
+    const { data } = await axios.post(config.get('monerod_rpc_url'), params)
 
     return data
 
@@ -101,7 +112,7 @@ export class RpcClient {
 export async function listUnspent(address): Promise<UTXO[]> {
 
   let rpc = new RpcClient({
-    url: process.env.XMR_RPC_URL
+    url: config.get('monero_wallet_rpc_url')
   })
 
   return rpc.listUnspent(address)
@@ -113,12 +124,9 @@ import { Balance } from '../../wallet'
 export async function getBalance(address): Promise<Balance> {
 
   let rpc = new RpcClient({
-    url: process.env.XMR_RPC_URL
+    url: config.get('monero_wallet_rpc_url')
   })
 
   return rpc.getBalance(address)
 
 }
-
-
-
