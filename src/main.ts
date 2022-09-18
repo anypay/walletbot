@@ -40,8 +40,6 @@ export async function start() {
 
   }
 
-  const { wallets } = new MnemonicWallet(mnemonic)
-
   //const card: Card = wallets.filter(wallet => wallet.currency === 'DASH').filter(w => !!w)[0]
 
   const wallet = await loadWallet()

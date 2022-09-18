@@ -3,6 +3,8 @@ import axios from 'axios'
 
 import * as protocol from './protocol'
 
+import { log } from './log'
+
 export class Client {
 
   url: string;
@@ -62,6 +64,8 @@ export class Client {
     options?: any
 
   ): Promise<protocol.PaymentResponse> {
+
+    log.info('wallet-bot.simple-wallet.transmitPayment', { params, transaction, options })
 
     var payment: protocol.SendPayment;
 

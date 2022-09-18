@@ -13,6 +13,8 @@ import axios from 'axios'
 
 import { Client } from 'payment-protocol'
 
+import { config, log }  from '../../../..'
+
 const bitcore = {
 
 }
@@ -74,7 +76,7 @@ export async function buildPayment(paymentRequest: PaymentRequest): Promise<Buil
 
 export async function call(method: string, params: any): Promise<any> {
 
-  let { data } = await axios.post(process.env.XMR_RPC_URL, {
+  let { data } = await axios.post(config.get('monero_wallet_rpc_url'), {
     jsonrpc:"2.0",
     id:"0",
     method,
@@ -88,7 +90,7 @@ export async function call(method: string, params: any): Promise<any> {
 
   if (data.error) {
 
-    console.error('xmr.rpc.call.error', data)
+    log.error('xmr.rpc.call.error', data.error)
 
     throw new Error(data.error)
 

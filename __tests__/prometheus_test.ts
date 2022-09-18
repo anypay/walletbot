@@ -40,5 +40,4 @@ describe('Scraping Prometheus Metrics', () => {
 
   })
 
-
 })
