@@ -18,9 +18,10 @@ import { start } from '../main'
 
 import { existsSync, writeFileSync } from 'fs'
 
-import { getBitcore, load } from '../wallet'
+import { getBitcore } from '../wallet'
 
-import * as delay from 'delay'
+import { initWalletFromMnemonic } from '..'
+
 
 program
   .version(version)
@@ -45,15 +46,15 @@ program
 
   })
 
-
-
 program
   .command('balances')
   .action(async () => {
 
     try {
 
-      let balances = await listBalances()
+      const wallet = await initWalletFromMnemonic()
+
+      let balances = await wallet.balances()
 
       console.log(balances)
 
@@ -70,10 +71,24 @@ program
   })
 
 program
-  .command('payinvoice <invoice_uid> <currency>')
-  .action(async (invoice_uid, currency) => {
+  .command('payinvoice <uri> <currency>')
+  .action(async (uri, currency) => {
 
-    const wallet = await load()
+    try {
+
+      const wallet = await initWalletFromMnemonic()
+
+      //await wallet.balances
+
+      const result = await wallet.payUri(uri, currency)
+
+      console.log(result)
+
+    } catch(error) {
+
+      console.error(error)
+
+    }
 
   })
 
@@ -83,9 +98,9 @@ program
 
     console.log(`show ${currency} balance`)
 
-    const wallet = await load();
+    const wallet = await initWalletFromMnemonic()
 
-    console.log(wallet)
+    console.log(wallet.balances)
 
     process.exit(0)
 
@@ -113,6 +128,8 @@ program
 
   })
 
+
+
 import { connect } from '../socket.io'
 
 program
@@ -130,7 +147,6 @@ program
     }
 
   })
-
 
 
 
@@ -185,7 +201,6 @@ program
     process.exit(0)
 
   })
-
 
 program.parse(process.argv)
 
