@@ -18,7 +18,7 @@ export async function load(): Promise<Wallet> {
   const cards = mnemonicWallet.wallets.map(wallet => {
 
     const card: Card = new Card({
-      asset: wallet.currency,
+      asset: wallet.asset,
       privatekey: wallet.privatekey,
       address: wallet.address
     })

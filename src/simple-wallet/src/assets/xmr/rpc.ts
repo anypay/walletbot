@@ -7,6 +7,8 @@ import config from '../../config';
 
 import { log } from '../../log'
 
+import { v4 as uuid } from 'uuid'
+
 export interface UTXO {
   txid: string;
   vout: number;
@@ -19,6 +21,8 @@ export interface UTXO {
   solvable: boolean;
   safe: boolean;
 }
+
+import { Utxo } from '../../wallet'
 
 interface RpcOptions {
   url: string;
@@ -33,7 +37,9 @@ export class RpcClient {
     this.url = params.url
   }
 
-  async getBalance(address): Promise<any> {
+  async getBalance(address): Promise<number> {
+
+    const trace = uuid()
 
     const method = 'get_balance'
 
@@ -42,7 +48,7 @@ export class RpcClient {
       "address_indices":[0,1]
     }
 
-    log.info('wallet-bot.simple-wallet.xmr.rpc.getBalance', { url: this.url, method, params })
+    log.info('wallet-bot.simple-wallet.xmr.rpc.getBalance', { url: this.url, method, params, trace })
 
     let { data } = await axios.post(this.url, {method , params}, {
       /*auth: {
@@ -51,22 +57,26 @@ export class RpcClient {
       }*/
     })
 
-    let { balance } = data.result
+    let balance: number = data.result
 
     balance = new BigNumber(data.result.balance).dividedBy(1000000000000).toNumber()
 
-    log.info('wallet-bot.simple-wallet.xmr.rpc.getBalance.result', { amount: balance })
+    log.info('wallet-bot.simple-wallet.xmr.rpc.getBalance.result', { balance, trace })
 
     return balance
 
   }
 
-  async listUnspent(address: string): Promise<UTXO[]> {
+  async listUnspent(address: string): Promise<Utxo[]> {
+
+    const trace = uuid()
 
     let method = 'listunspent'
 
     //let params = [0, 9999999, `["${address}"]`]
     let params = [0, 9999999, [address]]
+
+    log.info('wallet-bot.simple-wallet.xmr.rpc.listUnspent', { url: this.url, method, params, trace })
 
     let { data } = await axios.post(this.url, {method,params}, {
       auth: {
@@ -75,7 +85,15 @@ export class RpcClient {
       }
     })
 
-    return data.result
+    const utxos = data.result
+
+    log.info('wallet-bot.simple-wallet.xmr.rpc.listUnspent.result', { trace, data })
+
+
+    return utxos.map(utxo => {
+      return Object.assign(utxo, { value: utxo.amount })
+    })
+
 
   }
 
@@ -109,7 +127,7 @@ export class RpcClient {
 
 }
 
-export async function listUnspent(address): Promise<UTXO[]> {
+export async function listUnspent(address): Promise<Utxo[]> {
 
   let rpc = new RpcClient({
     url: config.get('monero_wallet_rpc_url')
@@ -121,7 +139,7 @@ export async function listUnspent(address): Promise<UTXO[]> {
 
 import { Balance } from '../../wallet'
 
-export async function getBalance(address): Promise<Balance> {
+export async function getBalance(address): Promise<number> {
 
   let rpc = new RpcClient({
     url: config.get('monero_wallet_rpc_url')

@@ -29,6 +29,15 @@ export class MnemonicWallet {
 
     bchhdprivatekey: any;//bch.HDPrivateKey;
 
+    static init(mnemonic: string): MnemonicWallet {
+
+      let wallet = new MnemonicWallet(mnemonic)
+
+      wallet.init()
+
+      return wallet
+
+    }
 
     constructor(mnemonic) {
   
@@ -53,33 +62,35 @@ export class MnemonicWallet {
       this.dogehdprivatekey = doge.HDPrivateKey.fromSeed(seed)
 
       this.bchhdprivatekey = bch.HDPrivateKey.fromSeed(seed)
+
+      return this
   
     }
   
     get wallets() {
   
       const wallets = [{
-        currency: 'BTC',
+        asset: 'BTC',
         address: this.btchdprivatekey.privateKey.toAddress().toString(),
         privatekey: this.btchdprivatekey.privateKey.toWIF()
       }, {
-        currency: 'BCH',
+        asset: 'BCH',
         address: this.bchhdprivatekey.privateKey.toAddress().toString(),
         privatekey: this.bchhdprivatekey.privateKey.toWIF()
       }, {
-        currency: 'DASH',
+        asset: 'DASH',
         address: this.dashhdprivatekey.privateKey.toAddress().toString(),
         privatekey: this.dashhdprivatekey.privateKey.toWIF()
       }, {
-        currency: 'BSV',
+        asset: 'BSV',
         address: this.bsvhdprivatekey.privateKey.toAddress().toString(),
         privatekey: this.bsvhdprivatekey.privateKey.toWIF()
       }, {
-        currency: 'LTC',
+        asset: 'LTC',
         address: this.ltchdprivatekey.privateKey.toAddress().toString(),
         privatekey: this.ltchdprivatekey.privateKey.toWIF()
       }, {
-        currency: 'DOGE',
+        asset: 'DOGE',
         address: this.dogehdprivatekey.privateKey.toAddress().toString(),
         privatekey: this.dogehdprivatekey.privateKey.toWIF()
       }]

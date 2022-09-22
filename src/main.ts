@@ -10,6 +10,7 @@ import { loadWallet } from './simple-wallet/src'
 import { shuffle } from './utils'
 
 import axios from 'axios'
+
 import { listBalances } from './websockets'
 
 export async function start() {
@@ -40,15 +41,25 @@ export async function start() {
 
   }
 
-  //const card: Card = wallets.filter(wallet => wallet.currency === 'DASH').filter(w => !!w)[0]
+  const { wallets } = MnemonicWallet.init(mnemonic)
 
-  const wallet = await loadWallet()
+  //const card = wallets.filter(wallet => wallet.asset === 'DASH').filter(w => !!w)[0]
+
+  //const wallet = await loadWallet(wallets)
+
+  const wallet = await loadWallet(wallets)
+
+  
 
   while (true) {
+
+    var length = 0;
 
     try {
 
       let unpaid = await listUnpaid()
+
+      length = unpaid.length
 
       log.debug('invoices.unpaid.list', { count: unpaid.length })
 
@@ -68,7 +79,7 @@ export async function start() {
             /*
             const result = await cancelPaymentRequest(invoice.uid, token)
 
-            console.log('payment-request.cancelled', result)
+            log.info('payment-request.cancelled', result)
 
             continue;
             */
@@ -79,21 +90,19 @@ export async function start() {
 
           log.info('invoice.pay', options.paymentOptions[0])
 
-          let result = await wallet.payUri(`https://api.anypayx.com/r/${invoice.uid}`, currency)
+          let result = await wallet.payUri(`${config.get('api_base')}/r/${invoice.uid}`, currency)
 
           log.info('wallet.payInvoice.result', { uid: invoice.uid, result })
 
           listBalances(socket)
 
         } catch(error) {
-
-          console.log("wallet.payInvoice.error", error.message)
-
+          
           log.error('wallet.payInvoice.error', error)
 
-          const result = await cancelPaymentRequest(invoice.uid, token)
+          /*const result = await cancelPaymentRequest(invoice.uid, token)
 
-          console.log('payment-request.cancelled', result)
+          log.info('payment-request.cancelled', result)*/
 
         }
 
@@ -105,7 +114,7 @@ export async function start() {
 
     }
 
-    await delay(5000)
+    await delay(length > 0 ? 5 : 5200)
 
   }
 
@@ -113,7 +122,7 @@ export async function start() {
 
 async function cancelPaymentRequest(uid: string, token: string): Promise<any> {
 
-  const { data } = await axios.delete(`https://api.anypayx.com/r/${uid}`, {
+  const { data } = await axios.delete(`${config.get('api_base')}/r/${uid}`, {
     auth: {
       username: token,
       password: ''

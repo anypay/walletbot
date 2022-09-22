@@ -1,14 +1,4 @@
 
-/*const WalletManager = require('@mymonero/mymonero-wallet-manager')({})
-
-const walletManager = new WalletManager('STAGENET', 'https://stagenet-api.mymonero.rtfm.net')
-
-walletManager.init()
-  .then(() => console.log('mymonero.walletmanger.initialized'))
-  .catch((error) => console.error('mymonero.walletmanger.init.failed', error))
-
-*/
-
 import axios from 'axios'
 
 import { Client } from 'payment-protocol'
@@ -63,11 +53,13 @@ export async function buildPayment(paymentRequest: PaymentRequest): Promise<Buil
 
     let { tx_blob, tx_key, tx_hash } =  transferResult
 
+    log.info('xmr.buildPayment.result', transferResult)
+
     return { tx_blob, tx_key, tx_hash }
   
   } catch(error) {
 
-    console.error('xmr.transfer.error', error)
+    log.error('xmr.transfer.error', error)
 
     throw error
   }

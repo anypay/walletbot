@@ -1,3 +1,6 @@
+import { log } from '../../log'
+
+import { v4 as uuid } from 'uuid'
 
 import * as dash from '@dashevo/dashcore-lib';
 
@@ -22,9 +25,15 @@ interface InsightUtxo {
 
 export const rpc = {
 
-    listUnspent: async (address: string): Promise<Utxo[]> => {
+    listUnspent: async (address: string, trace?: string): Promise<Utxo[]> => {
+
+        trace =  trace || uuid()
+
+        log.info('dash.listUnspent.insight', { address, trace })
 
         const response = await axios.get(`${insight}/addr/${address}/utxo`)
+
+        log.info('dash.listUnspent.insight.response', { address, trace, data: response.data })
 
         const utxos: InsightUtxo[] = response.data
 
@@ -41,7 +50,11 @@ export const rpc = {
 
     getBalance: async (address) => {
 
-        const utxos: Utxo[] = await rpc.listUnspent(address)
+        const trace = uuid()
+
+        log.info('dash.getBalance', { address, trace })
+
+        const utxos: Utxo[] = await rpc.listUnspent(address, trace)
 
         return utxos.reduce((sum, utxo) => {
 

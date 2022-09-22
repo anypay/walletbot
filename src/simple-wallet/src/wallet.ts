@@ -174,13 +174,26 @@ export class Wallet {
 
     if (!transmit) return payment;
 
-    let response = await client.transmitPayment(paymentRequest, payment, options)
+    try {
+      
+      let result = await client.transmitPayment(paymentRequest, payment, options)
+
+      log.info('simple-wallet.transmitPayment.result', result)
+
+    } catch(error) {
+
+      log.info('simple-wallet.transmitPayment.error', error)
+
+      throw error
+
+    }
 
     return payment
 
   }
 
   asset(asset: string) {
+
     return this.cards.filter(card => card.asset === asset)[0]
   }
 
@@ -195,7 +208,10 @@ export class Wallet {
 
     let wallet = this.asset(asset)
 
+
     let balance = await wallet.balance()
+
+    await wallet.listUnspent()
 
     let bitcore = getBitcore(asset)
 
@@ -326,6 +342,11 @@ export class Wallet {
   }
 }
 
+interface RPC {
+  listUnspent?(address: string, trace?: string): Promise<Utxo[]>;
+  getBalance?(address: any): Promise<number>;
+}
+
 export class Card {
 
   asset: string;
@@ -356,6 +377,36 @@ export class Card {
     const blockchairUnspent = await blockchair.listUnspent(this.asset, this.address)
 
     this.unspent = blockchairUnspent
+  }
+
+  async listUnspent(): Promise<Utxo[]> {
+
+    let rpc: RPC = getRPC(this.asset)
+
+    if (rpc['listUnspent']) {
+
+      this.unspent = await rpc['listUnspent'](this.address)
+
+    } else {
+
+      try {
+
+        this.unspent = await blockchair.listUnspent(this.asset, this.address)
+
+
+      } catch(error) {
+
+        error.asset = this.asset
+        error.address = this.address
+
+        log.error('blockchair.listUnspent.error', error)
+
+      }
+      
+    }
+
+    return this.unspent
+
   }
 
   async balance(): Promise<Balance> {
@@ -391,33 +442,7 @@ export class Card {
       
     }
 
-
-
-    if (rpc['listUnspent']) {
-
-      this.unspent = await rpc['listUnspent'](this.address)
-
-    } else {
-
-      try {
-
-        this.unspent = await blockchair.listUnspent(this.asset, this.address)
-
-
-      } catch(error) {
-
-        errors.push(error)
-
-        error.asset = this.asset
-        error.address = this.address
-
-        log.error('blockchair.listUnspent.error', error)
-
-        this.unspent = []
-
-      }
-      
-    }
+    this.unspent = await this.listUnspent()
 
     if (!value) {
 
@@ -510,11 +535,6 @@ export async function loadWallet(loadCards?: LoadCard[]) {
   }
 
   if (config.get('monero_wallet_rpc_url')) {
-
-    console.log('MONERO!', {
-      asset: 'XMR',      
-      privatekey: config.get('monero_wallet_rpc_password')
-    })
 
     cards.push(new Card({
       asset: 'XMR',
