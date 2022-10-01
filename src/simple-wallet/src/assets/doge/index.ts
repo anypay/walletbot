@@ -23,7 +23,7 @@ export const rpc = {
  
         try {
 
-            log.info('doge.listUnspent.bitcore_io', { address, trace })
+            log.debug('doge.listUnspent.bitcore_io', { address, trace })
 
             if (address.match(/:/)) {
                 address = address.split(':')[1]
@@ -35,7 +35,7 @@ export const rpc = {
 
             const { data } = response
 
-            log.info('doge.listUnspent.bitcore_io.response', { address, trace, data: data })
+            log.debug('doge.listUnspent.bitcore_io.response', { address, trace, data: data })
 
             const utxos: BitcoreIoUtxo[] = data
 
@@ -65,7 +65,7 @@ export const rpc = {
 
         const trace = uuid()
 
-        log.info('doge.getBalance', { address, trace })
+        log.debug('doge.getBalance', { address, trace })
 
         const utxos: Utxo[] = await rpc.listUnspent(address, trace)
 
@@ -75,7 +75,7 @@ export const rpc = {
 
         }, 0)
 
-        log.info('doge.getBalance.result', { address, trace, result })
+        log.debug('doge.getBalance.result', { address, trace, result })
 
         return result
         

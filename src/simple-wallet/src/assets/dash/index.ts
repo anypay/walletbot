@@ -29,11 +29,11 @@ export const rpc = {
 
         trace =  trace || uuid()
 
-        log.info('dash.listUnspent.insight', { address, trace })
+        log.debug('dash.listUnspent.insight', { address, trace })
 
         const response = await axios.get(`${insight}/addr/${address}/utxo`)
 
-        log.info('dash.listUnspent.insight.response', { address, trace, data: response.data })
+        log.debug('dash.listUnspent.insight.response', { address, trace, data: response.data })
 
         const utxos: InsightUtxo[] = response.data
 
@@ -52,7 +52,7 @@ export const rpc = {
 
         const trace = uuid()
 
-        log.info('dash.getBalance', { address, trace })
+        log.debug('dash.getBalance', { address, trace })
 
         const utxos: Utxo[] = await rpc.listUnspent(address, trace)
 

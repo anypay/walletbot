@@ -30,6 +30,13 @@ export interface BuiltPayment {
   tx_hash: string;
 }
 
+
+const { monero_wallet_rpcs } = require('../../../../../config/config.json')
+
+export const wallet_rpc_config = monero_wallet_rpcs[0]
+
+export const wallet_rpc_url = `http://${wallet_rpc_config.host}:${wallet_rpc_config.port}/json_rpc`
+
 export async function buildPaymentFromURL(paymentRequest: PaymentRequest): Promise<BuiltPayment> {
 
   let client = new Client(paymentRequest.paymentUrl)
@@ -68,17 +75,17 @@ export async function buildPayment(paymentRequest: PaymentRequest): Promise<Buil
 
 export async function call(method: string, params: any): Promise<any> {
 
-  let { data } = await axios.post(config.get('monero_wallet_rpc_url'), {
+  let { data } = await axios.post(wallet_rpc_url, {
     jsonrpc:"2.0",
     id:"0",
     method,
     params
-  }, {
+  }/*, {
     auth: {
       username: process.env.XMR_RPC_USER,
       password: process.env.XMR_RPC_PASSWORD
     }
-  })
+  }*/)
 
   if (data.error) {
 

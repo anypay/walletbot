@@ -17,7 +17,7 @@ export interface Balance {
 
 export async function convertBalance(balance: Balance, currency: Currency): Promise<Balance> {
 
-  const api = config.get('API_BASE')
+  const api = config.get('api_base')
 
   if (balance.currency === Currencies.Satoshis) {
 

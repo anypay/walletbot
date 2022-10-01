@@ -9,6 +9,9 @@ import { log } from '../../log'
 
 import { v4 as uuid } from 'uuid'
 
+import { wallet_rpc_url } from './'
+
+
 export interface UTXO {
   txid: string;
   vout: number;
@@ -48,7 +51,7 @@ export class RpcClient {
       "address_indices":[0,1]
     }
 
-    log.info('wallet-bot.simple-wallet.xmr.rpc.getBalance', { url: this.url, method, params, trace })
+    log.debug('wallet-bot.simple-wallet.xmr.rpc.getBalance', { url: this.url, method, params, trace })
 
     let { data } = await axios.post(this.url, {method , params}, {
       /*auth: {
@@ -61,7 +64,7 @@ export class RpcClient {
 
     balance = new BigNumber(data.result.balance).dividedBy(1000000000000).toNumber()
 
-    log.info('wallet-bot.simple-wallet.xmr.rpc.getBalance.result', { balance, trace })
+    log.info('wallet-bot.simple-wallet.xmr.rpc.getBalance.result', { result: data.result, trace })
 
     return balance
 
@@ -76,19 +79,20 @@ export class RpcClient {
     //let params = [0, 9999999, `["${address}"]`]
     let params = [0, 9999999, [address]]
 
-    log.info('wallet-bot.simple-wallet.xmr.rpc.listUnspent', { url: this.url, method, params, trace })
+    log.debug('wallet-bot.simple-wallet.xmr.rpc.listUnspent', { url: this.url, method, params, trace })
 
-    let { data } = await axios.post(this.url, {method,params}, {
-      auth: {
+    let { data } = await axios.post(this.url, {method,params})
+      /*auth: {
         username: config.get('monero_wallet_rpc_username'),
         password: config.get('monero_wallet_rpc_password')
       }
-    })
+    })*/
 
     const utxos = data.result
 
-    log.info('wallet-bot.simple-wallet.xmr.rpc.listUnspent.result', { trace, data })
+    console.log('RESULT', data)
 
+    log.info('wallet-bot.simple-wallet.xmr.rpc.listUnspent.result', { trace, data })
 
     return utxos.map(utxo => {
       return Object.assign(utxo, { value: utxo.amount })
@@ -115,11 +119,11 @@ export class RpcClient {
 
     const params = { tx_as_hex }
 
-    if (!config.get('monerod_rpc_url')) {
+    if (!wallet_rpc_url) {
       log.error('monerod_rpc_url config value not set')
     }
 
-    const { data } = await axios.post(config.get('monerod_rpc_url'), params)
+    const { data } = await axios.post(wallet_rpc_url, params)
 
     return data
 
@@ -130,7 +134,7 @@ export class RpcClient {
 export async function listUnspent(address): Promise<Utxo[]> {
 
   let rpc = new RpcClient({
-    url: config.get('monero_wallet_rpc_url')
+    url: wallet_rpc_url
   })
 
   return rpc.listUnspent(address)
@@ -142,7 +146,7 @@ import { Balance } from '../../wallet'
 export async function getBalance(address): Promise<number> {
 
   let rpc = new RpcClient({
-    url: config.get('monero_wallet_rpc_url')
+    url: wallet_rpc_url
   })
 
   return rpc.getBalance(address)
