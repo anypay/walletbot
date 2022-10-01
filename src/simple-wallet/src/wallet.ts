@@ -138,7 +138,8 @@ export class Wallet {
       transmit
     })
 
-    return this.payUri(`${config.get('api_base')}/i/${invoice_uid}`, asset, { transmit })
+
+    return this.payUri(`${config.get('API_BASE')}/i/${invoice_uid}`, asset, { transmit })
   }
 
   async payUri(uri: string, asset:string, {transmit}:{transmit: boolean}={transmit:true}): Promise<PaymentTx> {

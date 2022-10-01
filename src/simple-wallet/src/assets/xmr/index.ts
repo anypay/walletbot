@@ -33,7 +33,7 @@ export interface BuiltPayment {
 
 const { monero_wallet_rpcs } = require('../../../../../config/config.json')
 
-export const wallet_rpc_config = monero_wallet_rpcs[0]
+export const wallet_rpc_config = monero_wallet_rpcs ? monero_wallet_rpcs[0] : {}
 
 export const wallet_rpc_url = `http://${wallet_rpc_config.host}:${wallet_rpc_config.port}/json_rpc`
 
