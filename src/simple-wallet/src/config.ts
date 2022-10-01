@@ -7,8 +7,8 @@ config.argv()
    .env()
 
 config.defaults({
-  'DOMAIN': 'api.anypayx.com',
-  'API_BASE': 'https://api.anypayx.com'
+  'domain': 'api.anypayx.com',
+  'api_base': 'https://api.anypayx.com'
 })
 
 export default config 

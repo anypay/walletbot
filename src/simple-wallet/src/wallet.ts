@@ -107,7 +107,7 @@ export class Wallet {
 
     let balances = await Promise.all(this.cards.map(async card => {
 
-      if (card.asset === 'DOGE') { return }
+      //if (card.asset === 'DOGE') { return }
  
       try {
 
@@ -138,7 +138,7 @@ export class Wallet {
       transmit
     })
 
-    return this.payUri(`${config.get('API_BASE')}/i/${invoice_uid}`, asset, { transmit })
+    return this.payUri(`${config.get('api_base')}/i/${invoice_uid}`, asset, { transmit })
   }
 
   async payUri(uri: string, asset:string, {transmit}:{transmit: boolean}={transmit:true}): Promise<PaymentTx> {
@@ -335,7 +335,7 @@ export class Wallet {
 
   async getInvoice(uid: string): Promise<any> {
 
-    let { data } = await axios.get(`${config.get('API_BASE')}/invoices/${uid}`)
+    let { data } = await axios.get(`${config.get('api_base')}/invoices/${uid}`)
 
     return data
 
@@ -442,39 +442,56 @@ export class Card {
       
     }
 
-    this.unspent = await this.listUnspent()
-
-    if (!value) {
-
-      value = this.unspent.reduce((sum, output) => {
-
-        return sum.plus(output.value)
-  
-      }, new BigNumber(0)).toNumber()
-
-    }
-
-    if (errors.length > 0 && !value) {
-
-      value = false
-    }
-
     const { amount: value_usd } = await convertBalance({
       currency: this.asset,
       amount: this.asset === 'XMR' ? value : value / 100000000
     }, 'USD')
 
-    return {
-      asset: this.asset,
-      value: value,
-      value_usd,
-      address: this.address,
-      errors
+    try {
+
+      this.unspent = await this.listUnspent()
+
+      if (!value) {
+
+        value = this.unspent.reduce((sum, output) => {
+
+          return sum.plus(output.value)
+    
+        }, new BigNumber(0)).toNumber()
+
+      }
+
+      if (errors.length > 0 && !value) {
+
+        value = false
+      }
+
+      return {
+        asset: this.asset,
+        value: value,
+        value_usd,
+        address: this.address,
+        errors
+      }
+
+    } catch(error) {
+
+      return {
+        asset: this.asset,
+        value: value,
+        value_usd,
+        address: this.address,
+        errors
+      }
+
     }
+
 
   }
 
 }
+
+import { wallet_rpc_url, wallet_rpc_config } from './assets/xmr'
 
 export async function loadWallet(loadCards?: LoadCard[]) {
 
@@ -534,12 +551,12 @@ export async function loadWallet(loadCards?: LoadCard[]) {
 
   }
 
-  if (config.get('monero_wallet_rpc_url')) {
+  if (wallet_rpc_config) {
 
     cards.push(new Card({
       asset: 'XMR',
-      address: config.get('monero_wallet_rpc_username'),
-      privatekey: config.get('monero_wallet_rpc_password')
+      address: wallet_rpc_config['address'],
+      privatekey: wallet_rpc_config['password']
     }))
   }
 

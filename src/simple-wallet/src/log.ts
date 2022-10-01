@@ -40,7 +40,7 @@ const log = winston.createLogger({
 
 if (config.get('loki_host')) {
 
-  log.info('loki.enabled')
+  log.debug('loki.enabled')
 
 }
 
