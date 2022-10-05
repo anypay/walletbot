@@ -13,7 +13,7 @@ export async function listUnpaid(): Promise<any[]> {
 
   try {
 
-    let { data } = await axios.get(`${base}/v0/api/apps/wallet-bot/invoices`, {
+    let { data } = await axios.get(`${base}/v1/api/apps/wallet-bot/invoices?status=unpaid`, {
       auth: {
         username: config.get('anypay_access_token'),
         password: ''

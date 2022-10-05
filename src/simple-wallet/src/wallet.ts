@@ -138,7 +138,6 @@ export class Wallet {
       transmit
     })
 
-
     return this.payUri(`${config.get('API_BASE')}/i/${invoice_uid}`, asset, { transmit })
   }
 
@@ -224,7 +223,9 @@ export class Wallet {
 
       let inputs = wallet.unspent.map((output: any) => {
 
-        let satoshis = new BigNumber(output.amount).times(100000000).toNumber()
+
+        let satoshis = new BigNumber(output.value).times(100000000).toNumber()
+
 
         return {
           txId: output.txid,
@@ -300,6 +301,17 @@ export class Wallet {
 
       totalOutput += output.amount
 
+    }
+
+    if (totalInput < totalOutput) {
+
+      log.info('InsufficientFunds', {
+        currency: wallet.asset,
+        totalInput,
+        totalOutput
+      })
+
+      throw new Error(`Insufficient ${wallet.asset} funds to pay invoice`)
     }
 
     if (asset === 'BTC') {
