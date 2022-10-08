@@ -201,13 +201,11 @@ export class Wallet {
     return new Invoice()
   }
 
-
   async buildPayment(paymentRequest, asset) {
 
     let { instructions } = paymentRequest
 
     let wallet = this.asset(asset)
-
 
     let balance = await wallet.balance()
 
@@ -223,17 +221,33 @@ export class Wallet {
 
       let inputs = wallet.unspent.map((output: any) => {
 
-
-        let satoshis = new BigNumber(output.value).times(100000000).toNumber()
-
-
         return {
           txId: output.txid,
           outputIndex: output.vout,
           address: output.address,
           script: output.redeemScript,
           scriptPubKey: output.scriptPubKey,
-          satoshis
+          satoshis: output.value
+        }
+      })
+
+      tx = new bitcore.Transaction()
+        .from(inputs)
+        .change(wallet.address)
+
+    } else if (asset === 'DOGE') {
+
+      let inputs = wallet.unspent.map((output: any) => {
+
+        const address = new bitcore.Script(output.scriptPubKey).toAddress().toString()
+
+        return {
+          txId: output.txid,
+          outputIndex: output.vout,
+          address,
+          script: output.scriptPubKey,
+          scriptPubKey: output.scriptPubKey,
+          satoshis: output.value
         }
       })
 
@@ -258,17 +272,20 @@ export class Wallet {
 
       try {
 
-        tx = new bitcore.Transaction()
-          .from(unspent.map(utxo => {
-            const result = {
-              txId: utxo.txid,
-              outputIndex: utxo.vout,
-              satoshis: utxo.value,
-              scriptPubKey: utxo.scriptPubKey
-            }
+        const coins = unspent.map(utxo => {
 
-            return result
-          }))
+          const result = {
+            txId: utxo.txid,
+            outputIndex: utxo.vout,
+            satoshis: utxo.value,
+            scriptPubKey: utxo.scriptPubKey
+          }
+
+          return result
+        })
+
+        tx = new bitcore.Transaction()
+          .from(coins)
           .change(wallet.address)
 
       } catch(error) {
