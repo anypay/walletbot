@@ -6,9 +6,9 @@ import config from './config'
 
 import BigNumber from 'bignumber.js'
 
-import { getBitcore, toSatoshis } from './bitcore'
+import { getBitcore } from './bitcore'
 
-import { Invoice, Payment } from './invoice'
+import { Invoice } from './invoice'
 
 import { Client } from './client'
 
@@ -243,9 +243,10 @@ export class Wallet {
 
         return {
           txId: output.txid,
+          txid: output.txid,
           outputIndex: output.vout,
           address,
-          script: output.scriptPubKey,
+          script: output.script,
           scriptPubKey: output.scriptPubKey,
           satoshis: output.value
         }

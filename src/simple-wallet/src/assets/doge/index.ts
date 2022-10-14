@@ -1,5 +1,5 @@
 
-import * as bitcore from 'dogecore-lib';
+import * as bitcore from 'bitcore-lib-doge';
 
 export { bitcore }
 

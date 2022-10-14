@@ -33,6 +33,7 @@
       "axios": "^0.27.2",
       "bip39": "^3.0.4",
       "bitcoinme": "^1.0.0",
+      "bitcore-lib-doge": "^8.25.40",
       "commander": "^9.3.0",
       "delay": "^5.0.0",
       "dotenv": "^10.0.0",

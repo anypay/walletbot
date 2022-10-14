@@ -5,7 +5,7 @@ import * as btc from 'bitcore-lib'
 
 import * as dash from '@dashevo/dashcore-lib'
 
-import * as doge from 'dogecore-lib'
+import * as doge from 'bitcore-lib-doge'
 
 import * as ltc from 'litecore-lib'
 
