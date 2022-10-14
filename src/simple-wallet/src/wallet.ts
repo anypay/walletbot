@@ -2,7 +2,7 @@ require('dotenv').config()
 
 import { getRPC } from './rpc'
 
-import config from './config'
+import config from '../../config'
 
 import BigNumber from 'bignumber.js'
 
@@ -58,7 +58,7 @@ var assets = require('require-all')({
 
 const XMR = require('./assets/xmr')
 
-import { getRecommendedFees } from './mempool.space'
+import { FeeRates, getRecommendedFees } from './mempool.space'
 import log from '../../log'
 import { convertBalance } from './balance'
 
@@ -333,9 +333,11 @@ export class Wallet {
 
     if (asset === 'BTC') {
 
-      let { fastestFee } = await getRecommendedFees()
+      const feeRate: FeeRates = config.get('btc_fee_rate')
 
-      const fee = fastestFee * tx._estimateSize()
+      let feeRates = await getRecommendedFees()
+
+      const fee = feeRates[feeRate] * tx._estimateSize()
 
       totalOutput  += fee;
 

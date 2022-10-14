@@ -64,7 +64,8 @@ nconf.defaults({
   wallets: [],
   socket_io_host: 'wss://api.anypayx.com',
   socket_io_path: '/v1/apps/wallet-bot',
-  socket_io_reconnection_delay_max: 10000
+  socket_io_reconnection_delay_max: 10000,
+  btc_fee_rate: 'economyFee'
 })
 
 export default nconf
