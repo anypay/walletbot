@@ -49,7 +49,7 @@ process.on('SIGHUP', () => {
 nconf.defaults({
   config: '/etc/wallet-bot/wallet-bot.json',
   host: '0.0.0.0',
-  port: '5200',
+  port: 5200,
   prometheus_enabled: true,
   amqp_enabled: false,
   http_api_enabled: true,

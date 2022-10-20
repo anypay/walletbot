@@ -13,7 +13,21 @@ import axios from 'axios'
 
 import { listBalances } from './websockets'
 
+import { start as server } from './server'
+
 export async function start() {
+
+  if (config.get('http_api_enabled')) {
+
+    log.info('http_api_enabled')
+
+    server()
+
+  } else {
+
+    log.info('http_api_disabled')
+
+  }
 
   const token = config.get('anypay_access_token')
 
@@ -117,6 +131,8 @@ export async function start() {
     await delay(length > 0 ? 5 : 5200)
 
   }
+
+
 
 }
 

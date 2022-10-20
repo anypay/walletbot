@@ -17,9 +17,11 @@ import { load } from './server/handlers'
 
 const handlers = load(join(__dirname, './server/handlers'))
 
+const port = config.get('port')
+
 export const server = new Server({
   host: config.get('host'),
-  port: config.get('port'),
+  port: config.get('port') || 5200,
   routes: {
     cors: true,
     validate: {
@@ -30,111 +32,113 @@ export const server = new Server({
   }
 });
 
-server.register(require('@hapi/basic'));
+export async function start() {
 
-server.auth.strategy('prometheus', 'basic', {
+  await server.register(require('@hapi/basic'));
 
-  validate: async (req, password) => {
+  server.auth.strategy('prometheus', 'basic', {
 
-    if (config.get('prometheus_password') == undefined) {
+    validate: async (req, password) => {
 
-      return { isValid: true, credentials: {id: 'public'} }
+      if (config.get('prometheus_password') == undefined) {
 
-    }
+        return { isValid: true, credentials: {id: 'public'} }
 
-    if (password === config.get('prometheus_password')) {
+      }
 
-      return { isValid: true, credentials: {id: 'prometheus'} }
+      if (password === config.get('prometheus_password')) {
 
-    } else {
+        return { isValid: true, credentials: {id: 'prometheus'} }
 
-      return { isValid: false, credentials: null }
+      } else {
 
-    }
+        return { isValid: false, credentials: null }
 
-  }
-})
+      }
 
-if (config.get('prometheus_enabled')) {
-
-  log.debug('server.metrics.prometheus', { path: '/metrics' })
-
-  const { register: prometheus } = require('./metrics')
-
-  server.route({
-    method: 'GET',
-    path: '/metrics',
-    handler: async (req, h) => {
-      return h.response(await prometheus.metrics())
-    },
-    options: {
-      description: 'Prometheus Metrics about Node.js Process & Business-Level Metrics',
-      tags: ['system'],
-      auth: 'prometheus'
     }
   })
 
-}
+  if (config.get('prometheus_enabled')) {
 
-server.route({
-  method: 'GET', path: '/api/v0/status',
-  handler: handlers.Status.index,
-  options: {
-    description: 'Simply check to see that the server is online and responding',
-    tags: ['api', 'system'],
-    response: {
-      failAction: 'log',
-      schema: Joi.object({
-        status: Joi.string().valid('OK', 'ERROR').required(),
-        error: Joi.string().optional()
-      }).label('ServerStatus')
-    }
+    log.debug('server.metrics.prometheus', { path: '/metrics' })
+
+    const { register: prometheus } = require('./metrics')
+
+    server.route({
+      method: 'GET',
+      path: '/metrics',
+      handler: async (req, h) => {
+        return h.response(await prometheus.metrics())
+      },
+      options: {
+        description: 'Prometheus Metrics about Node.js Process & Business-Level Metrics',
+        tags: ['system'],
+        auth: 'prometheus'
+      }
+    })
+
   }
-})
 
-server.route({
-  method: 'GET', path: '/api/v1/balances',
-  handler: handlers.Balances.index,
-  options: {
-    description: 'List coin balances available',
-    tags: ['api', 'system'],
-    response: {
-      failAction: 'log',
-      schema: Joi.object({
-        balances: Joi.array().items(Joi.object({
-          currency: Joi.string().required(),
-          value: Joi.number().required(),
-          usd_value: Joi.number().required(),
-          threshold_minimum: Joi.number().optional(),
-          address: Joi.string().optional(),
-          last_updated: Joi.date()
-        }))
-        
-      }).label('ServerStatus')
+  server.route({
+    method: 'GET', path: '/api/v0/status',
+    handler: handlers.Status.index,
+    options: {
+      description: 'Simply check to see that the server is online and responding',
+      tags: ['api', 'system'],
+      response: {
+        failAction: 'log',
+        schema: Joi.object({
+          status: Joi.string().valid('OK', 'ERROR').required(),
+          error: Joi.string().optional()
+        }).label('ServerStatus')
+      }
     }
-  }
-})
+  })
 
-server.route({
-  method: 'GET', path: '/api/v1/payments',
-  handler: handlers.Payments.index,
-  options: {
-    description: 'List payments sent by the bot app account',
-    tags: ['api', 'system'],
-    response: {
-      failAction: 'log',
-      schema: Joi.object({
-        payments: Joi.array().items(Joi.object({
-
-        }))
-      }).label('ListPayments')
+  server.route({
+    method: 'GET', path: '/api/v1/balances',
+    handler: handlers.Balances.index,
+    options: {
+      description: 'List coin balances available',
+      tags: ['api', 'system'],
+      response: {
+        failAction: 'log',
+        schema: Joi.object({
+          balances: Joi.array().items(Joi.object({
+            currency: Joi.string().required(),
+            value: Joi.number().required(),
+            usd_value: Joi.number().required(),
+            threshold_minimum: Joi.number().optional(),
+            address: Joi.string().optional(),
+            last_updated: Joi.date()
+          }))
+          
+        }).label('ServerStatus')
+      }
     }
-  }
-})
+  })
 
-var started = false
+  server.route({
+    method: 'GET', path: '/api/v1/payments',
+    handler: handlers.Payments.index,
+    options: {
+      description: 'List payments sent by the bot app account',
+      tags: ['api', 'system'],
+      response: {
+        failAction: 'log',
+        schema: Joi.object({
+          payments: Joi.array().items(Joi.object({
 
-export async function start() {
+          }))
+        }).label('ListPayments')
+      }
+    }
+  })
+
+  var started = false
+
+
 
   if (started) return;
 
