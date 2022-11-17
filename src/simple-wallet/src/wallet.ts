@@ -86,6 +86,7 @@ export interface Balance {
 interface LoadCard {
   asset: string;
   privatekey: string;
+  address?: string;
 }
 
 export class Wallet {
@@ -208,6 +209,12 @@ export class Wallet {
     let wallet = this.asset(asset)
 
     let balance = await wallet.balance()
+
+    if (asset === 'XMR') {
+
+      return XMR.buildPayment(paymentRequest)
+      
+    }
 
     await wallet.listUnspent()
 
@@ -584,6 +591,7 @@ export async function loadWallet(loadCards?: LoadCard[]) {
 
   }
 
+  /*
   if (wallet_rpc_config) {
 
     cards.push(new Card({
@@ -592,6 +600,7 @@ export async function loadWallet(loadCards?: LoadCard[]) {
       privatekey: wallet_rpc_config['password']
     }))
   }
+  */
 
   if (process.env.XRP_PRIVATE_KEY) {
     cards.push(new Card({

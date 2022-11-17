@@ -3,7 +3,6 @@ require('dotenv').config()
 import axios from 'axios'
 
 import BigNumber from 'bignumber.js'
-import config from '../../config';
 
 import { log } from '../../log'
 
@@ -29,15 +28,21 @@ import { Utxo } from '../../wallet'
 
 interface RpcOptions {
   url: string;
+  username?: string;
+  password?: string;
 }
 
 export class RpcClient {
 
   url: string;
+  username: string | undefined;
+  password: string | undefined;
 
   constructor(params: RpcOptions) {
 
     this.url = params.url
+    this.username = params.username
+    this.password = params.password
   }
 
   async getBalance(address): Promise<number> {
@@ -53,11 +58,11 @@ export class RpcClient {
 
     log.debug('wallet-bot.simple-wallet.xmr.rpc.getBalance', { url: this.url, method, params, trace })
 
-    let { data } = await axios.post(this.url, {method , params}, {
-      /*auth: {
-        username: config.get('monero_wallet_rpc_username'),
-        password: config.get('monero_wallet_rpc_password')
-      }*/
+    let { data } = await axios.post(`${this.url}/json_rpc`, {method , params}, {
+      auth: {
+        username: 'username',
+        password: 'password'
+      }
     })
 
     let balance: number = data.result
@@ -146,7 +151,7 @@ import { Balance } from '../../wallet'
 export async function getBalance(address): Promise<number> {
 
   let rpc = new RpcClient({
-    url: wallet_rpc_url
+    url: address
   })
 
   return rpc.getBalance(address)

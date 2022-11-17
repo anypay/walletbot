@@ -7,11 +7,10 @@
     "allowJs": true,
     "module": "commonjs",
     "outDir": "./dist",
-		"sourceMap": true,
-		"sourceRoot": "."
+		"sourceMap": false
   },
   "include": [
-    "src"
+    "src/"
   ],
   "exclude": [
     "node_modules",

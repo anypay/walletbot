@@ -2,3 +2,4 @@ node_modules/
 .rabbi/
 .env
 .git
+start_docker_ionia.sh

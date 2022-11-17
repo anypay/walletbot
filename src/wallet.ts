@@ -5,6 +5,8 @@ export { getBitcore }
 
 import { Card, Wallet } from './simple-wallet/src/wallet';
 
+export { Card, Wallet }
+
 import { MnemonicWallet } from './mnemonic_wallet';
 
 import config from './config';

@@ -152,8 +152,8 @@ export async function start() {
         version: Pack.version,
         description: 'Developer API Documentation \n\n *** DEVELOPERS *** \n\n Edit this file under `swaggerOptions` in `src/server.ts` to better describe your service.'
       },
-      schemes: ['https'],
-      host: 'http://localhost:8000',
+      schemes: ['http'],
+      host: 'localhost:5200',
       documentationPath: '/',
       grouping: 'tags'
     }

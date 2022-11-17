@@ -13,7 +13,7 @@ program
     let utxos = await listUnspent(address)
 
     console.log(utxos)
-s
+
   })
 
 program.parse(process.argv)

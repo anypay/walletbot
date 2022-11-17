@@ -12,7 +12,11 @@ export { log } from './log'
 
 import { loadWallet, Wallet } from './simple-wallet/src'
 
+export { Card } from './wallet'
+
 export { config }
+
+export { Wallet, loadWallet }
 
 export async function initWalletFromMnemonic(): Promise<Wallet> {
 
