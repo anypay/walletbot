@@ -31,14 +31,12 @@ export async function listUnspent(coin: string, address: string): Promise<Utxo[]
 
     try {
 
-        const key = config.get('crypto_apis_io_api_key')
-
         const { data } = await axios.get(`https://blockchain.info/unspent?active=${address}`)
 
         return data.unspent_outputs.map((output: BlockchainInfoUtxo) => {
 
             return {
-                txid: output.tx_hash,
+                txid: output.tx_hash_big_endian,
                 vout: output.tx_output_n,
                 value: output.value,
                 scriptPubKey: output.script
