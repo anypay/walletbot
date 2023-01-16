@@ -63,8 +63,6 @@ export async function start() {
 
   const wallet = await loadWallet(wallets)
 
-  
-
   while (true) {
 
     var length = 0;
@@ -90,17 +88,24 @@ export async function start() {
 
           if (options.paymentOptions.length > 1) {
 
-            /*
             const result = await cancelPaymentRequest(invoice.uid, token)
 
             log.info('payment-request.cancelled', result)
 
             continue;
-            */
-            
           }
 
           const currency = options.paymentOptions[0].currency
+
+          if (currency === 'XMR') {
+
+            const result = await cancelPaymentRequest(invoice.uid, token)
+
+            log.info('payment-request.cancelled', result)
+
+            continue;
+            
+          }
 
           log.info('invoice.pay', options.paymentOptions[0])
 
@@ -112,7 +117,7 @@ export async function start() {
 
         } catch(error) {
           
-          log.error('wallet.payInvoice.error', error)
+          log.error('wallet.payInvoice.error', error.response.data)
 
           /*const result = await cancelPaymentRequest(invoice.uid, token)
 

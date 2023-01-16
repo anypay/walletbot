@@ -1,6 +1,6 @@
 {
    "name": "wallet-bot",
-   "version": "0.8.0",
+   "version": "0.8.1",
    "private": false,
    "description": "Your Money-Sending Robot Friend",
    "main": "./dist/wallet-bot/src/index.js",
@@ -28,7 +28,7 @@
       "@hapi/inert": "^6.0.5",
       "@hapi/joi": "^17.1.1",
       "@hapi/vision": "^6.1.0",
-      "anypay": "^0.1.0",
+      "anypay": "^0.1.1",
       "anypay-simple-wallet": "^0.4.0",
       "axios": "^0.27.2",
       "bip39": "^3.0.4",
@@ -51,6 +51,7 @@
       "socket.io-client": "^4.5.1",
       "winston": "^3.3.3",
       "winston-loki": "^6.0.5",
+      "winston-transport": "^4.5.0",
       "ws": "^8.2.0"
    },
    "devDependencies": {
@@ -66,7 +67,7 @@
       "nyc": "^15.1.0",
       "shebang-trim": "^1.1.0",
       "ts-node": "3.3.0",
-      "typescript": "^3.3.3333"
+      "typescript": "^3.9.10"
    },
    "config": {
       "commitizen": {

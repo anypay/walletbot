@@ -175,6 +175,8 @@ export class Wallet {
 
     if (!transmit) return payment;
 
+    log.info('wallet-bot.simple-wallet.transmitPayment', { paymentRequest, options, payment })
+
     try {
       
       let result = await client.transmitPayment(paymentRequest, payment, options)
@@ -183,9 +185,9 @@ export class Wallet {
 
     } catch(error) {
 
-      log.info('simple-wallet.transmitPayment.error', error)
+      log.info('simple-wallet.transmitPayment.error', error.response.data)
 
-      throw error
+      throw new Error(error.response.data)
 
     }
 
@@ -200,6 +202,19 @@ export class Wallet {
 
   async newInvoice(newInvoice: { amount: number, currency: string }): Promise<Invoice> {
     return new Invoice()
+  }
+
+  async buildPaymentForUri(uri: string, asset:string) {
+
+    let client = new Client(uri)
+
+    let paymentRequest = await client.selectPaymentOption({
+      chain: asset,
+      currency: asset
+    })
+
+    return this.buildPayment(paymentRequest, asset)
+
   }
 
   async buildPayment(paymentRequest, asset) {
@@ -240,7 +255,6 @@ export class Wallet {
 
       tx = new bitcore.Transaction()
         .from(inputs)
-        .change(wallet.address)
 
     } else if (asset === 'DOGE') {
 
@@ -261,7 +275,6 @@ export class Wallet {
 
       tx = new bitcore.Transaction()
         .from(inputs)
-        .change(wallet.address)
 
     } else {
 
@@ -294,7 +307,6 @@ export class Wallet {
 
         tx = new bitcore.Transaction()
           .from(coins)
-          .change(wallet.address)
 
       } catch(error) {
 
@@ -305,7 +317,7 @@ export class Wallet {
 
     totalInput = wallet.unspent.reduce((sum, input) => {
 
-      let satoshis = new BigNumber(input.value).times(100000000).toNumber()
+      let satoshis = new BigNumber(input.value).toNumber()
 
       return sum.plus(satoshis)
 
@@ -339,19 +351,36 @@ export class Wallet {
       throw new Error(`Insufficient ${wallet.asset} funds to pay invoice`)
     }
 
+    tx.change(wallet.address)
+
     if (asset === 'BTC') {
 
-      const feeRate: FeeRates = config.get('btc_fee_rate')
+      const feeRate: FeeRates = config.get('btc_fee_rate') || 'fastestFee'
 
       let feeRates = await getRecommendedFees()
 
       const fee = feeRates[feeRate] * tx._estimateSize()
 
-      totalOutput  += fee;
+      totalOutput  += fee;  
 
       tx.fee(fee)
 
       let change = totalInput - totalOutput
+
+      if (change > 0) {
+
+        const changeAddress = bitcore.Address.fromString(wallet.address)
+
+        tx.addOutput(
+          bitcore.Transaction.Output({
+            satoshis: change,
+            script: bitcore.Script.fromAddress(changeAddress).toHex()
+          })
+        )
+      } else if (change < 0) {
+
+        throw new Error(`Insufficient ${wallet.asset} funds to pay invoice`)
+      }
       
     }
 

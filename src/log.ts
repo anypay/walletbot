@@ -1,12 +1,53 @@
 
 import * as winston from 'winston';
 
+import * as Transport from 'winston-transport'
+
 import config from './config'
+
+import { socket } from './socket.io'
+
+import { Socket } from 'socket.io-client'
+
+class WebsocketTransport extends Transport {
+
+  socket: Socket;
+
+  constructor(socket: Socket, opts) {
+
+    super(opts);
+
+    this.socket = socket;
+
+  }
+
+  log(info, callback) {
+
+    try {
+
+      if (this.socket) {
+
+        this.socket.emit('log', info)
+
+      }
+
+    } catch(error) {
+
+      console.log('log.websocket.error', error)
+    }
+
+    callback();
+  }
+};
+
 
 const transports = [
   new winston.transports.Console({
     format: winston.format.json()
-  })
+  }),
+  new WebsocketTransport(socket, {
+    format: winston.format.json()
+  })  
 ]
 
 if (config.get('loki_host')) {

@@ -74,7 +74,7 @@ export async function call(method: string, params: any): Promise<any> {
 
   console.log('__CALL', { method , params })
 
-  let { data } = await axios.post(`http://localhost:28089/json_rpc`, {
+  let { data } = await axios.post(`http://localhost:18082/json_rpc`, {
     jsonrpc:"2.0",
     id:"0",
     method,
