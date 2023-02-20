@@ -47,17 +47,25 @@ describe("Loading USDC Wallets", () => {
 
   describe("Loading USDC Wallet on Polygon from Seed Phrase", () => {
 
+    it('should return the wallet address given a mnemonic phrase')
+
   })
 
   describe("Loading USDC Wallet on Ethereum from Seed Phrase", () => {
+
+    it('should return the wallet address given a mnemonic phrase')
 
   })
 
   describe("Loading USDC Wallet on Solana from Seed Phrase", () => {
 
+    it('should return the wallet address given a mnemonic phrase')
+
   })
 
   describe("Loading USDC Wallet on Bitcoin from Seed Phrase", () => {
+
+    it('should return the wallet address given a mnemonic phrase')
 
   })
 
@@ -67,18 +75,25 @@ describe("Getting USDC Balances", () => {
 
   describe('Getting USDC Balance for Polgyon Wallet', () => {
 
+    it('#getBalance should get the USDC balance and MATIC gas balance')
+
   })
 
   describe('Getting USDC Balance for Solana Wallet', () => {
+
+    it('#getBalance should get the USDC balance and SOL gas balance')
 
   })
 
   describe('Getting USDC Balance for Ethereum Wallet', () => {
 
+    it('#getBalance should get the USDC balance and ETH gas balance')
+
   })
 
   describe('Getting USDC Balance for Bitcoin Wallet', () => {
 
+    it('#getBalance should get the USDC balance and bits gas balance')
   })
 
 })
