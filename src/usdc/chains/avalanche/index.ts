@@ -1,6 +1,9 @@
 import { Avalanche } from "avalanche"
 
 import snowtrace from './snowtrace'
+import axios from "axios";
+
+//demo address: 0xa76e9cdc466d90e5ee16ad0fde7bd54ee1f40c72
 
 /**
  *
@@ -60,9 +63,22 @@ export async function getUSDCBalance(params: {address: string}): Promise<number>
  */
 export async function getGasBalance(params: {address: string}): Promise<number> {
 
-  let balance: number
+  const covalentChainID = 43114
 
-  return balance; // TODO: Actually get balance
+  const url = `https://api.covalenthq.com/v1/${covalentChainID}/address/${params.address}/balances_v2/`
+
+  const { data } = await axios.get(url, {
+    auth: {
+      username: String(process.env.covalent_api_key),
+      password: ''
+    }
+  })
+
+  const asset = data.data.items.find((item: any) => item.contract_address === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
+
+  if (!asset) { return 0 }
+
+  return asset.balance
 
 }
 
@@ -74,7 +90,7 @@ export async function getGasBalance(params: {address: string}): Promise<number> 
  */
 export function newRandomAddress(): string {
 
-  let address: string;
+  let address: string = '';
 
   return address;
 

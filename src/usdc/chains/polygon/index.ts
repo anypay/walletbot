@@ -1,3 +1,18 @@
+/**
+ * 
+ * Polygon Resources:
+ * 
+ * - https://polygon.technology/solutions/polygon-pos/
+ * - https://www.covalenthq.com/docs/api/#/0/0/USD/1
+ * 
+ * 
+ */
+
+import axios from 'axios'
+
+import { getPosClient } from "./pos_client";
+
+const usdc_token_address = '0x2791bca1f2de4661ed88a30c99a7a9449aa84174'
 
 /**
  * Fetches the token balances from a Polygon blockchain provider. It is designed to support
@@ -6,11 +21,34 @@
  */
 export async function getTokenBalance(params: {address: string, asset: string}): Promise<number> {
 
-  let balance: number
+  /*
 
-  balance = 0 // TODO: Actually get balance
+  const posClient = await getPosClient({ address: params.address })
 
-  return balance;
+  const erc20ChildToken = posClient.erc20(params.asset);
+
+  const balance = await erc20ChildToken.getBalance(params.address)
+
+  return parseInt(balance);
+
+  */
+
+  const covalentChainID = 137
+
+  const url = `https://api.covalenthq.com/v1/${covalentChainID}/address/${params.address}/balances_v2/`
+
+  const { data } = await axios.get(url, {
+    auth: {
+      username: String(process.env.covalent_api_key),
+      password: ''
+    }
+  })
+
+  const usdc = data.data.items.find((item: any) => item.contract_address === params.asset)
+
+  if (!usdc) { return 0 }
+
+  return usdc.balance
 
 }
 
@@ -28,7 +66,7 @@ export async function getTokenBalance(params: {address: string, asset: string}):
 export async function getUSDCBalance(params: {address: string}): Promise<number> {
 
   return getTokenBalance({
-    asset: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
+    asset: usdc_token_address,
     address: params.address
   })
 
@@ -40,7 +78,7 @@ export async function getUSDCBalance(params: {address: string}): Promise<number>
  */
 export async function getGasBalance(params: {address: string}): Promise<number> {
 
-  let balance: number
+  let balance: number = 0
 
   return balance; // TODO: Actually get balance
 
@@ -53,9 +91,12 @@ export async function getGasBalance(params: {address: string}): Promise<number> 
  */
 export function newRandomAddress(): string {
 
-  let address: string;
+  let address: string = '';
 
   return address;
 
 }
 
+export function getAddressFromMnemonic({ mnemonic }: { mnemonic: string }) {
+
+}

@@ -4,6 +4,7 @@
  * Solana Resources:
  *
  * - https://graphql.bitquery.io/user/api_key
+ * - https://bitquery.io/blog/solana-api
  *
  */
 

@@ -4,7 +4,11 @@
  * Ethereum Resources:
  *
  * - https://hardhat.org/
+ * - https://www.covalenthq.com/docs/api/#/0/0/USD/1
+ * 
  * */
+
+import axios from "axios"
 
 /**
  * Fetches the token balances from a Ethereum blockchain provider. It is designed to support
@@ -13,9 +17,22 @@
  */
 export async function getTokenBalance(params: {address: string, asset: string}): Promise<number> {
 
-  let balance: number = 0
+  const covalentChainID = 1
 
-  return balance; // TODO: Actually get balance
+  const url = `https://api.covalenthq.com/v1/${covalentChainID}/address/${params.address}/balances_v2/`
+
+  const { data } = await axios.get(url, {
+    auth: {
+      username: String(process.env.covalent_api_key),
+      password: ''
+    }
+  })
+
+  const usdc = data.data.items.find((item: any) => item.contract_address === params.asset)
+
+  if (!usdc) { return 0 }
+
+  return usdc.balance
 
 }
 
@@ -40,7 +57,7 @@ export async function getTokenBalance(params: {address: string, asset: string}):
 export async function getUSDCBalance(params: {address: string}): Promise<number> {
 
   return getTokenBalance({
-    asset: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', //TODO Get Actual Contract Hash Not 'USDC'
+    asset: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
     address: params.address
   })
 
@@ -51,10 +68,11 @@ export async function getUSDCBalance(params: {address: string}): Promise<number>
  *
  */
 export async function getGasBalance(params: {address: string}): Promise<number> {
-
-  let balance: number = 0
-
-  return balance; // TODO: Actually get balance
+  
+  return getTokenBalance({
+    asset: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    address: params.address
+  })
 
 }
 
@@ -66,7 +84,7 @@ export async function getGasBalance(params: {address: string}): Promise<number> 
  */
 export function newRandomAddress(): string {
 
-  let address: string;
+  let address: string = '';
 
   return address;
 
