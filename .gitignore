@@ -16,3 +16,5 @@ dist/
 .wallet-bot
 wallet.json
 start_docker_ionia.sh
+typedoc/
+.nyc_output/
