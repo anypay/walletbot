@@ -3,6 +3,10 @@ import * as usdc from '../src/usdc'
 
 import { expect } from './utils'
 
+import { generateMnemonic } from 'bip39'
+
+const mnemonic = 'street neglect reform tissue into chef coyote kit crop gun nest now'
+
 describe("Sending USDC Payments", () => {
 
   describe("Sending USDC Payment on Polygon", () => {
@@ -61,7 +65,15 @@ describe("Loading USDC Wallets", () => {
 
   describe("Loading USDC Wallet on Polygon from Seed Phrase", () => {
 
-    it('should return the wallet address given a mnemonic phrase')
+    it('should return the wallet address given a mnemonic phrase', () => {
+
+      const address = usdc.polygon.getAddressFromMnemonic({ mnemonic })
+
+      expect(address).to.be.a('string')
+
+      expect(String(address).length).to.be.greaterThan(0)
+
+    })
 
   })
 

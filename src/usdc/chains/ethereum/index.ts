@@ -5,10 +5,13 @@
  *
  * - https://hardhat.org/
  * - https://www.covalenthq.com/docs/api/#/0/0/USD/1
+ * - https://docs.ethers.org/v5/getting-started/
  * 
  * */
 
 import axios from "axios"
+
+import { ethers } from 'ethers'
 
 /**
  * Fetches the token balances from a Ethereum blockchain provider. It is designed to support
@@ -84,9 +87,20 @@ export async function getGasBalance(params: {address: string}): Promise<number> 
  */
 export function newRandomAddress(): string {
 
-  let address: string = '';
+  let address = ethers.Wallet.createRandom().address
 
   return address;
+
+}
+
+/**
+ * Returns a new randomly-generated address that cannot receive funds
+ * because the private key is not returned
+ *
+ */
+export function addressFromMnemonic({ mnemonic }: {mnemonic: string }): string {
+
+  return ethers.Wallet.fromMnemonic(mnemonic).address ;
 
 }
 

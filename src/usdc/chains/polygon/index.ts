@@ -10,6 +10,8 @@
 
 import axios from 'axios'
 
+import { ethers } from 'ethers'
+
 import { getPosClient } from "./pos_client";
 
 const usdc_token_address = '0x2791bca1f2de4661ed88a30c99a7a9449aa84174'
@@ -84,6 +86,7 @@ export async function getGasBalance(params: {address: string}): Promise<number> 
 
 }
 
+
 /**
  * Returns a new randomly-generated address that cannot receive funds
  * because the private key is not returned
@@ -91,12 +94,19 @@ export async function getGasBalance(params: {address: string}): Promise<number> 
  */
 export function newRandomAddress(): string {
 
-  let address: string = '';
+  let address = ethers.Wallet.createRandom().address
 
   return address;
 
 }
 
-export function getAddressFromMnemonic({ mnemonic }: { mnemonic: string }) {
+/**
+ * Returns a new randomly-generated address that cannot receive funds
+ * because the private key is not returned
+ *
+ */
+export function addressFromMnemonic({ mnemonic }: {mnemonic: string }): string {
+
+  return ethers.Wallet.fromMnemonic(mnemonic).address ;
 
 }

@@ -1,5 +1,17 @@
 
 /**
+ * 
+ * Algorand Resources:
+ * 
+ * - https://github.com/algorand/js-algorand-sdk
+ * 
+ */
+
+import * as algosdk from 'algosdk';
+
+
+
+/**
  * Fetches the token balances from a Algorand blockchain provider. It is designed to support
  * native assets on Algorand, specificially USDC.
  *
@@ -60,9 +72,14 @@ export async function getGasBalance(params: {address: string}): Promise<number> 
  */
 export function newRandomAddress(): string {
 
-  let address: string;
+  const {
+    sk: senderPrivateKey,
+    addr: senderAddress,
+  } = algosdk.generateAccount();
 
-  return address;
+  console.log({ senderPrivateKey })
+
+  return senderAddress
 
 }
 
