@@ -1,14 +1,46 @@
 
 /**
+ *
+ * Stellar Resources:
+ *
+ * - https://github.com/reverbel/seed-phrases-for-stellar
+ * - https://stellar.expert/explorer/public/asset/USDC-GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN
+ * - https://github.com/reverbel/seed-phrases-for-stellar/blob/master/seed_phrases_for_stellar/seed_phrase_to_stellar_keys.py
+ *
+*/
+
+import { randomBytes } from 'crypto'
+
+import axios from 'axios'
+
+import BigNumber from 'bignumber.js'
+
+import { mnemonicToSeedSync } from 'bip39'
+
+import { Keypair } from 'stellar-sdk'
+
+/**
  * Fetches the token balances from a Stellar blockchain provider. It is designed to support
  * native assets on Stellar, specificially USDC.
  *
  */
-export async function getTokenBalance(params: {address: string, asset: string}): Promise<number> {
+export async function getTokenBalance(params: {address: string, asset: string, issuer: string}): Promise<number> {
 
-  let balance: number = 0
+  const { data } = await axios.get(`https://horizon.stellar.org/accounts/${params.address}`)
 
-  return balance; // TODO: Actually get balance
+  const balance = data.balances.find(balance => {
+
+    return balance.asset_issuer == params.issuer &&
+           balance.asset_code == params.asset
+  })
+
+  if (!balance) {
+
+    return 0
+
+  }
+
+  return new BigNumber(balance.balance).toNumber()
 
 }
 
@@ -34,8 +66,9 @@ export async function getTokenBalance(params: {address: string, asset: string}):
 export async function getUSDCBalance(params: {address: string}): Promise<number> {
 
   return getTokenBalance({
-    asset: 'USDC-GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN-1',
-    address: params.address
+    address: params.address,
+    asset: 'USDC',
+    issuer: 'GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN'
   })
 
 }
@@ -46,9 +79,17 @@ export async function getUSDCBalance(params: {address: string}): Promise<number>
  */
 export async function getGasBalance(params: {address: string}): Promise<number> {
 
-  let balance: number = 0
+  const { data } = await axios.get(`https://horizon.stellar.org/accounts/${params.address}`)
 
-  return balance; // TODO: Actually get balance
+  const balance = data.balances.find(balance => balance.asset_type === 'native')
+
+  if (!balance) {
+
+    return 0
+
+  }
+
+  return new BigNumber(balance.balance).toNumber()
 
 }
 
@@ -59,9 +100,35 @@ export async function getGasBalance(params: {address: string}): Promise<number> 
  */
 export function newRandomAddress(): string {
 
-  let address: string;
-
-  return address;
+  return Keypair.random().publicKey()
 
 }
 
+/**
+ * Derives the Stellar Address from Bip39 Seed Phrase
+ *
+ */
+export function getAddressFromMnemonic({ mnemonic }: {mnemonic: string }): string {
+  
+  var seed: Buffer = mnemonicToSeedSync(mnemonic)
+
+  seed = Buffer.from(seed.toString('hex').slice(0, 32))
+
+  const bytes: Buffer = randomBytes(32);
+
+  const keypair = Keypair.fromRawEd25519Seed(seed)
+
+  console.log('ADDRESS--', keypair.publicKey())
+
+  return keypair.publicKey()
+
+}
+
+/**
+ * Determines whether a string is or is not a valid Polygon address 
+ */
+export function isAddress({ address }: {address: string }): boolean {
+
+  return false
+
+}
