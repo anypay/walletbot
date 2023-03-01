@@ -1,9 +1,15 @@
+
+require('dotenv').config()
+
 /**
  * 
  * Polygon Resources:
  * 
  * - https://polygon.technology/solutions/polygon-pos/
  * - https://www.covalenthq.com/docs/api/#/0/0/USD/1
+ * - https://cointelegraph.com/blockchain-for-beginners/polygon-blockchain-explained-a-beginners-guide-to-matic
+ * - https://github.com/maticnetwork/matic.js/
+ * - https://wiki.polygon.technology/docs/develop/ethereum-polygon/matic-js/get-started/
  * 
  * 
  */
@@ -12,9 +18,32 @@ import axios from 'axios'
 
 import { ethers } from 'ethers'
 
+import BigNumber from 'bignumber.js'
+
 import { getPosClient } from "./pos_client";
 
 const usdc_token_address = '0x2791bca1f2de4661ed88a30c99a7a9449aa84174'
+
+const matic_token_address = '0x0000000000000000000000000000000000001010'
+
+interface CovalentTokenBalanceResponseItem {
+  contract_decimals: number;
+  contract_name: string;
+  contract_ticker_symbol: string;
+  contract_address: string;
+  supports_erc: string[];
+  logo_url: string;
+  last_transferred_at: string;
+  native_token: boolean,
+  type: string;
+  balance: string;
+  balance_24h: string;
+  quote_rate: number;
+  quote_rate_24h: number;
+  quote: number;
+  quote_24h: number;
+  nft_data: any;
+}
 
 /**
  * Fetches the token balances from a Polygon blockchain provider. It is designed to support
@@ -46,11 +75,11 @@ export async function getTokenBalance(params: {address: string, asset: string}):
     }
   })
 
-  const usdc = data.data.items.find((item: any) => item.contract_address === params.asset)
+  const contract = data.data.items.find((item: CovalentTokenBalanceResponseItem) => item.contract_address === params.asset)
 
-  if (!usdc) { return 0 }
+  if (!contract) { return 0 }
 
-  return usdc.balance
+  return new BigNumber(`${contract.balance}e-${contract.contract_decimals}`).toNumber()
 
 }
 
@@ -80,9 +109,10 @@ export async function getUSDCBalance(params: {address: string}): Promise<number>
  */
 export async function getGasBalance(params: {address: string}): Promise<number> {
 
-  let balance: number = 0
-
-  return balance; // TODO: Actually get balance
+  return getTokenBalance({
+    asset: matic_token_address,
+    address: params.address
+  })
 
 }
 
@@ -105,8 +135,17 @@ export function newRandomAddress(): string {
  * because the private key is not returned
  *
  */
-export function addressFromMnemonic({ mnemonic }: {mnemonic: string }): string {
+export function getAddressFromMnemonic({ mnemonic }: {mnemonic: string }): string {
 
   return ethers.Wallet.fromMnemonic(mnemonic).address ;
+
+}
+
+/**
+ * Determines whether a string is or is not a valid Polygon address 
+ */
+export function isAddress({ address }: {address: string }): boolean {
+
+  return ethers.utils.isAddress(address) ;
 
 }

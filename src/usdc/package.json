@@ -4,9 +4,10 @@
   "description": "USDC Multi-Chain Payments SDK",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_ENV=test nyc --reporter=lcov mocha --require=ts-node/register --timeout=20000 test/*_test.ts --exit",
+      "runtest": "NODE_ENV=test mocha --require=ts-node/register --timeout=20000 $1"
   },
-  "author": "",
+  "author": "Anypay",
   "license": "ISC",
   "dependencies": {
     "@hashgraph/sdk": "^2.20.0",
