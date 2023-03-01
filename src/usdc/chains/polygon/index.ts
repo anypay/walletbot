@@ -26,7 +26,7 @@ const usdc_token_address = '0x2791bca1f2de4661ed88a30c99a7a9449aa84174'
 
 const matic_token_address = '0x0000000000000000000000000000000000001010'
 
-interface CovalentTokenBalanceResponseItem {
+export interface CovalentTokenBalanceResponseItem {
   contract_decimals: number;
   contract_name: string;
   contract_ticker_symbol: string;

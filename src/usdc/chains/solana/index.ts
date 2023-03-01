@@ -5,8 +5,20 @@
  *
  * - https://graphql.bitquery.io/user/api_key
  * - https://bitquery.io/blog/solana-api
+ * - https://github.com/solana-labs/solana-web3.js/
+ * - https://solanacookbook.com/#contributing
  *
  */
+
+import * as bip39 from 'bip39'
+
+import { Keypair, PublicKey } from '@solana/web3.js'
+
+import { CovalentTokenBalanceResponseItem } from '../polygon'
+
+import axios from 'axios'
+
+import BigNumber from 'bignumber.js'
 
 /**
  * Fetches the token balances from a Solana blockchain provider. It is designed to support
@@ -15,9 +27,24 @@
  */
 export async function getTokenBalance(params: {address: string, asset: string}): Promise<number> {
 
-  let balance: number = 0
+  const covalentChainID = 1399811149
 
-  return balance; // TODO: Actually get balance
+  const url = `https://api.covalenthq.com/v1/${covalentChainID}/address/${params.address}/balances_v2/`
+
+  const { data } = await axios.get(url, {
+    auth: {
+      username: String(process.env.covalent_api_key),
+      password: ''
+    }
+  })
+
+  for (let item of data.data.items) { console.log(item) }
+
+  const contract = data.data.items.find((item: CovalentTokenBalanceResponseItem) => item.contract_address === params.asset)
+
+  if (!contract) { return 0 }
+
+  return new BigNumber(`${contract.balance}e-${contract.contract_decimals}`).toNumber()
 
 }
 
@@ -55,9 +82,10 @@ export async function getUSDCBalance(params: {address: string}): Promise<number>
  */
 export async function getGasBalance(params: {address: string}): Promise<number> {
 
-  let balance: number = 0
-
-  return balance; // TODO: Actually get balance
+  return getTokenBalance({
+    asset: '11111111111111111111111111111111',
+    address: params.address
+  })
 
 }
 
@@ -72,5 +100,38 @@ export function newRandomAddress(): string {
 
   return address;
 
+}
+
+
+/**
+ * Returns a new randomly-generated address that cannot receive funds
+ * because the private key is not returned
+ *
+ */
+export function getAddressFromMnemonic({ mnemonic }: {mnemonic: string }): string {
+
+  const seed = bip39.mnemonicToSeedSync(mnemonic, ""); // (mnemonic, password)
+  const keypair = Keypair.fromSeed(seed.slice(0, 32));
+
+  return keypair.publicKey.toString()
+
+}
+/**
+ * Determines whether a string is or is not a valid Ethereum address 
+ */
+export function isAddress({ address }: {address: string }): boolean {
+
+  try {
+
+    const keypair = new PublicKey(address)
+
+    return !!keypair
+
+  } catch(error) {
+
+    return false
+
+  }
+  
 }
 
