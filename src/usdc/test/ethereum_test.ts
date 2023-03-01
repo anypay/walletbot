@@ -5,13 +5,13 @@ import * as usdc from '..'
 
 const mnemonic = 'street neglect reform tissue into chef coyote kit crop gun nest now'
 
-describe("Polygon USDC", () => {
+describe("Ethereum USDC", () => {
 
-  describe("Loading USDC Wallet on Polygon from Seed Phrase", () => {
+  describe("Loading USDC Wallet on Ethereum from Seed Phrase", () => {
 
     it('should return the wallet address given a mnemonic phrase', () => {
 
-      const address = usdc.polygon.getAddressFromMnemonic({ mnemonic })
+      const address = usdc.ethereum.getAddressFromMnemonic({ mnemonic })
 
       console.log(address)
 
@@ -23,13 +23,13 @@ describe("Polygon USDC", () => {
 
     it('should validate a wallet address', () => {
 
-      const address = usdc.polygon.getAddressFromMnemonic({ mnemonic })
+      const address = usdc.ethereum.getAddressFromMnemonic({ mnemonic })
 
-      const isValid = usdc.polygon.isAddress({ address })
+      const isValid = usdc.ethereum.isAddress({ address })
 
       expect(isValid).to.be.equal(true)
 
-      const invalidIsValid = usdc.polygon.isAddress({ address: '12345' })
+      const invalidIsValid = usdc.ethereum.isAddress({ address: '12345' })
 
       expect(invalidIsValid).to.be.equal(false)
 
@@ -37,15 +37,15 @@ describe("Polygon USDC", () => {
 
   })
 
-  describe("Getting Polygon Wallet Balances", async () => {
+  describe("Getting Ethereum Wallet Balances", async () => {
 
     it('should get the USDC wallet balance as zero for an empty wallet', async () => {
 
       try {
 
-        const address = usdc.polygon.getAddressFromMnemonic({ mnemonic })
+        const address = usdc.ethereum.getAddressFromMnemonic({ mnemonic })
 
-        const balance = await usdc.polygon.getUSDCBalance({ address })
+        const balance = await usdc.ethereum.getUSDCBalance({ address })
 
         expect(balance).to.be.equal(0)
 
@@ -61,7 +61,7 @@ describe("Polygon USDC", () => {
 
       const address = '0xA77547a3fB82a5Fa4DB408144870B69c70906989'
 
-      const balance = await usdc.polygon.getUSDCBalance({ address })
+      const balance = await usdc.ethereum.getUSDCBalance({ address })
 
       console.log({ balance, address })
 
@@ -69,11 +69,11 @@ describe("Polygon USDC", () => {
 
     })
 
-    it('should get the MATIC wallet balance for a non-empty wallet', async () => {
+    it('should get the ETH wallet balance for a non-empty wallet', async () => {
 
       const address = '0xA77547a3fB82a5Fa4DB408144870B69c70906989'
 
-      const balance = await usdc.polygon.getGasBalance({ address })
+      const balance = await usdc.ethereum.getGasBalance({ address })
 
       console.log({ balance, address })
 

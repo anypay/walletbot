@@ -1,7 +1,12 @@
 import { Avalanche } from "avalanche"
 
 import snowtrace from './snowtrace'
+
 import axios from "axios";
+
+import { ethers } from 'ethers'
+
+import BigNumber from 'bignumber.js'
 
 //demo address: 0xa76e9cdc466d90e5ee16ad0fde7bd54ee1f40c72
 
@@ -20,14 +25,35 @@ import axios from "axios";
  * native assets on Avalanche, specificially USDC.
  *
  */
+/**
+ * Fetches the token balances from a Ethereum blockchain provider. It is designed to support
+ * native assets on Ethereum, specificially USDC.
+ *
+ */
 export async function getTokenBalance(params: {address: string, asset: string}): Promise<number> {
 
-  const { balance } = await snowtrace.getTokenBalance({
-    contractaddress: params.asset,
-    address: params.address
+  const covalentChainID = 43114
+
+  const url = `https://api.covalenthq.com/v1/${covalentChainID}/address/${params.address}/balances_v2/`
+
+  const { data } = await axios.get(url, {
+    auth: {
+      username: String(process.env.covalent_api_key),
+      password: ''
+    }
   })
 
-  return balance;
+  console.log('getTokenBalance.result', data)
+
+  for (let item of data.data.items) {
+    console.log(item)
+  }
+
+  const contract = data.data.items.find((item: any) => item.contract_address === params.asset)
+
+  if (!contract) { return 0 }
+
+  return new BigNumber(`${contract.balance}e-${contract.contract_decimals}`).toNumber()
 
 }
 
@@ -51,7 +77,7 @@ export async function getTokenBalance(params: {address: string, asset: string}):
 export async function getUSDCBalance(params: {address: string}): Promise<number> {
 
   return getTokenBalance({
-    asset: '0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e', //TODO Get Actual Contract Hash Not 'USDC'
+    asset: '0xa7d7079b0fead91f3e65f86e8915cb59c1a4c664', //TODO Get Actual Contract Hash Not 'USDC'
     address: params.address
   })
 
@@ -63,23 +89,10 @@ export async function getUSDCBalance(params: {address: string}): Promise<number>
  */
 export async function getGasBalance(params: {address: string}): Promise<number> {
 
-  const covalentChainID = 43114
-
-  const url = `https://api.covalenthq.com/v1/${covalentChainID}/address/${params.address}/balances_v2/`
-
-  const { data } = await axios.get(url, {
-    auth: {
-      username: String(process.env.covalent_api_key),
-      password: ''
-    }
+  return getTokenBalance({
+    asset: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    address: params.address
   })
-
-  const asset = data.data.items.find((item: any) => item.contract_address === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
-
-  if (!asset) { return 0 }
-
-  return asset.balance
-
 }
 
 
@@ -96,3 +109,21 @@ export function newRandomAddress(): string {
 
 }
 
+/**
+ * Returns a new randomly-generated address that cannot receive funds
+ * because the private key is not returned
+ *
+ */
+export function getAddressFromMnemonic({ mnemonic }: {mnemonic: string }): string {
+
+  return ethers.Wallet.fromMnemonic(mnemonic).address ;
+
+}
+/**
+ * Determines whether a string is or is not a valid Ethereum address 
+ */
+export function isAddress({ address }: {address: string }): boolean {
+
+  return ethers.utils.isAddress(address) ;
+
+}

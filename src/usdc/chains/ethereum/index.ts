@@ -1,3 +1,4 @@
+require('dotenv').config()
 
 /**
  *
@@ -10,6 +11,8 @@
  * */
 
 import axios from "axios"
+
+import BigNumber from 'bignumber.js'
 
 import { ethers } from 'ethers'
 
@@ -31,11 +34,17 @@ export async function getTokenBalance(params: {address: string, asset: string}):
     }
   })
 
-  const usdc = data.data.items.find((item: any) => item.contract_address === params.asset)
+  console.log('getTokenBalance.result', data)
 
-  if (!usdc) { return 0 }
+  for (let item of data.data.items) {
+    console.log(item)
+  }
 
-  return usdc.balance
+  const contract = data.data.items.find((item: any) => item.contract_address === params.asset)
+
+  if (!contract) { return 0 }
+
+  return new BigNumber(`${contract.balance}e-${contract.contract_decimals}`).toNumber()
 
 }
 
@@ -98,9 +107,16 @@ export function newRandomAddress(): string {
  * because the private key is not returned
  *
  */
-export function addressFromMnemonic({ mnemonic }: {mnemonic: string }): string {
+export function getAddressFromMnemonic({ mnemonic }: {mnemonic: string }): string {
 
   return ethers.Wallet.fromMnemonic(mnemonic).address ;
 
 }
+/**
+ * Determines whether a string is or is not a valid Ethereum address 
+ */
+export function isAddress({ address }: {address: string }): boolean {
 
+  return ethers.utils.isAddress(address) ;
+
+}
