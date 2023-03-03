@@ -11,6 +11,8 @@
 
 import { randomBytes } from 'crypto'
 
+import StellarSdk from 'stellar-sdk'
+
 import axios from 'axios'
 
 import BigNumber from 'bignumber.js'
@@ -124,6 +126,20 @@ export function getAddressFromMnemonic({ mnemonic }: {mnemonic: string }): strin
 
 }
 
+export function getKeypairFromMnemonic({ mnemonic }: {mnemonic: string }): Keypair {
+  
+  var seed: Buffer = mnemonicToSeedSync(mnemonic)
+
+  seed = Buffer.from(seed.toString('hex').slice(0, 32))
+
+  const bytes: Buffer = randomBytes(32);
+
+  const keypair = Keypair.fromRawEd25519Seed(seed)
+
+  return keypair
+
+}
+
 /**
  * Determines whether a string is or is not a valid Polygon address 
  */
@@ -131,4 +147,70 @@ export function isAddress({ address }: {address: string }): boolean {
 
   return false
 
+}
+
+export async function parseUSDCTransaction({ txhex }: { txhex: string }): Promise<any> {
+
+  const base64 = Buffer.from(txhex, 'hex').toString('base64')
+  
+  const envelope = StellarSdk.xdr.TransactionEnvelope.fromXDR(base64, 'base64')
+
+
+}
+
+export async function buildUSDCTransfer({
+  mnemonic,
+  to,
+  amount
+}: {
+  mnemonic: string,
+  to: string,
+  amount: number
+}) {
+  
+  // Derive Keypair object and public key (that starts with a G) from the secret
+  const sourceKeypair = getKeypairFromMnemonic({ mnemonic })
+
+  const sourcePublicKey = sourceKeypair.publicKey();
+
+  // Configure StellarSdk to talk to the horizon instance hosted by Stellar.org
+  // To use the live network, set the hostname to 'horizon.stellar.org'
+  const server = new StellarSdk.Server('https://horizon.stellar.org');
+
+
+  // Transactions require a valid sequence number that is specific to this account.
+  // We can fetch the current sequence number for the source account from Horizon.
+  const account = await server.loadAccount(sourcePublicKey);
+
+  // Right now, there's one function that fetches the base fee.
+  // In the future, we'll have functions that are smarter about suggesting fees,
+  // e.g.: `fetchCheapFee`, `fetchAverageFee`, `fetchPriorityFee`, etc.
+  const fee = await server.fetchBaseFee();
+
+  const transaction = new StellarSdk.TransactionBuilder(account, { fee })
+    // Add a payment operation to the transaction
+    .addOperation(StellarSdk.Operation.payment({
+      
+      destination: to,
+
+      asset: new StellarSdk.Asset('USDC', 'GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN'),
+
+      amount: amount.toString()
+    }))
+    // Make this transaction valid for the next 30 seconds only
+    .setTimeout(30)
+    // Uncomment to add a memo (https://www.stellar.org/developers/learn/concepts/transactions.html)
+    // .addMemo(StellarSdk.Memo.text('Hello world!'))
+    .build();
+
+  // Sign this transaction with the secret key
+  // NOTE: signing is transaction is network specific. Test network transactions
+  // won't work in the public network. To switch networks, use the Network object
+  // as explained above (look for StellarSdk.Network).
+  transaction.sign(sourceKeypair);
+
+  // Let's see the XDR (encoded in base64) of the transaction we just built
+  console.log(transaction.toEnvelope().toXDR('base64'));
+
+  return transaction.toEnvelope().toXDR('base64')
 }

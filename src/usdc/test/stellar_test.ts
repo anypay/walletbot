@@ -83,4 +83,19 @@ describe("Stellar USDC", () => {
 
   })
 
+  describe("Building USDC Transactions", () => {
+
+    it('should build and sign a USDC transaction', async () => {
+
+      const transaction = await usdc.stellar.buildUSDCTransfer({
+        mnemonic,
+        to: 'GA6DN27AG5FTVGUFPCUHCKJ6KOK33FL5GED3K7QD2FSN6HCXW3G4BGXP',
+        amount: 1
+      })
+
+      console.log(transaction, 'stellar.transaction')
+      
+    })
+  })
+
 })
