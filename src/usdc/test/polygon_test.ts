@@ -83,4 +83,21 @@ describe("Polygon USDC", () => {
 
   })
 
+  describe("Sending Polygon Transactions", () => {
+
+    it('#buildUSDCTransaction should build a USDC transaction but not broadcast', async () => {
+
+      const to = '0xA77547a3fB82a5Fa4DB408144870B69c70906989'
+
+      const result = await usdc.polygon.buildUSDCTransfer({
+        mnemonic,
+        to,
+        amount: 1
+      })
+
+      console.log(result, 'buildUSDCTransaction.result')
+
+    })
+  })
+
 })
