@@ -7,6 +7,7 @@ require('dotenv').config()
  * - https://hardhat.org/
  * - https://www.covalenthq.com/docs/api/#/0/0/USD/1
  * - https://docs.ethers.org/v5/getting-started/
+ * - https://medium.com/@mehmetegemenalbayrak/send-erc20-tokens-with-javascript-and-ethers-js-a063df896f99
  * 
  * */
 
@@ -15,6 +16,8 @@ import axios from "axios"
 import BigNumber from 'bignumber.js'
 
 import { ethers } from 'ethers'
+
+import ERC20_ABI from "./erc20_abi"
 
 /**
  * Fetches the token balances from a Ethereum blockchain provider. It is designed to support
@@ -120,3 +123,75 @@ export function isAddress({ address }: {address: string }): boolean {
   return ethers.utils.isAddress(address) ;
 
 }
+
+/**
+ * 
+ * Builds a new signed transaction to send USDC to a given address given the wallet private key.
+ * This function does not transmit or broadcast the transaction and therefore no gas will
+ * be spent until the transaction is sent by a subsequent call to sendSignedTransaction.
+ * 
+ * Example ERC20 Transfer: https://etherscan.io/tx/0xeda0433ebbb12256ef1c4ab0278ea0c71de4832b7edd65501cc445794ad1f46c
+ * 
+ */
+export async function buildUSDCTransfer({ mnemonic, to, amount, memo }: { mnemonic: string, to: string, amount: number, memo?: string}): Promise<string> {
+
+  const senderWallet = ethers.Wallet.fromMnemonic(mnemonic)
+
+  const howMuchTokens = ethers.utils.parseUnits(amount.toString(), 6)
+
+  return ''
+}
+
+/**
+ * 
+ * Transmits the signed transaction to the Ethereum blockchain via a provider.
+ */
+export async function sendSignedTransaction({ signedTransaction }: { signedTransaction: string }): Promise<string> {
+
+  return ''
+
+}
+
+export interface USDCTransaction {
+  txid: string;
+  txhex: string;
+  to: string;
+  from: string;
+  value: number;  
+  block_height?: number;
+  block_hash?: string;
+  block_time?: number;
+  memo?: string;
+}
+
+export async function parseUSDCTransaction({ txhex }: { txhex: string }): Promise<USDCTransaction> {
+
+  const transaction = ethers.utils.parseTransaction(txhex)
+
+  if (transaction.to !== '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48') {
+    throw new Error('Not a USDC Contract transaction')
+  }
+
+  const contractInterface = new ethers.utils.Interface(ERC20_ABI);
+
+  const decoded = contractInterface.parseTransaction(transaction)
+
+  if (decoded.name !== 'transfer') {
+    throw new Error('Not a USDC transfer transaction')
+  }
+
+  const value = new BigNumber(decoded.args[1].toString()).dividedBy(1000000).toNumber()
+
+  return {
+    txid: String(transaction.hash),
+    txhex,
+    to: decoded.args[0],
+    from: String(transaction.from),
+    value
+  }
+
+}
+
+import * as test from './test_data'
+
+export { test }

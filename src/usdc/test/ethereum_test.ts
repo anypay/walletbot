@@ -83,4 +83,18 @@ describe("Ethereum USDC", () => {
 
   })
 
+  describe("Parsing & Validating Ethereum Transactions", () => {
+
+    it("#parseUSDCTransaction should parse a USDC transaction", async () => {
+
+      const transaction = await usdc.ethereum.parseUSDCTransaction({ txhex: usdc.ethereum.test.ERC20_USDC_TRANSFER_HEX })
+
+      console.log(transaction)
+
+      expect(transaction.txid).to.be.equal(usdc.ethereum.test.ERC20_USDC_TRANSFER_TXID)
+
+    })
+
+  })
+
 })
