@@ -1,5 +1,18 @@
 
 /**
+ * 
+ * Tron Resources:
+ * 
+ * - https://developers.tron.network/reference/tronweb-sendtoken 
+ * - https://tron.network/usdc
+ * - https://tronscan.org/#/contract/TEkxiTehnzSmSe2XqrBj4w32RUN966rdz8/code
+ * - https://developers.tron.network/reference/tronweb-sendtoken
+ *
+ */
+
+import * as tronWeb from 'tronweb'
+
+/**
  * Fetches the token balances from a Tron blockchain provider. It is designed to support
  * native assets on Tron, specificially USDC.
  *
@@ -54,15 +67,64 @@ export async function getGasBalance(params: {address: string}): Promise<number> 
 }
 
 /**
+ * Derives the Stellar Address from Bip39 Seed Phrase
+ *
+ */
+export function getAddressFromMnemonic({ mnemonic }: {mnemonic: string }): string {
+  
+  const { privateKey, publicKey, address } = tronWeb.fromMnemonic(mnemonic)
+
+  return address
+
+}
+
+export function getKeypairFromMnemonic({ mnemonic }: {mnemonic: string }): { privateKey: string, publicKey: string, address: string} {
+  
+  return tronWeb.fromMnemonic(mnemonic)
+
+}
+
+/**
  * Returns a new randomly-generated address that cannot receive funds
  * because the private key is not returned
  *
  */
 export function newRandomAddress(): string {
 
-  let address: string;
+  let address: string = tronWeb.createRandom().address;
 
   return address;
 
 }
+
+export function isAddress({ address }: { address: string }): boolean {
+
+  return false;
+
+}
+
+/**
+ * 
+ * Builds a new signed transaction to send USDC to a given address given the wallet private key.
+ * This function does not transmit or broadcast the transaction and therefore no gas will
+ * be spent until the transaction is sent by a subsequent call to sendSignedTransaction.
+ * 
+ * Example ERC20 Transfer: https://etherscan.io/tx/0xeda0433ebbb12256ef1c4ab0278ea0c71de4832b7edd65501cc445794ad1f46c
+ * 
+ */
+export async function buildUSDCTransfer({ mnemonic, to, amount, memo }: { mnemonic: string, to: string, amount: number, memo?: string}): Promise<string> {
+
+  const result = await tronWeb.transactionBuilder.sendToken(
+    to,
+    amount,
+    'TEkxiTehnzSmSe2XqrBj4w32RUN966rdz8',
+    getAddressFromMnemonic({ mnemonic })
+  );
+
+  console.log(result, 'tron.buildUSDCTransfer.result')
+
+  return result
+
+}
+
 

@@ -6,6 +6,7 @@ import { Mnemonic } from "@hashgraph/sdk";
  * Hedera Hashgraph Resources:
  *
  * - https://app.lworks.io/api-access-tokens
+ * - https://docs.hedera.com/hedera/sdks-and-apis/sdks/tokens/transfer-tokens
  *
  */
 
