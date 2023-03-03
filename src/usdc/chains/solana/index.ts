@@ -20,6 +20,8 @@ import axios from 'axios'
 
 import BigNumber from 'bignumber.js'
 
+import { SolanaPayment } from './payment'
+
 /**
  * Fetches the token balances from a Solana blockchain provider. It is designed to support
  * native assets on Solana, specificially USDC.
@@ -96,7 +98,7 @@ export async function getGasBalance(params: {address: string}): Promise<number> 
  */
 export function newRandomAddress(): string {
 
-  let address: string;
+  let address: string = '';
 
   return address;
 
@@ -135,3 +137,19 @@ export function isAddress({ address }: {address: string }): boolean {
   
 }
 
+/**
+ * 
+ * Parses a USDC transfer transaction on Solana
+ * 
+ */
+export async function parseUSDCTransaction({ txhex }: { txhex: string}): Promise<any> {
+
+  const payment = new SolanaPayment(txhex)
+
+  console.log(payment.outputs, 'payment.outputs')
+
+  console.log(payment.references, 'payment.references')
+
+  return payment
+
+}
