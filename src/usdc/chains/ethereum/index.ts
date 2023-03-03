@@ -139,11 +139,11 @@ export async function buildUSDCTransfer({ mnemonic, to, amount, memo }: { mnemon
 
   const senderWallet = ethers.Wallet.fromMnemonic(mnemonic).connect(provider)
 
-  const howMuchTokens = ethers.utils.parseUnits(amount.toString(), 6)
+  const value = ethers.utils.parseUnits(amount.toString(), 6)
 
   const contract = new ethers.Contract('0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', ERC20_ABI, senderWallet);
 
-  const result = await contract.transfer(to, howMuchTokens) 
+  const result = await contract.transfer(to, value)
 
   return result
 }

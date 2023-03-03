@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 import { Avalanche } from "avalanche"
 
 import snowtrace from './snowtrace'
@@ -8,6 +10,12 @@ import { ethers } from 'ethers'
 
 import BigNumber from 'bignumber.js'
 
+import ERC20_ABI from "../ethereum/erc20_abi";
+
+import Web3 from 'web3'
+
+const provider = new ethers.providers.JsonRpcProvider(process.env.infura_url_avalanche)
+
 //demo address: 0xa76e9cdc466d90e5ee16ad0fde7bd54ee1f40c72
 
 /**
@@ -16,6 +24,7 @@ import BigNumber from 'bignumber.js'
  *
  * - https://blog.logrocket.com/build-dapp-avalanche-complete-guide/
  * - https://docs.snowtrace.io/api-endpoints/accounts#get-a-list-of-erc20-token-transfer-events-by-address
+ * - https://docs.avax.network/dapps/developer-toolchains/using-truffle-with-the-avalanche-c-chain
  *
  */
 
@@ -126,4 +135,26 @@ export function isAddress({ address }: {address: string }): boolean {
 
   return ethers.utils.isAddress(address) ;
 
+}
+
+/**
+ * 
+ * Builds a new signed transaction to send USDC to a given address given the wallet private key.
+ * This function does not transmit or broadcast the transaction and therefore no gas will
+ * be spent until the transaction is sent by a subsequent call to sendSignedTransaction.
+ * 
+ * Example ERC20 Transfer: https://etherscan.io/tx/0xeda0433ebbb12256ef1c4ab0278ea0c71de4832b7edd65501cc445794ad1f46c
+ * 
+ */
+export async function buildUSDCTransfer({ mnemonic, to, amount, memo }: { mnemonic: string, to: string, amount: number, memo?: string}): Promise<string> {
+
+  const senderWallet = ethers.Wallet.fromMnemonic(mnemonic).connect(provider)
+
+  const value = ethers.utils.parseUnits(amount.toString(), 6)
+
+  const contract = new ethers.Contract('0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e', ERC20_ABI, senderWallet);
+
+  const result = await contract.transfer(to, value)
+
+  return result
 }

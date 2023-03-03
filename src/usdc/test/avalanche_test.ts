@@ -83,4 +83,21 @@ describe("Avalanche USDC", () => {
 
   })
 
+  describe("Sending Avalanche Transactions", () => {
+
+    it('#buildUSDCTransaction should build a USDC transaction but not broadcast', async () => {
+
+      const to = '0x4da4bcf92ab8160906e5123c52da6c61a165adc4'
+
+      const result = await usdc.avalanche.buildUSDCTransfer({
+        mnemonic,
+        to,
+        amount: 1
+      })
+
+      console.log(result, 'buildUSDCTransaction.result')
+
+    })
+  })
+
 })
