@@ -8,6 +8,7 @@ import * as polygon from './chains/polygon'
 import * as solana from './chains/solana'
 import * as stellar from './chains/stellar'
 import * as tron from './chains/tron'
+import * as request from './request'
 
 export {
   algorand,
@@ -18,5 +19,6 @@ export {
   polygon,
   solana,
   stellar,
-  tron
+  tron,
+  request
 }
