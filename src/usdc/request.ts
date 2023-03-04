@@ -28,12 +28,12 @@ type PaymentRequestTemplate = {
   }[];
 }[]
 
-interface PaymentOptionSelected {
+interface EthPaymentOption {
   instructions: {
-    type: 'transaction',
-    value: number,
+    type: 'transaction';
+    value: number;
     to: string;
-    data: string;
+    data?: string;
     gasPrice?: number;
   }[];
 }
@@ -66,3 +66,28 @@ export async function create({ template }:{ template: PaymentRequestTemplate}): 
   }
 
 }
+
+export async function option({
+  template,
+  chain,
+  currency
+}: {
+  template: PaymentRequestTemplate,
+  chain: string;
+  currency: string;
+}): Promise<EthPaymentOption> {
+
+  const option = template.find(option => option.chain === chain && option.currency === currency)
+
+  return {
+    instructions: option.to.map(to => {
+      return {
+        type: 'transaction',
+        to: to.address,
+        value: to.amount
+      }
+    })
+  }
+
+}
+

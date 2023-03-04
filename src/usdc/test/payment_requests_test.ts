@@ -78,5 +78,65 @@ describe("USDC Payment Requests", () => {
 
   })
 
+  describe("USDC Payment Request on Ethereum", () => {
+
+  })
+
+  describe("USDC Payment Request on Solana", () => {
+
+    it('should return valid multi-output payment request for solana', async () => {
+
+      const template = [{
+        chain: 'SOL',
+        currency: 'USDC',
+        to: [{
+          address: 'Ef9ca7Uwkw9rrbdaWnUrrdMZJqPYykZ1dPLEv9yMpEjB',
+          amount: 100
+        }, {
+          address: 'Ef9ca7Uwkw9rrbdaWnUrrdMZJqPYykZ1dPLEv9yMpEjB',
+          amount: 0.10
+        }]
+      }]
+
+      const request = await usdc.request.create({ template })
+
+      const option = await usdc.request.option({ template, chain: 'SOL', currency: 'USDC' })
+
+      expect(option.instructions.length === 2)
+
+      for (let instruction of option.instructions) {
+
+        expect(instruction.type === 'transaction')
+
+        expect(instruction.value > 0)
+        
+        expect(instruction.to === 'Ef9ca7Uwkw9rrbdaWnUrrdMZJqPYykZ1dPLEv9yMpEjB')
+
+      }
+
+    })
+
+  })
+
+  describe("USDC Payment Request on Stellar", () => {
+
+  })
+
+  describe("USDC Payment Request on Tron", () => {
+
+  })
+
+  describe("USDC Payment Request on Bitcoin", () => {
+
+  })
+
+  describe("USDC Payment Request on Polygon", () => {
+
+  })
+
+  describe("USDC Payment Request on Avalanche", () => {
+
+  })
+
 })
 
