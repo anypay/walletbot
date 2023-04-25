@@ -153,7 +153,7 @@ export class Wallet {
     let client = new Client(uri)
 
     let paymentRequest = await client.selectPaymentOption({
-      chain: asset,
+      chain: asset === 'USDC' ? 'MATIC' : asset,
       currency: asset
     })
 
