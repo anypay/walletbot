@@ -106,7 +106,9 @@ export class Wallet {
 
   async balances(): Promise<Balance[]> {
 
-    let balances = await Promise.all(this.cards.map(async card => {
+    let balances = []
+
+    for (let card of this.cards) {
 
       //if (card.asset === 'DOGE') { return }
  
@@ -114,7 +116,7 @@ export class Wallet {
 
         let balance = await card.balance()
 
-        return balance
+        balances.push(balance)
 
       } catch(error) {
 
@@ -124,7 +126,7 @@ export class Wallet {
 
       }
 
-    }))
+    }
 
     return balances.filter(balance => balance !== null)
 
@@ -482,7 +484,7 @@ export class Card {
 
     const asset = this.asset
 
-    let rpc = getRPC(this.asset)
+    let rpc: any = getRPC(this.asset)
 
     var value;
 
@@ -511,9 +513,21 @@ export class Card {
       
     }
 
+    let _currency = this.asset.match(/USDC/) ? 'USDC' : this.asset
+    _currency = this.asset.match(/USDT/) ? 'USDT' : _currency
+
+    let convertValue = value
+
+    if (this.asset === 'XMR') {
+    } else if (_currency === 'USDC') {
+    } else if (_currency === 'USDT') {
+    } else {
+      convertValue = value / 100000000
+    }
+
     const { amount: value_usd } = await convertBalance({
-      currency: this.asset,
-      amount: this.asset === 'XMR' ? value : value / 100000000
+      currency: _currency,
+      amount: convertValue
     }, 'USD')
 
     try {

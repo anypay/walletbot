@@ -1,6 +1,5 @@
-require('dotenv').config()
 
-import { polygon } from 'usdc'
+import { ethereum } from 'usdc'
 
 export const bitcore = {
 
@@ -73,14 +72,13 @@ export async function getBalance(address) {
 
   try {
 
-    const matic_balance = await polygon.getGasBalance({address})
+    const ethereum_balance = await ethereum.getUSDCBalance({address})
 
-    return matic_balance
+    return ethereum_balance
 
   } catch(error) {
 
-    console.error(error.message, `matic.getBalance.error.${address}`)
-    console.error(error)
+    console.error(error.message, `eth.getBalance.error.${address}`)
 
     return 0
 

@@ -27,7 +27,9 @@ export async function convertBalance(balance: Balance, currency: Currency): Prom
 
   }
 
-  let { data } = await axios.get(`${api}/convert/${balance.amount}-${balance.currency}/to-${currency}`)
+  let url = `${api}/convert/${balance.amount}-${balance.currency}/to-${currency}`
+
+  let { data } = await axios.get(url)
 
   let amount = data.conversion.output.value
 

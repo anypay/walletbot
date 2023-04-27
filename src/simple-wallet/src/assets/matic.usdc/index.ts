@@ -71,11 +71,13 @@ export const rpc = {
 
 export async function getBalance(address) {
 
+  console.log(address, 'matic.usdc.getUSDCBalance')
+
   try {
 
-    const matic_balance = await polygon.getGasBalance({address})
+    const usdc_balance = await polygon.getUSDCBalance({address})
 
-    return matic_balance
+    return usdc_balance
 
   } catch(error) {
 
