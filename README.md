@@ -25,13 +25,21 @@ echo wallet_bot_backup_seed_phrase=$(docker run anypay/wallet-bot npx seed-phras
 Get your wallet bot access token here: [https://anypayx.com/apps/wallet-bot/](https://anypayx.com/apps/wallet-bot/)
 
 ```
-echo anypay_access_token=YOUR_WALLET_BOT_ACCESS_TOKEN >> .env
+export token=REPLACE_WITH_YOUR_WALLET_BOT_ACCESS_TOKEN 
+
+# or using the clipboard on mac
+# export token=$(pbpaste) 
+
+echo anypay_access_token=$token >> .env
 ```
 
+#### Run with Docker
+
+Once your .env file contains the required variables you may start wallet bot:
+
 ```
-docker run \
-  --env-file=.env \
-  anypay/wallet-bot start
+docker run --env-file=.env --name=wallet-bot anypay/wallet-bot npm start
+docker logs -f wallet-bot
 ```
 
 ## Configuration
