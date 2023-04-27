@@ -11,10 +11,21 @@ The application runs as a long-running process which should be managed by k8s, d
 
 `docker pull anypay/wallet-bot`
 
-## Setting Up Wallet Keys
+## Setting Up Wallet Bot Keys
 
+
+#### Wallet Private Key Seed Phrase
+
+All of your coins shall be controlled by a single bip39 seed phrase
 ```
 echo wallet_bot_backup_seed_phrase=$(docker run anypay/wallet-bot npx seed-phrase) >> .env
+```
+
+#### Anypay Access Token
+Get your wallet bot access token here: [https://anypayx.com/apps/wallet-bot/](https://anypayx.com/apps/wallet-bot/)
+
+```
+echo anypay_access_token=YOUR_WALLET_BOT_ACCESS_TOKEN >> .env
 ```
 
 ```
@@ -23,10 +34,9 @@ docker run \
   anypay/wallet-bot start
 ```
 
-You may also combine some variables from one method with others from the other method.
 ## Configuration
 
-Wallets and system settings may be configured by a combination of json config files, environment variables, and command line flags. All variables may be provided by either of the config variations.
+Wallets and system settings may be configured by environment variables.
 
 ## Environment Variables
 
