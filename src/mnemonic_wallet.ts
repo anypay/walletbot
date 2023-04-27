@@ -1,4 +1,7 @@
 
+import { ethers } from 'ethers'
+
+
 const bip39 = require('bip39');
 
 import * as btc from 'bitcore-lib'
@@ -28,6 +31,14 @@ export class MnemonicWallet {
     dogehdprivatekey: any;//doge.HDPrivateKey;
 
     bchhdprivatekey: any;//bch.HDPrivateKey;
+
+    ethersWallet: any;
+
+    matic_privatekey: any;
+
+    ethereum_privatekey: any;
+
+    avalanche_privatekey: any;
 
     static init(mnemonic: string): MnemonicWallet {
 
@@ -63,6 +74,8 @@ export class MnemonicWallet {
 
       this.bchhdprivatekey = bch.HDPrivateKey.fromSeed(seed)
 
+      this.ethersWallet = ethers.Wallet.fromMnemonic(this.mnemonic);
+
       return this
   
     }
@@ -93,6 +106,18 @@ export class MnemonicWallet {
         asset: 'DOGE',
         address: this.dogehdprivatekey.privateKey.toAddress().toString(),
         privatekey: this.dogehdprivatekey.privateKey.toWIF()
+      }, {
+        asset: 'MATIC',
+        address: this.ethersWallet.address,
+        privatekey: this.ethersWallet
+      }, {
+        asset: 'ETH',
+        address: this.ethersWallet.address,
+        privatekey: this.ethersWallet
+      }, {
+        asset: 'AVAX',
+        address: this.ethersWallet.address,
+        privatekey: this.ethersWallet
       }]
   
       return wallets

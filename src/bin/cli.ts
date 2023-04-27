@@ -2,13 +2,15 @@
 
 require('dotenv').config()
 
+const { Command } = require('commander');
+
+const program = new Command();
+
 const { version } = require('../../package')
 
 import config from '../config'
 
 import log from '../log'
-
-import { program } from 'commander'
 
 import { listBalances } from '../balances'
 
