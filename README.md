@@ -2,17 +2,15 @@
 
 # Wallet Bot
 
-Self-custody, headless wallet service that runs as a daemon process within your data center. It manages your software operation's private keys so that your apps can securely send payments on any peer to peer payments network.
+Self-hosted wallet API that runs as a daemon process within your data center. It manages your software operation's private keys so that your apps can securely send payments on any peer to peer payments network.
 
 ## Installation and Setup
 
-The application runs as a long-running process which should be managed by k8s, docker, or your system service manager such as systemd or similar. It may be run in a node.js environment or as an isolated docker container. The single process requires no additional services such as database servers to be run.
-
+Wallet Bot is meant to be run as a docker container. The single typescript process requires no additional services such as database servers to be run.
 
 `docker pull anypay/wallet-bot`
 
 ## Setting Up Wallet Bot Keys
-
 
 #### Wallet Private Key Seed Phrase
 
