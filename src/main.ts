@@ -59,13 +59,7 @@ export async function start() {
 
   const { wallets } = MnemonicWallet.init(mnemonic)
 
-  //const card = wallets.filter(wallet => wallet.asset === 'DASH').filter(w => !!w)[0]
-
-  //const wallet = await loadWallet(wallets)
-
   const wallet = await loadWallet(wallets)
-
-  console.log(await _listBalances())
 
   while (true) {
 
@@ -75,13 +69,11 @@ export async function start() {
 
       let unpaid = await listUnpaid()
 
-      length = unpaid.length
-
-      log.debug('invoices.unpaid.list', { count: unpaid.length })
-
       for (let invoice of shuffle<any>(unpaid)) {
+        console.log(invoice, 'unpaid')
 
         try {
+          console.log(`${config.get('api_base')}/r/${invoice.uid}`, 'get')
 
           const { data: options } = await axios.get(`${config.get('api_base')}/r/${invoice.uid}`, {
             headers: {
@@ -99,7 +91,7 @@ export async function start() {
             continue;
           }
 
-          const currency = options.paymentOptions[0].currency
+          const {chain, currency} = options.paymentOptions[0]
 
           if (currency === 'XMR') {
 
@@ -111,9 +103,9 @@ export async function start() {
             
           }
 
-          log.info('invoice.pay', options.paymentOptions[0])
+          console.log('invoice.pay', options.paymentOptions[0])
 
-          let result = await wallet.payUri(`${config.get('api_base')}/r/${invoice.uid}`, currency)
+          let result = await wallet.payUri(`${config.get('api_base')}/r/${invoice.uid}`, `${chain}.${currency}`)
 
           log.info('wallet.payInvoice.result', { uid: invoice.uid, result })
 
@@ -137,7 +129,7 @@ export async function start() {
 
     }
 
-    await delay(length > 0 ? 5 : 5200)
+    await delay(length > 0 ? 1000 : 5200)
 
   }
 

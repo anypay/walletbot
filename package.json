@@ -31,6 +31,7 @@
       "anypay": "^0.1.1",
       "anypay-simple-wallet": "^0.4.0",
       "axios": "^0.27.2",
+      "bignumber.js": "^9.1.1",
       "bip39": "^3.0.4",
       "bitcoinme": "^1.0.0",
       "bitcore-lib-doge": "^8.25.40",

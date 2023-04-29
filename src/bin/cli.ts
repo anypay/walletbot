@@ -8,13 +8,11 @@ const program = new Command();
 
 const { version } = require('../../package')
 
-/*import config from '../config'
+import config from '../config'
 
 import log from '../log'
-*/
 
-//import { listBalances } from '../balances'
-/*
+import { listBalances } from '../balances'
 
 import { createInvoice } from '../invoices'
 
@@ -23,9 +21,6 @@ import { start } from '../main'
 import { existsSync, writeFileSync } from 'fs'
 
 import { getBitcore } from '../wallet'
-
-
-*/
 
 import axios from 'axios'
 
@@ -38,17 +33,13 @@ program
   .command('start')
   .action(async () => {
 
-    //start()
-  console.log('start')
+    start()
 
   })
 
 program
   .command('list-addresses')
   .action(async () => {
-
-    //console.log('list-addresses')
-    //let balances = await listBalances()
 
     let wallet = await initWalletFromMnemonic()
 
@@ -64,21 +55,15 @@ program
   .command('pay-invoice <uid> <chain> <currency>')
   .action(async (uid, chain, currency) => {
 
-
     let wallet = await initWalletFromMnemonic()
 
     console.log(wallet)
-
-    //let balances = await wallet.balances()
-
-    //console.log(balances)
 
     let result = await wallet.payInvoice(uid, `${chain}.${currency}`)
 
     console.log(result)
 
   })
-
 
 
 program
@@ -102,15 +87,6 @@ program
 
   })
 
-program
-  .command('start')
-  .action(async () => {
-
-    //start()
-  console.log('start')
-
-  })
-/*
 
 program
   .command('balances')
@@ -213,61 +189,6 @@ program
     }
 
   })
-
-
-
-program
-  .command('new_wallet [filepath]')
-  .action((filepath) => {
-
-
-    const json = {
-      "anypay_api_token": config.get('anypay_api_token'),
-      "cards": [{
-        "asset": "BSV",
-        "privatekey": getBitcore('BSV').PrivateKey().toWIF()
-      }, {
-        "asset": "BTC",
-        "privatekey": getBitcore('BTC').PrivateKey().toWIF()
-      }, {
-        "asset": "BCH",
-        "privatekey": getBitcore('BCH').PrivateKey().toWIF()
-      }, {
-        "asset": "DASH",
-        "privatekey": getBitcore('DASH').PrivateKey().toWIF()
-      }, {
-        "asset": "LTC",
-        "privatekey": getBitcore('LTC').PrivateKey().toWIF()
-      }, {
-        "asset": "DOGE",
-        "privatekey": getBitcore('DOGE').PrivateKey().toWIF()
-      }]
-    }
-
-    if (filepath) {
-
-      if (existsSync(filepath)) {
-
-        console.error(`file at ${filepath} already exists`)
-
-        process.exit(1)
-
-      }
-
-      writeFileSync(filepath, JSON.stringify(json, null, 2))
-
-      console.log(`New wallet config json written to ${filepath}`)
-
-    } else {
-
-      console.log(JSON.stringify(json, null, 2))
-
-    }
-
-    process.exit(0)
-
-  })
-*/
 
 program.parse(process.argv)
 

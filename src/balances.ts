@@ -24,6 +24,8 @@ export async function listBalances(): Promise<Balance[]> {
 
   const balances = await wallet.balances()
 
+  if (!balances) { return [] }
+
   for (let balance of balances) {
 
     log.info('balance', balance)
