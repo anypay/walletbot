@@ -61,6 +61,14 @@ export async function start() {
 
   const wallet = await loadWallet(wallets)
 
+  setInterval(async () => {
+
+    await updateBalances(wallet)
+
+  }, 60000)
+
+  updateBalances(wallet)
+
   while (true) {
 
     var length = 0;
@@ -70,10 +78,8 @@ export async function start() {
       let unpaid = await listUnpaid()
 
       for (let invoice of shuffle<any>(unpaid)) {
-        console.log(invoice, 'unpaid')
 
         try {
-          console.log(`${config.get('api_base')}/r/${invoice.uid}`, 'get')
 
           const { data: options } = await axios.get(`${config.get('api_base')}/r/${invoice.uid}`, {
             headers: {
@@ -103,8 +109,6 @@ export async function start() {
             
           }
 
-          console.log('invoice.pay', options.paymentOptions[0])
-
           let result = await wallet.payUri(`${config.get('api_base')}/r/${invoice.uid}`, `${chain}.${currency}`)
 
           log.info('wallet.payInvoice.result', { uid: invoice.uid, result })
@@ -113,6 +117,7 @@ export async function start() {
 
         } catch(error) {
           
+          console.log('wallet.payInvoice.error', error)
           log.error('wallet.payInvoice.error', error.response.data)
 
           /*const result = await cancelPaymentRequest(invoice.uid, token)
@@ -131,6 +136,34 @@ export async function start() {
 
     await delay(length > 0 ? 1000 : 5200)
 
+  }
+
+}
+
+async function updateBalances(wallet) {
+
+   console.log("--update balances--")
+
+   let balances = await wallet.balances()
+
+     for (let balance of balances) {
+    console.log(balance, 'update balance')
+
+     let [chain, currency] = balance.asset.split('.')
+      if (!currency) { currency = chain }
+
+      const { data } = await axios.put(`https://api.anypayx.com/v1/api/apps/wallet-bot/address-balances`, {
+        currency,
+        chain,
+        balance: balance.value,
+        address: balance.address
+       }, {
+          auth: {
+            username: config.get('anypay_access_token'),
+            password: ''
+          }
+      })
+  console.log(data)
   }
 
 
