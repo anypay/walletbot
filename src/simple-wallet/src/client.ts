@@ -65,7 +65,7 @@ export class Client {
 
   ): Promise<protocol.PaymentResponse> {
 
-    log.info('wallet-bot.simple-wallet.transmitPayment', { params, transaction, options })
+    log.info('wallet-bot.simple-wallet.transmitPayment', { params, transaction, options, url: this.url })
 
     var payment: protocol.SendPayment;
 
@@ -86,7 +86,7 @@ export class Client {
 
         chain: params.chain,
 
-        currency: params.chain,
+        currency: params.currency,
 
         transactions: [{ tx: transaction }]
       }

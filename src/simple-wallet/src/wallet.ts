@@ -57,6 +57,7 @@ var assets = require('require-all')({
 });
 
 const XMR = require('./assets/xmr')
+const MATIC_USDC = require('./assets/matic.usdc')
 
 import { FeeRates, getRecommendedFees } from './mempool.space'
 import log from '../../log'
@@ -120,7 +121,7 @@ export class Wallet {
 
       } catch(error) {
 
-        log.error('balances.error', error)
+        //log.error('balances.error', error)
 
         return null
 
@@ -141,7 +142,7 @@ export class Wallet {
       transmit
     })
 
-    return this.payUri(`${config.get('API_BASE')}/i/${invoice_uid}`, asset, { transmit })
+    return this.payUri(`${config.get('api_base')}/i/${invoice_uid}`, asset, { transmit })
   }
 
   async payUri(uri: string, asset:string, {transmit}:{transmit: boolean}={transmit:true}): Promise<PaymentTx> {
@@ -152,11 +153,15 @@ export class Wallet {
       transmit
     })
 
+    let [chain, currency] = asset.split('.')
+
+    if (!currency) { currency = chain }
+
     let client = new Client(uri)
 
     let paymentRequest = await client.selectPaymentOption({
-      chain: asset,
-      currency: asset
+      chain,
+      currency
     })
 
     var payment;
@@ -225,12 +230,20 @@ export class Wallet {
 
     let wallet = this.asset(asset)
 
+    let [chain, currency] = asset.split('.')
+
     let balance = await wallet.balance()
 
     if (asset === 'XMR') {
 
       return XMR.buildPayment(paymentRequest)
       
+    }
+
+    if (chain === 'MATIC' && currency === 'USDC') {
+
+      return MATIC_USDC.buildPayment(paymentRequest)
+
     }
 
     await wallet.listUnspent()

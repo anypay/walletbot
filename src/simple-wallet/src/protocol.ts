@@ -65,6 +65,7 @@ export interface PaymentRequest extends ProtocolMessage {
   paymentUrl: string;
   paymentId: string;
   chain: string;
+  currency?: string;
   network: string;
   instructions: Instruction[];
 }

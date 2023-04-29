@@ -13,6 +13,8 @@ import axios from 'axios'
 
 import { listBalances } from './websockets'
 
+import { listBalances as _listBalances } from './balances'
+
 import { start as server } from './server'
 
 export async function start() {
@@ -49,7 +51,7 @@ export async function start() {
 
     log.error('no wallet_bot_backup_seed_phrase config variable set')
 
-    log.error("Please run `docker run wallet-bot seed-phrase` to generate a new empty wallet")
+    log.error("Please run `echo wallet_bot_backup_seed_phrase=$(npx seed-phrase) >> .env` to generate a new empty wallet")
 
     process.exit(1)
 
@@ -62,6 +64,8 @@ export async function start() {
   //const wallet = await loadWallet(wallets)
 
   const wallet = await loadWallet(wallets)
+
+  console.log(await _listBalances())
 
   while (true) {
 

@@ -61,8 +61,10 @@ export class MnemonicWallet {
     init() {
   
       const seed = bip39.mnemonicToSeedSync(this.mnemonic).toString('hex')
+
+      console.log(seed, 'SEED')
   
-      this.btchdprivatekey = btc.HDPrivateKey['fromSeed'](seed)
+      this.btchdprivatekey = btc.HDPrivateKey.fromSeed(seed)
   
       this.dashhdprivatekey = dash.HDPrivateKey.fromSeed(seed)
   
@@ -116,6 +118,30 @@ export class MnemonicWallet {
         privatekey: this.ethersWallet
       }, {
         asset: 'AVAX',
+        address: this.ethersWallet.address,
+        privatekey: this.ethersWallet
+      }, {
+        asset: 'MATIC.USDC',
+        address: this.ethersWallet.address,
+        privatekey: this.ethersWallet
+      }, {
+        asset: 'ETH.USDC',
+        address: this.ethersWallet.address,
+        privatekey: this.ethersWallet
+      }, {
+        asset: 'AVAX.USDC',
+        address: this.ethersWallet.address,
+        privatekey: this.ethersWallet
+      }, {
+        asset: 'MATIC.USDT',
+        address: this.ethersWallet.address,
+        privatekey: this.ethersWallet
+      }, {
+        asset: 'ETH.USDT',
+        address: this.ethersWallet.address,
+        privatekey: this.ethersWallet
+      }, {
+        asset: 'AVAX.USDT',
         address: this.ethersWallet.address,
         privatekey: this.ethersWallet
       }]

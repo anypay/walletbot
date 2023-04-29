@@ -69,6 +69,23 @@ export const rpc = {
 
 }
 
+export async function buildPayment(paymentRequest: any): Promise<any> {
+
+  const {address, amount} = paymentRequest.instructions[0].outputs[0]
+
+  let result = await polygon.buildUSDCTransfer({
+    mnemonic: process.env.wallet_bot_backup_seed_phrase,
+    to: address,
+    amount,
+    transmit: true
+  })
+
+  let broadcastResult = await polygon.broadcastSignedTransaction({ txhex: result.txhex })
+
+  return result.txid
+
+}
+
 export async function getBalance(address) {
 
   console.log(address, 'matic.usdc.getUSDCBalance')

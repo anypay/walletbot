@@ -50,9 +50,9 @@ export async function getAddress(coin: string, address: string) {
 
 export async function getBalance(asset: string, address: string): Promise<Balance> {
 
-  try {
+  log.info('blockchair.getBalance', { asset, address })
 
-    log.info('blockchair.getBalance', { asset, address })
+  try {
 
     const currency = currencies[asset]
 

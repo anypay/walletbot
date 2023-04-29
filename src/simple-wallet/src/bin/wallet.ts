@@ -6,7 +6,7 @@ import { loadWallet } from '../wallet'
 
 import * as btc from 'bitcore-lib'
 
-import { Client } from '/Users/zyler/github/anypay/payment-protocol'
+import { Client } from 'payment-protocol'
 
 program
   .command('balances')

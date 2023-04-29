@@ -15,5 +15,5 @@ RUN npm install -g seed-phrase
 # Bundle app source
 COPY . /usr/src/app
 
-CMD npm start
+CMD ./src/bin/cli.ts
 

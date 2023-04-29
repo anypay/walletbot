@@ -8,11 +8,13 @@ const program = new Command();
 
 const { version } = require('../../package')
 
-import config from '../config'
+/*import config from '../config'
 
 import log from '../log'
+*/
 
-import { listBalances } from '../balances'
+//import { listBalances } from '../balances'
+/*
 
 import { createInvoice } from '../invoices'
 
@@ -22,31 +24,93 @@ import { existsSync, writeFileSync } from 'fs'
 
 import { getBitcore } from '../wallet'
 
-import { initWalletFromMnemonic } from '..'
 
+*/
+
+import axios from 'axios'
+
+import { initWalletFromMnemonic } from '..'
 
 program
   .version(version)
-  .option('--config <path>')
-  .option('--host <ipaddress>')
-  .option('--port <integer>')
-  .option('--prometheus_enabled <boolean>')
-  .option('--amqp_enabled <boolean>')
-  .option('--http_api_enabled <boolean>')
-  .option('--swagger_enabled <boolean>')
-  .option('--postgres_enabled <boolean>')
-  .option('--database_url <connection_string>')
-  .option('--amqp_url <connection_string>')
-  .option('--amqp_exchange <name>')
-  .option('--amqp_enabled <boolean>')
 
 program
   .command('start')
   .action(async () => {
 
-    start()
+    //start()
+  console.log('start')
 
   })
+
+program
+  .command('list-addresses')
+  .action(async () => {
+
+    //console.log('list-addresses')
+    //let balances = await listBalances()
+
+    let wallet = await initWalletFromMnemonic()
+
+    console.log(wallet)
+
+    let balances = await wallet.balances()
+
+    console.log(balances)
+
+  })
+
+program
+  .command('pay-invoice <uid> <chain> <currency>')
+  .action(async (uid, chain, currency) => {
+
+
+    let wallet = await initWalletFromMnemonic()
+
+    console.log(wallet)
+
+    //let balances = await wallet.balances()
+
+    //console.log(balances)
+
+    let result = await wallet.payInvoice(uid, `${chain}.${currency}`)
+
+    console.log(result)
+
+  })
+
+
+
+program
+  .command('list-address-balance-history')
+  .action(async () => {
+
+    //start()
+  console.log('start')
+
+  })
+
+program
+  .command('add-payment')
+  .option('--chain <string>')
+  .option('--currency <string>')
+  .option('--uri <uri>')
+  .action(async () => {
+
+    //start()
+  console.log('add-payment', program)
+
+  })
+
+program
+  .command('start')
+  .action(async () => {
+
+    //start()
+  console.log('start')
+
+  })
+/*
 
 program
   .command('balances')
@@ -203,6 +267,7 @@ program
     process.exit(0)
 
   })
+*/
 
 program.parse(process.argv)
 

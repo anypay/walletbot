@@ -8,7 +8,7 @@ program
   .command('listunspent <chain> <address>')
   .action(async (chain, address) => {
 
-    let {listUnspent} = getRPC(chain)
+    let {listUnspent}: any = getRPC(chain)
 
     let utxos = await listUnspent(address)
 
