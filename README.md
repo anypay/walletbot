@@ -37,6 +37,16 @@ Once your .env file contains the required variables you may start wallet bot:
 docker run -d --restart=always --env-file=.env --name=wallet-bot anypay/wallet-bot npm start
 docker logs -f wallet-bot
 ```
+#### Paying an Invoice Directly
+
+One easy way to create a new invoice is at https://next.anypayx.com/dashboard/merchant/payments/
+
+Given the invoice uid, call `pay-invoice $UID $CHAIN $CURRENCY`. 
+
+```
+export INVOICE_UID=QtSCrNxE2
+docker run --name walletbot --rm -it --env-file=.env anypay/wallet-bot:develop pay-invoice $INVOICE_UID MATIC USDC
+```
 
 ## Configuration
 

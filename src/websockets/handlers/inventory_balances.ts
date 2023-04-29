@@ -7,13 +7,13 @@ import { log } from '../../log'
 
 export default async function (socket: Socket, json?: any) {
 
-    log.info(`wallet-bot.websocket.handlers.inventory.balances`, json)
+    //log.info(`wallet-bot.websocket.handlers.inventory.balances`, json)
 
     const balances = await listBalances()
 
     for (let balance of balances) {
 
-        log.info('wallet-bot.balance', balance)
+        //log.info('wallet-bot.balance', balance)
     }
 
     socket.emit('inventory.balances', balances)

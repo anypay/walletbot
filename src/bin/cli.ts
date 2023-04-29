@@ -149,7 +149,7 @@ program
   })
 
 program
-  .command('newinvoice')
+  .command('add-payment')
   .requiredOption('-c, --currency <currency>', 'coin to collect')
   .requiredOption('-a, --address <address>', 'crypto receiving address')
   .requiredOption('-v, --value <value>', 'amount to collect', (value) => parseFloat(value))

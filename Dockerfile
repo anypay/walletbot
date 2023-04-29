@@ -17,3 +17,4 @@ COPY . /usr/src/app
 
 CMD ./dist/bin/cli.js
 
+ENTRYPOINT ["ts-node", "src/bin/cli.ts"]
