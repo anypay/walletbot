@@ -146,25 +146,49 @@ async function updateBalances(wallet) {
 
    let balances = await wallet.balances()
 
+   const { data: serverBalances } = await axios.get(`https://api.anypayx.com/v1/api/apps/wallet-bot/address-balances`, {
+      auth: {
+        username: config.get('anypay_access_token'),
+        password: ''
+      }
+   })
+
+    console.log(serverBalances, 'serverBalances')
+
      for (let balance of balances) {
-    console.log(balance, 'update balance')
+      console.log(balance, 'update balance')
 
-     let [chain, currency] = balance.asset.split('.')
-      if (!currency) { currency = chain }
+     
 
-      const { data } = await axios.put(`https://api.anypayx.com/v1/api/apps/wallet-bot/address-balances`, {
-        currency,
-        chain,
-        balance: balance.value,
-        address: balance.address
-       }, {
-          auth: {
-            username: config.get('anypay_access_token'),
-            password: ''
-          }
-      })
-  console.log(data)
-  }
+       let [chain, currency] = balance.asset.split('.')
+        if (!currency) { currency = chain }
+
+        let serverBalance = serverBalances.balances.find(b => b.chain === chain && b.currency === currency && b.address === balance.address)
+
+        console.log('server balance found', serverBalance)
+
+        if (serverBalance.balance != balance.value) {
+
+          const { data } = await axios.put(`https://api.anypayx.com/v1/api/apps/wallet-bot/address-balances`, {
+            currency,
+            chain,
+            balance: balance.value,
+            address: balance.address
+           }, {
+              auth: {
+                username: config.get('anypay_access_token'),
+                password: ''
+              }
+          })
+
+          console.log(data)
+
+        } else {
+
+          console.log('same address balance, do nothing')
+
+        }
+    }
 
 
 
