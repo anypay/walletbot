@@ -57,10 +57,6 @@ export async function start() {
 
   const { wallets } = MnemonicWallet.init(mnemonic)
 
-  //const card = wallets.filter(wallet => wallet.asset === 'DASH').filter(w => !!w)[0]
-
-  //const wallet = await loadWallet(wallets)
-
   const wallet = await loadWallet(wallets)
 
   while (true) {
@@ -73,7 +69,7 @@ export async function start() {
 
       length = unpaid.length
 
-      log.debug('invoices.unpaid.list', { count: unpaid.length })
+      console.log('invoices.unpaid.list', { count: unpaid.length })
 
       for (let invoice of shuffle<any>(unpaid)) {
 
