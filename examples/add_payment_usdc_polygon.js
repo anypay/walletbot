@@ -28,7 +28,9 @@ async function main() {
 
   const anypay = app({
     // Here you provide the Anypay API key from your wallet bot dashboard.
-    apiKey: process.env.anypay_access_token
+    apiKey: process.env.anypay_access_token,
+
+    apiBase: process.env.anypay_api_base || 'https://api.next.anypayx.com'
   })
 
 
@@ -40,9 +42,9 @@ async function main() {
     currency: 'USDC',
 
     // For testing purposes simply set the address as your own
-    address: '0xA77547a3fB82a5Fa4DB408144870B69c70906989',
+    address: process.argv[2] || '0xA77547a3fB82a5Fa4DB408144870B69c70906989',
 
-    amount: 5.00
+    amount: process.argv[3] ? parseFloat(process.argv[3]) : 0.01
 
   }, {
 
