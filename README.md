@@ -8,6 +8,30 @@ Self-custody, headless wallet service that runs as a daemon process within your 
 
 The application runs as a long-running process which should be managed by k8s, docker, or your system service manager such as systemd or similar. It may be run in a node.js environment or as an isolated docker container. The single process requires no additional services such as database servers to be run.
 
+## Running in Nodejs (Typescript)
+
+```
+import { WalletBot } from '@anypay/walletbot'
+
+export async function start() {
+
+  const walletBot = new WalletBot({
+    seed_phrase: process.env.WALLET_BOT_BACKUP_SEED_PHRASE,
+    anypay_token: process.env.ANYPAY_ACCESS_TOKEN
+  })
+
+  walletBot.start()
+
+}
+
+if (require.main === module) {
+
+  start()
+
+}
+```
+
+### Running with Docker
 
 `docker pull anypay/wallet-bot`
 
