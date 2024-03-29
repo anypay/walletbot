@@ -1,10 +1,11 @@
-require('dotenv').config()
 
-//import { log } from './log'
+import { config as dotenv } from 'dotenv'
 
-const nconf = require('nconf')
+dotenv()
 
-const os = require('os')
+import * as nconf from 'nconf'
+
+import { homedir } from 'os'
 
 nconf.argv({
   parseValues: true,
@@ -18,7 +19,7 @@ nconf.env({
 
 const global_file = `/etc/wallet-bot/wallet-bot.json`
 
-const user_file = `${os.homedir()}/.wallet-bot/wallet-bot.json`
+const user_file = `${homedir()}/.wallet-bot/wallet-bot.json`
 
 const project_file = `${process.cwd()}/.wallet-bot/wallet-bot.json`
 
@@ -62,7 +63,8 @@ nconf.defaults({
   loki_label_app: 'wallet-bot',
   api_base: 'https://api.anypayx.com',
   wallets: [],
-  socket_io_host: 'wss://api.anypayx.com',
+  websocket_url: 'wss://wss.wallet.anypayx.com',
+  socket_io_host: 'wss://socketio.wallet.anypayx.com',
   socket_io_path: '/v1/apps/wallet-bot',
   socket_io_reconnection_delay_max: 10000,
   btc_fee_rate: 'economyFee'

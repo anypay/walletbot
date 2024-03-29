@@ -1,11 +1,11 @@
 
-import { Socket } from 'socket.io-client'
+import { WebSocket } from 'ws'
 
-import { listBalances } from '../../balances'
+import { listBalances, Balance } from '../../balances'
 
 import { log } from '../../log'
 
-export default async function (socket: Socket, json?: any) {
+export default async function (socket: WebSocket, json?: any): Promise<Balance[]> {
 
     log.info(`wallet-bot.websocket.handlers.inventory.balances`, json)
 
@@ -16,7 +16,7 @@ export default async function (socket: Socket, json?: any) {
         log.info('wallet-bot.balance', balance)
     }
 
-    socket.emit('inventory.balances', balances)
+    socket?.emit('inventory.balances', balances)
 
     return balances
 

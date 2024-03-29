@@ -47,13 +47,73 @@ export class RpcClient {
 
 }
 
-import { getBalance as blockchair_getBalance, listUnspent as blockchair_listUnspent, BlockchairUtxo } from '../../../../blockchair'
-
-import { run, RunUtxo } from '../../run'
-
 export async function listUnspent(address): Promise<Utxo[]> {
 
-  const utxos: RunUtxo[]  = await run.blockchain.utxos(address)
+  var confirmed: any, unconfirmed: any;
+
+  try {
+
+
+  const result = await axios.get<{
+    address: string,
+    script: string,
+    result: {
+        height: number,
+        tx_pos: number,
+        tx_hash: string,
+        value: number
+      }[]
+  }>(`https://api.whatsonchain.com/v1/bsv/main/address/${address}/confirmed/unspent`)
+
+  confirmed = result.data.result
+
+
+  } catch(error) {
+
+    confirmed = []
+
+  }
+
+  try {
+
+
+  const result = await axios.get<{result: {
+    hex: string,
+    tx_pos: number,
+    tx_hash: string,
+    value: number
+  }[]
+}>(`https://api.whatsonchain.com/v1/bsv/main/address/${address}/unconfirmed/unspent`)
+
+  unconfirmed = result.data.result
+
+  } catch(error) {
+
+    unconfirmed = []
+  }
+
+  return [
+    ...confirmed.map(utxo => {
+      return {
+        txid: utxo.tx_hash,
+        vout: utxo.tx_pos,
+        value: utxo.value,
+        confirmed: true,
+        spendable: true
+      }
+    }), 
+    ...unconfirmed.map(utxo => {
+      return {
+        txid: utxo.tx_hash,
+        vout: utxo.tx_pos,
+        value: utxo.value,
+        confirmed: false,
+        spendable: true
+      }
+    })
+  ]
+  // TODO: Replace RUN here with TAAL or other
+  /*const utxos: RunUtxo[]  = await run.blockchain.utxos(address)
 
   return utxos.map(utxo => {
     return {
@@ -63,6 +123,7 @@ export async function listUnspent(address): Promise<Utxo[]> {
       scriptPubKey: utxo.script
     }
   })
+  */
 
 }
 

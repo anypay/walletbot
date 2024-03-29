@@ -219,6 +219,8 @@ export class Wallet {
 
   async buildPayment(paymentRequest, asset) {
 
+    console.log('BUILD PAYMENT', paymentRequest, asset)
+
     let { instructions } = paymentRequest
 
     let wallet = this.asset(asset)
@@ -276,6 +278,92 @@ export class Wallet {
       tx = new bitcore.Transaction()
         .from(inputs)
 
+    } else if(asset === 'BSV') {
+
+      const transactions = await Promise.all(wallet.unspent.map(async unspent => {
+
+        console.log('bsv.unspent', unspent)
+
+        try {
+
+          const { data } = await axios.get<{
+            txid: string,
+            hash: string,
+            locktime: number,
+            vin: {
+  
+            }[],
+            vout: {
+              value: number,
+              n: number,
+              scriptPubKey: {
+                asm: string,
+                hex: string,
+                reqSigs: number,
+                type: number,
+                addresses: string[],
+                opReturn: null,
+                isTruncated: boolean
+              }
+            }[],
+            blockhash: string,
+            confirmations: number,
+            time: number,
+            blocktime: number
+          }>(`https://api.whatsonchain.com/v1/bsv/main/tx/hash/${unspent.txid}`)
+
+  
+          console.log('bsv.transaction', data.vout)
+
+          const inputs = data.vout.map(output => {
+            if (output.scriptPubKey && !output.scriptPubKey.addresses) {
+              return false
+            }
+
+            if (output.scriptPubKey && output.scriptPubKey.addresses && output.scriptPubKey.addresses.length) {
+
+
+              if (wallet.address !== output.scriptPubKey?.addresses[0]) {
+                console.log('ADDRESS MISMATCH', {
+                  address: wallet.address,
+                  output: output.scriptPubKey?.addresses[0]
+                })
+                return false
+              } else {
+                console.log('ADDRESS MATCH', {
+                  address: wallet.address,
+                  output: output.scriptPubKey?.addresses[0]
+                })
+              }
+            }
+
+            return {
+              txId: data.txid,
+              outputIndex: output.n,
+              satoshis: new BigNumber(output.value).times(100000000).toNumber(),
+              scriptPubKey: output.scriptPubKey.hex
+            }
+            
+          })
+          .filter(input => !!input)
+
+          console.log('bsv.inputs', inputs)
+
+          tx = new bitcore.Transaction()
+          .from(inputs)
+
+          console.log('bsv.tx', tx)
+
+
+        } catch(error) {
+
+          console.log('bsv.error', error)
+
+        }
+
+        
+      }))
+
     } else {
 
       const unspent = await Promise.all(wallet.unspent.map(async utxo => {
@@ -323,18 +411,24 @@ export class Wallet {
 
     }, new BigNumber(0)).toNumber()
 
+    console.log('totalInput', totalInput)
+
     for (let output of instructions[0].outputs) {
+
+      console.log('output', output)
 
       let address = bitcore.Address.fromString(output.address)
 
       let script = bitcore.Script.fromAddress(address)
 
-      tx.addOutput(
-        bitcore.Transaction.Output({
-          satoshis: output.amount,
-          script: script.toHex()
-        })
-      )
+      const txOutput = bitcore.Transaction.Output({
+        satoshis: output.amount,
+        script: script.toHex()
+      })
+
+      console.log({ txOutput })
+
+      tx.addOutput(txOutput)
 
       totalOutput += output.amount
 
@@ -351,7 +445,21 @@ export class Wallet {
       throw new Error(`Insufficient ${wallet.asset} funds to pay invoice`)
     }
 
-    tx.change(wallet.address)
+    console.log('totalOutput', totalOutput)
+
+    console.log('wallet', wallet)
+    console.log('address', wallet.address)
+
+    try {
+      tx.change(wallet.address)
+
+    } catch(error) {
+      console.log('change error', error)
+      throw error
+    }
+
+
+    console.log('change added')
 
     if (asset === 'BTC') {
 
@@ -404,9 +512,20 @@ export class Wallet {
 
   async getInvoice(uid: string): Promise<any> {
 
-    let { data } = await axios.get(`${config.get('api_base')}/invoices/${uid}`)
+    try {
 
-    return data
+      let { data } = await axios.get(`${config.get('api_base')}/invoices/${uid}`)
+
+      return data
+
+    } catch(error) {
+
+      console.log(error.message);
+
+      throw error;
+
+    }
+
 
   }
 }
