@@ -28,7 +28,6 @@ export async function connect(token?: string): Promise<WebSocket> {
   });
 
   const websocket_url = config.get('socket_io_host');
-  console.log("WEBSOCKET_URL", config.get('socket_io_host'))
 
   socket = new WebSocket(config.get('socket_io_host'), {
     headers: {

@@ -58,10 +58,10 @@ export class WalletBot {
         //socket = await connect(this.options.anypay_token)
 
       }
+
+      console.log('Wallet Bot Started -- Listening for Payment Requests to Fulfill')
   
       while (true) {
-
-        console.log("LOOP 1")
     
         var length = 0;
     
@@ -70,22 +70,12 @@ export class WalletBot {
           let unpaid = await listUnpaid()
     
           length = unpaid.length
-
-          console.log(`unpaid invoices: ${length}`)
         
           for (let invoice of shuffle<any>(unpaid)) {
-
-            console.log("IN SHUFFLE")
-
-            console.log(invoice)
     
             try {
 
-              console.log('API BASE', config.get("api_base"))
-
               const url = `${config.get('api_base')}/r/${invoice.uid}`
-
-              console.log({ url })
     
               const { data: options } = await axios.get(url, {
                 headers: {

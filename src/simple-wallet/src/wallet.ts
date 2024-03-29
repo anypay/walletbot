@@ -219,13 +219,11 @@ export class Wallet {
 
   async buildPayment(paymentRequest, asset) {
 
-    console.log('BUILD PAYMENT', paymentRequest, asset)
-
     let { instructions } = paymentRequest
 
     let wallet = this.asset(asset)
 
-    let balance = await wallet.balance()
+    await wallet.balance()
 
     if (asset === 'XMR') {
 
@@ -282,8 +280,6 @@ export class Wallet {
 
       const transactions = await Promise.all(wallet.unspent.map(async unspent => {
 
-        console.log('bsv.unspent', unspent)
-
         try {
 
           const { data } = await axios.get<{
@@ -313,8 +309,6 @@ export class Wallet {
           }>(`https://api.whatsonchain.com/v1/bsv/main/tx/hash/${unspent.txid}`)
 
   
-          console.log('bsv.transaction', data.vout)
-
           const inputs = data.vout.map(output => {
             if (output.scriptPubKey && !output.scriptPubKey.addresses) {
               return false
@@ -324,16 +318,10 @@ export class Wallet {
 
 
               if (wallet.address !== output.scriptPubKey?.addresses[0]) {
-                console.log('ADDRESS MISMATCH', {
-                  address: wallet.address,
-                  output: output.scriptPubKey?.addresses[0]
-                })
+
                 return false
               } else {
-                console.log('ADDRESS MATCH', {
-                  address: wallet.address,
-                  output: output.scriptPubKey?.addresses[0]
-                })
+
               }
             }
 
@@ -347,13 +335,8 @@ export class Wallet {
           })
           .filter(input => !!input)
 
-          console.log('bsv.inputs', inputs)
-
           tx = new bitcore.Transaction()
           .from(inputs)
-
-          console.log('bsv.tx', tx)
-
 
         } catch(error) {
 
@@ -411,11 +394,7 @@ export class Wallet {
 
     }, new BigNumber(0)).toNumber()
 
-    console.log('totalInput', totalInput)
-
     for (let output of instructions[0].outputs) {
-
-      console.log('output', output)
 
       let address = bitcore.Address.fromString(output.address)
 
@@ -425,8 +404,6 @@ export class Wallet {
         satoshis: output.amount,
         script: script.toHex()
       })
-
-      console.log({ txOutput })
 
       tx.addOutput(txOutput)
 
@@ -445,11 +422,6 @@ export class Wallet {
       throw new Error(`Insufficient ${wallet.asset} funds to pay invoice`)
     }
 
-    console.log('totalOutput', totalOutput)
-
-    console.log('wallet', wallet)
-    console.log('address', wallet.address)
-
     try {
       tx.change(wallet.address)
 
@@ -457,9 +429,6 @@ export class Wallet {
       console.log('change error', error)
       throw error
     }
-
-
-    console.log('change added')
 
     if (asset === 'BTC') {
 

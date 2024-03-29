@@ -15,10 +15,6 @@ export async function listUnpaid(): Promise<any[]> {
 
     const url = `${base}/v1/api/apps/wallet-bot/invoices?status=unpaid`
 
-    console.log("LIST UNPAID URL", url)
-
-    console.log("ACCESS TOKEN", config.get('anypay_access_token'))
-
     let { data } = await axios.get(url, {
       auth: {
         username: config.get('anypay_access_token'),
