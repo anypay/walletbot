@@ -1,6 +1,6 @@
 {
-   "name": "wallet-bot",
-   "version": "0.8.1",
+   "name": "@anypay/walletbot",
+   "version": "0.9.0",
    "private": false,
    "description": "Your Money-Sending Robot Friend",
    "main": "./dist/wallet-bot/src/index.js",
