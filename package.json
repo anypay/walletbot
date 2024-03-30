@@ -1,6 +1,6 @@
 {
    "name": "@anypay/walletbot",
-   "version": "0.9.2",
+   "version": "0.9.3",
    "public": true,
    "private": false,
    "description": "Your Money-Sending Robot Friend",
@@ -10,7 +10,7 @@
       "test": "NODE_ENV=test nyc --reporter=lcov mocha --require=ts-node/register --timeout=20000 __tests__/**/*_test.ts --exit",
       "runtest": "NODE_ENV=test nyc nyc --reporter=lcov mocha --require=ts-node/register --timeout=20000 $1",
       "build": "tsc",
-      "postbuild": "shebang-trim dist/wallet-bot/src/bin/cli.js && chmod +x dist/wallet-bot/src/bin/cli.js",
+      "postbuild": "shebang-trim dist/bin/cli.js && chmod +x dist/bin/cli.js",
       "ci": "circleci local execute --job build",
       "commit": "npx cz",
       "seed-phrase": "seed-phrase",
