@@ -13,9 +13,7 @@ const Joi = require('joi')
 
 const Pack = require('../package');
 
-import { load } from './server/handlers'
-
-const handlers = load(join(__dirname, './server/handlers'))
+import handlers from './server/handlers'
 
 const port = config.get('port')
 

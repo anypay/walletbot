@@ -1,43 +1,23 @@
 
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
+
+import * as Balances from './handlers/balances'
+import * as Payments from './handlers/payments'
+import * as Status   from './handlers/status'
+
+import { Request, ResponseToolkit } from '@hapi/hapi'
+
+interface Handler {
+  [key: string]: (request: Request, h: ResponseToolkit) => void;
 }
 
-export function load(dirname) {
-
-  var handlers: any = {}
-
-  var tsHandlers: any = require('require-all')({
-    dirname,
-    filter      :  /(.+)\.ts$/,
-    map: function(name, path) {
-
-      return name.split('_').map(p => {
-
-        return capitalizeFirstLetter(p);
-
-      })
-      .join('');
-    }
-  });
-
-  var jsHandlers: any = require('require-all')({
-    dirname,
-    map: function(name, path) {
-
-      return name.split('_').map(p => {
-
-        return capitalizeFirstLetter(p);
-
-      })
-      .join('');
-    }
-  });
-
-  handlers = Object.assign(handlers, jsHandlers);
-
-  handlers = Object.assign(handlers, tsHandlers);
-
-  return handlers;
+interface Handlers {
+  [key: string]: Handler;
 }
 
+const handlers: Handlers = {
+  Balances,
+  Payments,
+  Status
+}
+
+export default handlers
