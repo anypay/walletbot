@@ -1,10 +1,10 @@
 {
    "name": "@anypay/walletbot",
-   "version": "0.9.3",
+   "version": "1.5.0",
    "public": true,
    "private": false,
    "description": "Your Money-Sending Robot Friend",
-   "main": "./dist/wallet-bot/src/index.js",
+   "main": "./dist/index.js",
    "scripts": {
       "start": "ts-node src/main.ts",
       "test": "NODE_ENV=test nyc --reporter=lcov mocha --require=ts-node/register --timeout=20000 __tests__/**/*_test.ts --exit",

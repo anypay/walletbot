@@ -8,6 +8,15 @@ Self-custody, headless wallet service that runs as a daemon process within your 
 
 The application runs as a long-running process which should be managed by k8s, docker, or your system service manager such as systemd or similar. It may be run in a node.js environment or as an isolated docker container. The single process requires no additional services such as database servers to be run.
 
+## Installation with Homebrew for Mac (AMD64 and x86_64)
+
+```
+brew tap anypay/walletbot
+brew install walletbot
+
+walletbot --help
+```
+
 ## Running in Nodejs (Typescript)
 
 ```
