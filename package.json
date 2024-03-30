@@ -1,6 +1,6 @@
 {
    "name": "@anypay/walletbot",
-   "version": "0.9.1",
+   "version": "0.9.2",
    "public": true,
    "private": false,
    "description": "Your Money-Sending Robot Friend",
