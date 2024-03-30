@@ -1,14 +1,13 @@
 #!/usr/bin/env ts-node
 
 require('dotenv').config()
+/*
 
-const { version } = require('../../package')
 
 import config from '../config'
 
 import log from '../log'
 
-import { program } from 'commander'
 
 import { listBalances } from '../balances'
 
@@ -21,6 +20,15 @@ import { existsSync, writeFileSync } from 'fs'
 import { getBitcore } from '../wallet'
 
 import { initWalletFromMnemonic } from '..'
+
+*/
+
+import { Command } from 'commander'
+
+
+const program = new Command()
+
+const { version } = require('../../package')
 
 
 program
@@ -36,15 +44,16 @@ program
   .option('--database_url <connection_string>')
   .option('--amqp_url <connection_string>')
   .option('--amqp_exchange <name>')
-  .option('--amqp_enabled <boolean>')
 
 program
   .command('start')
   .action(async () => {
 
-    start()
+    //start()
 
   })
+
+  /*
 
 program
   .command('balances')
@@ -201,6 +210,8 @@ program
     process.exit(0)
 
   })
+
+  */
 
 program.parse(process.argv)
 
