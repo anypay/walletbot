@@ -21,11 +21,23 @@ program
 
     const options = program.opts();
 
-    const AUTH_TOKEN = config.get("walletbot_auth_token");
+    const seed_phrase = options.seedPhrase || config.get('walletbot_seed_phrase')
+
+    if (!seed_phrase) {
+      console.error('walletbot_seed_phrase environment variable or --seed-phrase command line option is required')
+      process.exit(1)
+    }
+
+    const auth_token = options.authToken || config.get('walletbot_auth_token')
+
+    if (!auth_token) {
+      console.error('walletbot_auth_token environment variable or --auth-token command line option is required')
+      process.exit(1)
+    }
 
     const walletBot = new WalletBot({
-      seed_phrase: options.seedPhrase || config.get('walletbot_seed_phrase'),
-      anypay_token: options.authToken || config.get('walletbot_auth_token'),
+      seed_phrase,
+      auth_token,
       http_api_enabled: config.get('http_api_enabled'),
       websocket_enabled: true,
       websocket_url: config.get('websocket_url')
@@ -50,9 +62,35 @@ program
 program
   .command('list-balances')
   .action(async () => {
-    const balances = await listBalances()
+
+    const options = program.opts();
+
+    const seed_phrase = options.seedPhrase || config.get('walletbot_seed_phrase')
+
+    if (!seed_phrase) {
+      console.error('walletbot_seed_phrase environment variable or --seed-phrase command line option is required')
+      process.exit(1)
+    }
+
+    const auth_token = options.authToken || config.get('walletbot_auth_token')
+
+    if (!auth_token) {
+      console.error('walletbot_auth_token environment variable or --auth-token command line option is required')
+      process.exit(1)
+    }
+
+    const walletBot = new WalletBot({
+      seed_phrase,
+      auth_token,
+      http_api_enabled: config.get('http_api_enabled'),
+      websocket_enabled: true,
+      websocket_url: config.get('websocket_url')
+    })
+
+    const balances = await walletBot.listBalances()
 
     console.log(balances)
+
   })
   
   program.parse(process.argv)

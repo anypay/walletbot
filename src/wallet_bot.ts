@@ -2,7 +2,7 @@ import axios from 'axios'
 
 import * as delay from 'delay'
 
-import { connect, MnemonicWallet, config, log } from './'
+import { connect, MnemonicWallet, config, log, Wallet } from './'
 
 import { handlers } from './websockets/index'
 
@@ -14,10 +14,11 @@ import { loadWallet } from './simple-wallet/src'
 
 import { shuffle } from './utils'
 
+import { Balance } from './balances'
   
 export interface WalletBotOptions {
     seed_phrase: string
-    anypay_token: string;
+    auth_token: string;
     
     http_api_enabled?: boolean;
     websocket_enabled?: boolean;
@@ -27,13 +28,44 @@ export interface WalletBotOptions {
 export class WalletBot {
 
     options: WalletBotOptions
+
+    wallet?: Wallet;
   
     constructor(options: WalletBotOptions) {
       this.options = options
 
+      if (!options.seed_phrase) {
+        throw new Error('seed_phrase is required')
+      }
+
+      if (!options.auth_token) {
+        throw new Error('auth_token is required')
+      }
+
       if (this.options.websocket_enabled === undefined) {
         this.options.websocket_enabled = true
       }
+
+    }
+
+    async loadWallet(): Promise<Wallet> {
+
+      if (!this.wallet) {
+
+        const { wallets } = MnemonicWallet.init(this.options.seed_phrase)
+  
+        this.wallet = await loadWallet(wallets)
+      }
+
+      return this.wallet
+
+    }
+
+    async listBalances(): Promise<Balance[]> {
+
+      const wallet = await this.loadWallet()
+
+      return wallet.balances()
     }
   
     async start() {
@@ -43,20 +75,20 @@ export class WalletBot {
         server()
       }
   
-      if (!this.options.anypay_token) {
+      if (!this.options.auth_token) {
         log.error(`Please visit https://anypayx.com/dashboard/apps/wallet-bot to get your token`)
         throw new Error('walletbot_auth_token not set in environment variables')
       }
   
       const { wallets } = MnemonicWallet.init(this.options.seed_phrase)
   
-      const wallet = await loadWallet(wallets)
+      this.wallet = await loadWallet(wallets)
 
       var socket: WebSocket | null = null;
 
       if (this.options.websocket_enabled) {
   
-        //socket = await connect(this.options.anypay_token)
+        //socket = await connect(this.options.auth_token)
 
       }
 
@@ -87,7 +119,7 @@ export class WalletBot {
     
               if (options.paymentOptions.length > 1) {
     
-                const result = await cancelPaymentRequest(invoice.uid, this.options.anypay_token)
+                const result = await cancelPaymentRequest(invoice.uid, this.options.auth_token)
     
                 log.info('payment-request.cancelled', result)
     
@@ -98,7 +130,7 @@ export class WalletBot {
     
               if (currency === 'XMR') {
     
-                const result = await cancelPaymentRequest(invoice.uid, this.options.anypay_token)
+                const result = await cancelPaymentRequest(invoice.uid, this.options.auth_token)
     
                 log.info('payment-request.cancelled', result)
     
@@ -108,7 +140,7 @@ export class WalletBot {
     
               log.info('invoice.pay', options.paymentOptions[0])
     
-              let result = await wallet.payUri(`${config.get('api_base')}/r/${invoice.uid}`, currency)
+              let result = await this.wallet.payUri(`${config.get('api_base')}/r/${invoice.uid}`, currency)
     
               log.info('wallet.payInvoice.result', { uid: invoice.uid, result })
 

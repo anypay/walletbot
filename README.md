@@ -22,7 +22,7 @@ Usage: walletbot [options] [command]
 Options:
   -V, --version                     output the version number
   -s --seed-phrase <seed_phrase>    seed phrase for wallet bot
-  -t --anypay-token <anypay_token>  anypay token for wallet bot
+  -t --auth-token <auth_token>  anypay token for wallet bot
   -h, --help                        display help for command
 
 Commands:
@@ -63,7 +63,7 @@ import { WalletBot } from '@anypay/walletbot'
 
 const walletBot = new WalletBot({
   seed_phrase: "replace this with your twelve word seed phrase to start sending payments",
-  anypay_token: "replacewith-your-anypay-apiauthtoken"
+  auth_token: "replacewith-your-anypay-apiauthtoken"
 })
 
 walletBot.start()

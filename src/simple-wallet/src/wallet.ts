@@ -526,8 +526,6 @@ export class Wallet {
 
     } catch(error) {
 
-      console.log(error.message);
-
       throw error;
 
     }
