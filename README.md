@@ -11,10 +11,38 @@ The application runs as a long-running process which should be managed by k8s, d
 ## Installation with Homebrew for Mac (AMD64 and x86_64)
 
 ```
-brew tap anypay/walletbot
-brew install walletbot
+> brew tap anypay/walletbot
+> brew install walletbot
+```
 
-walletbot --help
+```
+> walletbot
+Usage: walletbot [options] [command]
+
+Options:
+  -V, --version                     output the version number
+  -s --seed-phrase <seed_phrase>    seed phrase for wallet bot
+  -t --anypay-token <anypay_token>  anypay token for wallet bot
+  -h, --help                        display help for command
+
+Commands:
+  start
+  seed-phrase
+  help [command]                    display help for command
+```
+
+### Generating a 12-Word Seed Phrase
+
+```
+> walletbot seed-phrase
+```
+
+### Starting Wallet Bot
+
+```
+> walletbot start \
+  --seed-phrase="$SEED_PHRASE" \
+  --anypay-token=$ANYPAY_API_TOKEN
 ```
 
 ## Running in Nodejs (Typescript)
@@ -22,86 +50,18 @@ walletbot --help
 ```
 import { WalletBot } from '@anypay/walletbot'
 
-export async function start() {
+const walletBot = new WalletBot({
+  seed_phrase: process.env.WALLET_BOT_BACKUP_SEED_PHRASE,
+  anypay_token: process.env.ANYPAY_ACCESS_TOKEN
+})
 
-  const walletBot = new WalletBot({
-    seed_phrase: process.env.WALLET_BOT_BACKUP_SEED_PHRASE,
-    anypay_token: process.env.ANYPAY_ACCESS_TOKEN
-  })
+walletBot.start()
 
-  walletBot.start()
-
-}
-
-if (require.main === module) {
-
-  start()
-
-}
 ```
 
 ### Running with Docker
 
-`docker pull anypay/wallet-bot`
-
-## Setting Up Wallet Keys
-
-Rather than managing your own private key generation and backup, allow wallet bot to generate keys offline and automatically output a wallet-bot.json config file for you. Simply save a copy of this file to your organizations' vaults to restore funds in case of a machine failure.
-
-
-
-```
-docker run anypay/wallet-bot new_wallet > wallet-bot.json
-```
-
-You may view with `cat wallet-bot.json` that one private key has been created for each of the supported coins.
-
-Alternatively you may provide your own wallet keys using the Wallet Import Format (WIF) inside wallet-bot.json.
-
-## Running the Service
-
-To run with wallet-bot.json config file:
-
-
-```
-docker run \
-  -v /path/to/wallet-bot.json:/etc/wallet-bot/wallet-bot.json \
-  anypay/wallet-bot start
-```
-
-To run with environment variables:
-
-```
-docker run --env-file=/path/to/.env anypay/wallet-bot start
-```
-
-You may also combine some variables from one method with others from the other method.
-## Configuration
-
-Wallets and system settings may be configured by a combination of json config files, environment variables, and command line flags. All variables may be provided by either of the config variations.
-
-## Environment Variables
-
-*required
-
-| Variable name                         | Description                   |
-|---------------------------------------|-------------------------------|
-| ANYPAY_API\_TOKEN *                     | https://anypayx.com/dashboard/developer/wallet-bot |
-| SLACK_WEBHOOK\_URL							| Will receive Slack-formatted messages on certain events |
-| WEBHOOK_URL									| Will receive messages on certain events |
-| LOG_LEVEL									| [error, debug, info, warn] defaults to info |
-| BSV_PRIVATE\_KEY                       | Private signing key to BSV wallet      |
-| BTC_PRIVATE\_KEY      						| Private signing key to BTC wallet            |
-| BCH_PRIVATE\_KEY      						| Private signing key to BCH wallet           |
-| DASH_PRIVATE\_KEY      					| Private signing key to DASH wallet           |
-| DOGE_PRIVATE\_KEY      					| Private signing key to DOGE wallet           |
-| LTC_PRIVATE\_KEY      						| Private signing key to LTC wallet           |
-| ZEC_PRIVATE\_KEY      						| Private signing key to ZEC wallet           |
-
-
-
-Configuration should be provided by a file mounted at `/etc/wallet-bot/wallet-bot.json`
-
+`docker run anypay/walletbot`
 
 ## Testing
 
