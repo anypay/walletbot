@@ -36,6 +36,7 @@ program
   })
 
 import { generateMnemonic } from 'bip39'
+import { listBalances } from './balances'
 
 program
   .command('seed-phrase')
@@ -44,6 +45,14 @@ program
     const mnemonic = generateMnemonic()
 
     console.log(mnemonic)
+  })
+  
+program
+  .command('list-balances')
+  .action(async () => {
+    const balances = await listBalances()
+
+    console.log(balances)
   })
   
   program.parse(process.argv)
