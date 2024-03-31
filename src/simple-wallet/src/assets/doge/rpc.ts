@@ -30,8 +30,8 @@ export class RpcClient {
   constructor(params: RpcOptions) {
 
     this.url = params.url
-    this.username = params.username || process.env.DOGE_RPC_USER
-    this.password = params.password || process.env.DOGE_RPC_PASSWORD
+    this.username = String(params.username || process.env.DOGE_RPC_USER)
+    this.password = String(params.password || process.env.DOGE_RPC_PASSWORD)
   }
 
   async listUnspent(address: string): Promise<UTXO[]> {
@@ -55,10 +55,10 @@ export class RpcClient {
 
 }
 
-export async function listUnspent(address): Promise<UTXO[]> {
+export async function listUnspent(address: string): Promise<UTXO[]> {
 
   let rpc = new RpcClient({
-    url: process.env.DOGE_RPC_URL
+    url: String(process.env.DOGE_RPC_URL)
   })
 
   return rpc.listUnspent(address)
@@ -70,7 +70,7 @@ import { Balance } from '../../wallet'
 
 import { getBalance as blockchair_getBalance } from '../../../../blockchair'
 
-export async function getBalance(address): Promise<Balance> {
+export async function getBalance(address: string): Promise<Balance> {
 
   return blockchair_getBalance('DOGE', address)
 

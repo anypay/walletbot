@@ -1,6 +1,6 @@
 
-import { Socket } from 'socket.io-client'
+import { WebSocket } from 'ws'
 
-export default async function (socket: Socket, json: any) {
+export default async function (socket: WebSocket, json: any) {
 
 }

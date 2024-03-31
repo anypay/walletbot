@@ -1,3 +1,21 @@
+/*
+    This file is part of Wallet Bot: https://github.com/anypay/walletbot
+    Copyright (c) 2022 Anypay Inc, Steven Zeiler
+
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose  with  or without fee is hereby granted, provided that the above
+    copyright notice and this permission notice appear in all copies.
+
+    THE  SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+    WITH  REGARD  TO  THIS  SOFTWARE  INCLUDING  ALL  IMPLIED  WARRANTIES  OF
+    MERCHANTABILITY  AND  FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+    ANY  SPECIAL ,  DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+    WHATSOEVER  RESULTING  FROM  LOSS  OF USE, DATA OR PROFITS, WHETHER IN AN
+    ACTION  OF  CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*/
+//==============================================================================
+
 require('dotenv').config()
 
 import { getRPC } from './rpc'
@@ -49,14 +67,31 @@ export class UnsufficientFundsError extends Error {
 
 }
 
-var assets = require('require-all')({
-  dirname  :  __dirname + '/assets',
-  recursive: true,
-  filter      :  /(.+)\.ts$/,
-  map: (name) => name.toUpperCase()
-});
+interface Assets {
+  [key: string]: any
+}
 
-const XMR = require('./assets/xmr')
+import * as BTC from './assets/btc'
+import * as BSV from './assets/bsv'
+import * as BCH from './assets/bch'
+import * as DASH from './assets/dash'
+import * as DOGE from './assets/doge'
+import * as LTC from './assets/ltc'
+import * as XRP from './assets/xrp'
+import * as XMR from './assets/xmr'
+
+const assets: Assets = {
+  BTC,
+  BSV,
+  BCH,
+  DASH,
+  DOGE,
+  LTC,
+  XRP,
+  XMR
+}
+
+export { assets }
 
 import { FeeRates, getRecommendedFees } from './mempool.space'
 import log from '../../log'
@@ -126,7 +161,7 @@ export class Wallet {
 
     }))
 
-    return balances.filter(balance => balance !== null)
+    return balances.filter(balance => balance !== null) as Balance[]
 
   }
 
@@ -185,9 +220,11 @@ export class Wallet {
 
     } catch(error) {
 
-      log.info('simple-wallet.transmitPayment.error', error.response.data)
+      const { response } = error as any
 
-      throw new Error(error.response.data)
+      log.info('simple-wallet.transmitPayment.error', response.data)
+
+      throw new Error(response.data)
 
     }
 
@@ -201,7 +238,7 @@ export class Wallet {
   }
 
   async newInvoice(newInvoice: { amount: number, currency: string }): Promise<Invoice> {
-    return new Invoice()
+    throw new Error('not implemented')
   }
 
   async buildPaymentForUri(uri: string, asset:string) {
@@ -217,7 +254,7 @@ export class Wallet {
 
   }
 
-  async buildPayment(paymentRequest, asset) {
+  async buildPayment(paymentRequest: PaymentRequest, asset: string) {
 
     let { instructions } = paymentRequest
 
@@ -495,7 +532,6 @@ export class Wallet {
 
     }
 
-
   }
 }
 
@@ -518,8 +554,8 @@ export class Card {
   }) {
     this.unspent = []
     this.asset = params.asset
-    this.privatekey = params.privatekey
-    this.address = params.address
+    this.privatekey = String(params.privatekey)
+    this.address = String(params.address)
 
     let bitcore = getBitcore(this.asset)
 
@@ -553,9 +589,6 @@ export class Card {
 
       } catch(error) {
 
-        error.asset = this.asset
-        error.address = this.address
-
         log.error('blockchair.listUnspent.error', error)
 
       }
@@ -574,7 +607,7 @@ export class Card {
 
     var value;
 
-    const errors = []
+    const errors: Error[] = []
 
     if (rpc['getBalance']) {
 
@@ -588,11 +621,6 @@ export class Card {
 
       } catch(error) {
 
-        errors.push(error)
-
-        error.asset = this.asset
-        error.address = this.address
-
         log.error('blockchair.getBalance.error', error)
 
       }
@@ -601,7 +629,7 @@ export class Card {
 
     const { amount: value_usd } = await convertBalance({
       currency: this.asset,
-      amount: this.asset === 'XMR' ? value : value / 100000000
+      amount: this.asset === 'XMR' ? Number(value) : new BigNumber(Number(value)).dividedBy(100000000).toNumber()
     }, 'USD')
 
     try {
@@ -625,7 +653,7 @@ export class Card {
 
       return {
         asset: this.asset,
-        value: value,
+        value: Number(value),
         value_usd,
         address: this.address,
         errors
@@ -635,7 +663,7 @@ export class Card {
 
       return {
         asset: this.asset,
-        value: value,
+        value: Number(value),
         value_usd,
         address: this.address,
         errors
@@ -649,6 +677,7 @@ export class Card {
 }
 
 import { wallet_rpc_url, wallet_rpc_config } from './assets/xmr'
+import { PaymentRequest } from './protocol'
 
 export async function loadWallet(loadCards?: LoadCard[]) {
 

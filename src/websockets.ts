@@ -1,9 +1,9 @@
 import { WebSocket } from 'ws';
-import { Logform } from 'winston';
 import config from './config';
 import { log } from './log';
-import { listBalances } from './websockets';
-import { handlers, Log, Context } from './websockets/handlers';
+import { Log, Context } from './websockets/handlers';
+
+import { handlers } from './websockets/index'
 
 let socket: WebSocket | undefined;
 
@@ -37,10 +37,13 @@ export async function connect(token?: string): Promise<WebSocket> {
 
   socket.on('open', async () => {
     log.info('socket.io.connected');
-    const balances = await listBalances(socket!);
-    for (let balance of balances) {
-      console.log({ balance });
+    if (socket) {
+      const balances = await handlers.list_balances(socket, {});
+      for (let balance of balances) {
+        console.log({ balance });
+      }
     }
+
   });
 
   socket.on('close', (event) => {
@@ -56,18 +59,21 @@ export async function connect(token?: string): Promise<WebSocket> {
     log.info('ping');
   });
 
-  socket.on('message', (data: WebSocket.Data) => {
+  socket.on('message', (data: any) => {
     const message = JSON.parse(data.toString());
-    const event = message.event;
+    const event = message.event as string;
     const handler = handlers[event];
     if (handler) {
-      const log = new Log({ socket });
-      const context: Context<any> = {
-        socket,
-        log,
-        message,
-      };
-      handler(socket, context);
+      if (socket) {
+        const log = new Log({ socket });
+
+        const context: Context<any> = {
+          socket,
+          log,
+          message,
+        };
+        handler(socket, context);
+      }
     }
   });
 

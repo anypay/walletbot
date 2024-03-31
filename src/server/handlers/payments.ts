@@ -1,11 +1,9 @@
 
-import log from '../../log'
-
-import { badRequest } from 'boom'
+import { badRequest } from '@hapi/boom'
 
 import { listPayments, Payment } from '../../payments'
 
-export async function index(req, h) {
+export async function index() {
 
   try {
 
@@ -17,12 +15,11 @@ export async function index(req, h) {
 
     }
 
-    log.debug('api.handlers.Payments.index.result', payments)
-
-
   } catch(error) {
 
-    log.error('api.handlers.Payments.index', error)
+    const { message } = error as Error
+
+    return badRequest(message)
 
   }
 

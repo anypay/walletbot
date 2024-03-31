@@ -5,15 +5,15 @@ import * as Transport from 'winston-transport'
 
 import config from './config'
 
-import { socket } from './socket.io'
+import { socket } from './websockets'
 
-import { Socket } from 'socket.io-client'
+import { WebSocket } from 'ws'
 
 class WebsocketTransport extends Transport {
 
-  socket: Socket;
+  socket: WebSocket;
 
-  constructor(socket: Socket, opts) {
+  constructor(socket: WebSocket, opts: winston.LoggerOptions) {
 
     super(opts);
 
@@ -21,7 +21,7 @@ class WebsocketTransport extends Transport {
 
   }
 
-  log(info, callback) {
+  log(info: string, callback: Function) {
 
     try {
 
@@ -41,25 +41,38 @@ class WebsocketTransport extends Transport {
 };
 
 
-const transports = [
+const transports: winston.transport[] = [
   new winston.transports.Console({
     format: winston.format.json()
   }),
-  new WebsocketTransport(socket, {
-    format: winston.format.json()
-  })  
+ 
 ]
+
+if (socket) {
+  transports.push(
+    new WebsocketTransport(socket, {
+      format: winston.format.json()
+    }) 
+  )
+}
 
 if (config.get('loki_host')) {
 
   const LokiTransport = require("winston-loki");
 
-  const lokiConfig = {
+  const lokiConfig: {
+    format: winston.Logform.Format,
+    host: string,
+    json: boolean,
+    batching: boolean,
+    labels: { app: string },
+    basicAuth?: string
+  } = {
     format: winston.format.json(),
     host: config.get('loki_host'),
     json: true,
     batching: false,
-    labels: { app: config.get('loki_label_app') }
+    labels: { app: config.get('loki_label_app') },
   }
 
   if (config.get('loki_basic_auth')) {

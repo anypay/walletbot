@@ -1,17 +1,17 @@
 
-const bip39 = require('bip39');
-
+import * as bip39 from 'bip39'
+//@ts-ignore
 import * as btc from 'bitcore-lib'
-
+//@ts-ignore
 import * as dash from '@dashevo/dashcore-lib'
-
+//@ts-ignore
 import * as doge from 'bitcore-lib-doge'
-
+//@ts-ignore
 import * as ltc from 'litecore-lib'
-
+//@ts-ignore
 import * as bch from 'bitcore-lib-cash'
 
-import * as bsv from 'bsv'
+import { bsv } from 'scrypt-ts'
 
 export class MnemonicWallet {
 
@@ -39,7 +39,7 @@ export class MnemonicWallet {
 
     }
 
-    constructor(mnemonic) {
+    constructor(mnemonic: string) {
   
       this.mnemonic = mnemonic
 
@@ -55,7 +55,7 @@ export class MnemonicWallet {
   
       this.dashhdprivatekey = dash.HDPrivateKey.fromSeed(seed)
   
-      this.bsvhdprivatekey = bsv.HDPrivateKey.fromSeed(seed)
+      this.bsvhdprivatekey = bsv.HDPrivateKey.fromSeed(seed, bsv.Networks.livenet)
   
       this.ltchdprivatekey = ltc.HDPrivateKey.fromSeed(seed)
   

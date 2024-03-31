@@ -1,34 +1,20 @@
 
-import listBalances from './handlers/inventory_balances'
+import { WebSocket } from 'ws'
 
-export { listBalances }
+import list_addresses from './handlers/inventory_addresses'
+import list_balances from './handlers/inventory_balances'
+import invoice_cancelled from './handlers/invoice_cancelled'
+import invoice_created from './handlers/invoice_created'
+import invoice_paid from './handlers/invoice_paid'
 
+import { Handlers } from './handler'
 
-export function load(dirname) {
-
-    var handlers: any = {}
-
-    var tsHandlers: any = require('require-all')({
-        dirname,
-        filter      :  /(.+)\.ts$/,
-        map: function(name, path) {
-
-        return name.split('.').join('.');
-        }
-    });
-
-    var jsHandlers: any = require('require-all')({
-        dirname,
-        map: function(name, path) {
-
-        return name.split('.').join('.');
-
-        }
-    });
-
-    handlers = Object.assign(handlers, jsHandlers);
-
-    handlers = Object.assign(handlers, tsHandlers);
-
-    return handlers;
+const handlers: Handlers = {
+    list_addresses,
+    list_balances,
+    invoice_cancelled,
+    invoice_created,
+    invoice_paid
 }
+
+export { handlers } 

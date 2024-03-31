@@ -1,43 +1,41 @@
+/*
+    This file is part of Wallet Bot: https://github.com/anypay/walletbot
+    Copyright (c) 2022 Anypay Inc, Steven Zeiler
+
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose  with  or without fee is hereby granted, provided that the above
+    copyright notice and this permission notice appear in all copies.
+
+    THE  SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+    WITH  REGARD  TO  THIS  SOFTWARE  INCLUDING  ALL  IMPLIED  WARRANTIES  OF
+    MERCHANTABILITY  AND  FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+    ANY  SPECIAL ,  DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+    WHATSOEVER  RESULTING  FROM  LOSS  OF USE, DATA OR PROFITS, WHETHER IN AN
+    ACTION  OF  CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*/
+//==============================================================================
 
 import { BigNumber } from 'bignumber.js';
 
 import { join } from 'path'
 
+import { assets } from './wallet'
 
-const assetsTs = require('require-all')({
-  dirname: join(__dirname, 'assets'),
-  filter      :  /\index.ts/,
-  recursive: true
-})
+export function getBitcore(assetName: string): any {
 
-const assetsJs = require('require-all')({
-  dirname: join(__dirname, 'assets'),
-  filter      :  /\index.js/,
-  recursive: true
-})
+  const asset = assets[assetName]
 
-export function getBitcore(asset): any {
+  if (!asset.bitcore) {
 
-  const tsAsset = assetsTs[asset.toLowerCase()]
-  
-  const jsAsset = assetsJs[asset.toLowerCase()]
-
-  const bitcore = tsAsset ? (
-    tsAsset['index.ts'].bitcore
-  ) : (
-    jsAsset['index.js'].bitcore
-  )
-
-  if (!bitcore) {
-
-    throw new Error(`bitcore not available for ${asset}`)
+    throw new Error(`bitcore not available for ${assetName}`)
   }
 
-  return bitcore
+  return asset.bitcore
 
 }
 
-export function toSatoshis(amount): number{
+export function toSatoshis(amount: number): number{
   let amt = new BigNumber(amount); 
   let scalar = new BigNumber(100000000);
 

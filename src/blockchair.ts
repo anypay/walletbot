@@ -9,7 +9,10 @@ import { Balance } from './simple-wallet/src/wallet'
 
 import config from './config'
 
-const currencies = {
+const currencies: {
+  [key: string]: string
+
+} = {
   'BCH': 'bitcoin-cash',
   'BSV': 'bitcoin-sv',
   'BTC': 'bitcoin',
@@ -36,9 +39,7 @@ export async function getAddress(coin: string, address: string) {
 
     return data
 
-  } catch(err) {
-
-    const error = new BlockchairApiError(err.message)
+  } catch(error) {
 
     log.error('blockchair.api.dashboards', error)
 
@@ -70,9 +71,7 @@ export async function getBalance(asset: string, address: string): Promise<Balanc
 
     return { asset, address, value: parseFloat(value), value_usd: parseFloat(value_usd.toFixed(2)) }
 
-  } catch(err) {
-
-    const error = new BlockchairApiError(err.message)
+  } catch(error) {
 
     log.error('blockchair.api.getBalance.error', error)
 
@@ -117,9 +116,7 @@ export async function listUnspent(asset: string, address: string): Promise<Utxo[
     })
 
 
-  } catch(err) {
-
-    const error = new BlockchairApiError(err.message)
+  } catch(error) {
 
     log.error('blockchair.api.listUnspent.error', error)
 
@@ -140,9 +137,7 @@ export async function getRawTx(asset: string, txid: string): Promise<any> {
 
     return data['data'][txid]['decoded_raw_transaction']
 
-  } catch(err) {
-
-    const error = new BlockchairApiError(err.message)
+  } catch(error) {
 
     log.error('blockchair.api.getRawTx.error', error)
 
@@ -150,4 +145,3 @@ export async function getRawTx(asset: string, txid: string): Promise<any> {
   }
 
 }
-

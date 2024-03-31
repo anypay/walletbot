@@ -3,7 +3,8 @@ require('dotenv').config()
 
 import config from './config'
 
-import { Server } from '@hapi/hapi'
+//@ts-ignore
+import { Server, ResponseToolkit, Request} from '@hapi/hapi'
 
 import { log } from './log'
 
@@ -36,7 +37,7 @@ export async function start() {
 
   server.auth.strategy('prometheus', 'basic', {
 
-    validate: async (req, password) => {
+    validate: async (_: any, password: string) => {
 
       if (config.get('prometheus_password') == undefined) {
 
@@ -66,7 +67,7 @@ export async function start() {
     server.route({
       method: 'GET',
       path: '/metrics',
-      handler: async (req, h) => {
+      handler: async (req: Request, h: ResponseToolkit) => {
         return h.response(await prometheus.metrics())
       },
       options: {

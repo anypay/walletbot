@@ -72,7 +72,7 @@ nconf.defaults({
 
 export default nconf
 
-function transform(obj) {
+function transform(obj: { key: string, value: any }) {
   return {
     key: obj.key.toLowerCase(),
     value: obj.value

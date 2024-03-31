@@ -1,12 +1,12 @@
 
-import { Socket } from 'socket.io-client'
+import { WebSocket } from 'ws'
 
 import { log } from '../log'
 
 import { Logger } from 'winston'
 
 export interface Context<T> {
-    socket: Socket;
+    socket: WebSocket;
     message: T;
     log: Log;
 }
@@ -19,9 +19,9 @@ interface Invoice {
 export class Log {
     
     log: Logger;
-    socket: Socket;
+    socket: WebSocket;
 
-    constructor({socket}: {socket: Socket}) {
+    constructor({socket}: {socket: WebSocket}) {
         this.log = log
         this.socket = socket
     }

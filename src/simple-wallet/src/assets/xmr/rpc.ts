@@ -1,3 +1,21 @@
+/*
+    This file is part of Wallet Bot: https://github.com/anypay/walletbot
+    Copyright (c) 2022 Anypay Inc, Steven Zeiler
+
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose  with  or without fee is hereby granted, provided that the above
+    copyright notice and this permission notice appear in all copies.
+
+    THE  SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+    WITH  REGARD  TO  THIS  SOFTWARE  INCLUDING  ALL  IMPLIED  WARRANTIES  OF
+    MERCHANTABILITY  AND  FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+    ANY  SPECIAL ,  DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+    WHATSOEVER  RESULTING  FROM  LOSS  OF USE, DATA OR PROFITS, WHETHER IN AN
+    ACTION  OF  CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*/
+//==============================================================================
+
 require('dotenv').config()
 
 import axios from 'axios'
@@ -45,7 +63,7 @@ export class RpcClient {
     this.password = params.password
   }
 
-  async getBalance(address): Promise<number> {
+  async getBalance(address: string): Promise<number> {
 
     const trace = uuid()
 
@@ -99,7 +117,7 @@ export class RpcClient {
 
     log.info('wallet-bot.simple-wallet.xmr.rpc.listUnspent.result', { trace, data })
 
-    return utxos.map(utxo => {
+    return utxos.map((utxo: { amount: Number }) => {
       return Object.assign(utxo, { value: utxo.amount })
     })
 
@@ -136,7 +154,7 @@ export class RpcClient {
 
 }
 
-export async function listUnspent(address): Promise<Utxo[]> {
+export async function listUnspent(address: string): Promise<Utxo[]> {
 
   let rpc = new RpcClient({
     url: wallet_rpc_url
@@ -146,9 +164,7 @@ export async function listUnspent(address): Promise<Utxo[]> {
 
 }
 
-import { Balance } from '../../wallet'
-
-export async function getBalance(address): Promise<number> {
+export async function getBalance(address: string): Promise<number> {
 
   let rpc = new RpcClient({
     url: address

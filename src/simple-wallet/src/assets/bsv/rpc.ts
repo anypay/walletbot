@@ -36,8 +36,8 @@ export class RpcClient {
 
     let { data } = await axios.post(this.url, {method,params}, {
       auth: {
-        username: process.env.BSV_RPC_USER,
-        password: process.env.BSV_RPC_PASSWORD
+        username: String(process.env.BSV_RPC_USER),
+        password: String(process.env.BSV_RPC_PASSWORD)
       }
     })
 
@@ -47,7 +47,7 @@ export class RpcClient {
 
 }
 
-export async function listUnspent(address): Promise<Utxo[]> {
+export async function listUnspent(address: string): Promise<Utxo[]> {
 
   var confirmed: any, unconfirmed: any;
 
@@ -93,7 +93,7 @@ export async function listUnspent(address): Promise<Utxo[]> {
   }
 
   return [
-    ...confirmed.map(utxo => {
+    ...confirmed.map((utxo: { tx_hash: any; tx_pos: any; value: any; }) => {
       return {
         txid: utxo.tx_hash,
         vout: utxo.tx_pos,
@@ -102,7 +102,7 @@ export async function listUnspent(address): Promise<Utxo[]> {
         spendable: true
       }
     }), 
-    ...unconfirmed.map(utxo => {
+    ...unconfirmed.map((utxo: { tx_hash: any; tx_pos: any; value: any; }) => {
       return {
         txid: utxo.tx_hash,
         vout: utxo.tx_pos,
@@ -129,7 +129,7 @@ export async function listUnspent(address): Promise<Utxo[]> {
 
 import { Utxo } from '../../wallet'
 
-export async function getBalance(address): Promise<number> {
+export async function getBalance(address: string): Promise<number> {
 
   const utxos: Utxo[] = await listUnspent(address)
 

@@ -5,9 +5,8 @@ import config from './config'
 
 const base = config.get('api_base') || 'https://api.anypayx.com'
 
-import { log } from './log'
-
 import anypay from './anypay'
+import log from './log'
 
 export async function listUnpaid(): Promise<any[]> {
 
@@ -26,9 +25,7 @@ export async function listUnpaid(): Promise<any[]> {
 
   } catch(error) {
 
-    console.log(error.message)
-
-    //log.error('invoices.listUnpaid.error', error)
+    log.error('invoices.listUnpaid.error', error)
 
     return []
   }

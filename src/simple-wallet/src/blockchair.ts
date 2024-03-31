@@ -1,3 +1,20 @@
+/*
+    This file is part of Wallet Bot: https://github.com/anypay/walletbot
+    Copyright (c) 2022 Anypay Inc, Steven Zeiler
+
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose  with  or without fee is hereby granted, provided that the above
+    copyright notice and this permission notice appear in all copies.
+
+    THE  SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+    WITH  REGARD  TO  THIS  SOFTWARE  INCLUDING  ALL  IMPLIED  WARRANTIES  OF
+    MERCHANTABILITY  AND  FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+    ANY  SPECIAL ,  DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+    WHATSOEVER  RESULTING  FROM  LOSS  OF USE, DATA OR PROFITS, WHETHER IN AN
+    ACTION  OF  CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*/
+//==============================================================================
 
 import axios from 'axios'
 
@@ -9,7 +26,9 @@ import { Balance } from './wallet'
 
 import config from './config'
 
-const currencies = {
+const currencies: {
+  [key: string]: string
+} = {
   'BCH': 'bitcoin-cash',
   'BSV': 'bitcoin-sv',
   'BTC': 'bitcoin',
@@ -38,7 +57,9 @@ export async function getAddress(coin: string, address: string) {
 
   } catch(err) {
 
-    const error = new BlockchairApiError(err.message)
+    const { message } = err as any
+
+    const error = new BlockchairApiError(message)
 
     log.error('blockchair.api.dashboards', error)
 
@@ -54,7 +75,7 @@ export async function getBalance(asset: string, address: string): Promise<Balanc
 
     log.info('blockchair.getBalance', { asset, address })
 
-    const currency = currencies[asset]
+    const currency: string = currencies[asset]
 
     const url = `https://api.blockchair.com/${currency}/dashboards/address/${address}?key=${key}`
 
@@ -72,7 +93,9 @@ export async function getBalance(asset: string, address: string): Promise<Balanc
 
   } catch(err) {
 
-    const error = new BlockchairApiError(err.message)
+    const { message } = err as any
+
+    const error = new BlockchairApiError(message)
 
     log.error('blockchair.api.getBalance.error', error)
 
@@ -119,7 +142,9 @@ export async function listUnspent(asset: string, address: string): Promise<Utxo[
 
   } catch(err) {
 
-    const error = new BlockchairApiError(err.message)
+    const { message } = err as any
+
+    const error = new BlockchairApiError(message)
 
     log.error('blockchair.api.listUnspent.error', error)
 
@@ -142,7 +167,9 @@ export async function getRawTx(asset: string, txid: string): Promise<any> {
 
   } catch(err) {
 
-    const error = new BlockchairApiError(err.message)
+    const { message } = err as any
+
+    const error = new BlockchairApiError(message)
 
     log.error('blockchair.api.getRawTx.error', error)
 

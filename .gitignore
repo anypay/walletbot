@@ -16,3 +16,4 @@ dist/
 .wallet-bot
 wallet.json
 release/
+.DS_Store

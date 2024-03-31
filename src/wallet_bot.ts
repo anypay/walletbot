@@ -4,7 +4,7 @@ import * as delay from 'delay'
 
 import { connect, MnemonicWallet, config, log } from './'
 
-import { listBalances } from './websockets'
+import { handlers } from './websockets/index'
 
 import { start as server } from './server'
 
@@ -18,6 +18,7 @@ import { shuffle } from './utils'
 export interface WalletBotOptions {
     seed_phrase: string
     anypay_token: string;
+    
     http_api_enabled?: boolean;
     websocket_enabled?: boolean;
     websocket_url?: string;
@@ -111,14 +112,14 @@ export class WalletBot {
     
               log.info('wallet.payInvoice.result', { uid: invoice.uid, result })
 
-              if (this.options.websocket_enabled) {
+              if (this.options.websocket_enabled && socket) {
 
-                listBalances(socket)
+                handlers.list_balances(socket, {})
               }              
     
             } catch(error) {
-              
-              log.error('wallet.payInvoice.error', error.response.data)
+
+              log.error('wallet.payInvoice.error', error)
     
               /*const result = await cancelPaymentRequest(invoice.uid, token)
     
