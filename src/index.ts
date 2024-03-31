@@ -20,11 +20,11 @@ export { Wallet, loadWallet }
 
 export async function initWalletFromMnemonic(): Promise<Wallet> {
 
-  const mnemonic = config.get('wallet_bot_backup_seed_phrase')
+  const mnemonic = config.get('WALLETBOT_SEED_PHRASE')
 
   if (!mnemonic) {
 
-    const error = new Error('no wallet_bot_backup_seed_phrase config variable set')
+    const error = new Error('no WALLETBOT_SEED_PHRASE config variable set')
 
     log.error('config.env.invalid', error)
 

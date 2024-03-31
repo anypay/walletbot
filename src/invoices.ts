@@ -16,7 +16,7 @@ export async function listUnpaid(): Promise<any[]> {
 
     let { data } = await axios.get(url, {
       auth: {
-        username: config.get('anypay_access_token'),
+        username: config.get('walletbot_auth_token'),
         password: ''
       }
     })

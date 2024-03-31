@@ -12,8 +12,8 @@ const { version } = require('../package')
 program
   .name('walletbot')
   .version(version)
-  .option('-s --seed-phrase <seed_phrase>', 'seed phrase for wallet bot')
-  .option('-t --anypay-token <anypay_token>', 'anypay token for wallet bot')
+  .option('-s --seed-phrase <seed_phrase>', '12-work seed phrase for wallet bot')
+  .option('-t --auth-token <auth_token>', 'anypay api auth token for wallet bot')
 
 program
   .command('start')
@@ -21,11 +21,11 @@ program
 
     const options = program.opts();
 
-    console.log(options)
+    const AUTH_TOKEN = config.get("walletbot_auth_token");
 
     const walletBot = new WalletBot({
-      seed_phrase: options.seedPhrase || config.get('wallet_bot_backup_seed_phrase'),
-      anypay_token: options.anypayToken || config.get('anypay_access_token'),
+      seed_phrase: options.seedPhrase || config.get('walletbot_seed_phrase'),
+      anypay_token: options.authToken || config.get('walletbot_auth_token'),
       http_api_enabled: config.get('http_api_enabled'),
       websocket_enabled: true,
       websocket_url: config.get('websocket_url')
@@ -46,7 +46,7 @@ program
 
     console.log(mnemonic)
   })
-  
+
 program
   .command('list-balances')
   .action(async () => {

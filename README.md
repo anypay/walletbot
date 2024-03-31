@@ -41,8 +41,19 @@ Commands:
 
 ```
 > walletbot start \
-  --seed-phrase="$SEED_PHRASE" \
-  --anypay-token=$ANYPAY_API_TOKEN
+  --seed-phrase="replace this with your twelve word seed phrase to start sending payments" \
+  --auth-token=replacewith-your-anypay-apiauthtoken
+```
+
+### Configuring with Environment Variables
+In the same terminal shell tab or shell script first export the required environment variables,
+then you can run walletbot without providing the equivalent command line arguments.
+
+```
+export walletbot_seed_phrase="replace this with your twelve word seed phrase to start sending payments"
+export walletbot_auth_token=replacewith-your-anypay-apiauthtoken
+
+walletbot start
 ```
 
 ## Running in Nodejs (Typescript)
@@ -51,8 +62,8 @@ Commands:
 import { WalletBot } from '@anypay/walletbot'
 
 const walletBot = new WalletBot({
-  seed_phrase: process.env.WALLET_BOT_BACKUP_SEED_PHRASE,
-  anypay_token: process.env.ANYPAY_ACCESS_TOKEN
+  seed_phrase: "replace this with your twelve word seed phrase to start sending payments",
+  anypay_token: "replacewith-your-anypay-apiauthtoken"
 })
 
 walletBot.start()

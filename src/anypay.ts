@@ -1,8 +1,8 @@
+
 import { app } from 'anypay'
 
 import config from './config'
 
-const anypay = app(config.get('anypay_access_token'))
+const anypay = app(config.get('walletbot_auth_token'))
 
 export default anypay
-
