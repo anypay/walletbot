@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'
 
       - name: Install dependencies
         run: npm install
@@ -28,6 +28,4 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}} # Make sure to set this secret in your repository settings
         run: |
-          VERSION=$(echo "${GITHUB_REF}" | sed 's/refs\/tags\/v//')
-          npm version "${VERSION}"
           npm publish --access public
