@@ -18,6 +18,8 @@ export { config }
 
 export { Wallet, loadWallet }
 
+export { WalletBot } from './wallet_bot'
+
 export async function initWalletFromMnemonic(): Promise<Wallet> {
 
   const mnemonic = config.get('WALLETBOT_SEED_PHRASE')
