@@ -6,7 +6,7 @@
    "description": "Your Money-Sending Robot Friend",
    "main": "./dist/index.js",
    "scripts": {
-      "start": "ts-node src/main.ts start",
+      "start": "npx ts-node src/main.ts start",
       "test": "NODE_ENV=test nyc --reporter=lcov mocha --require=ts-node/register --timeout=20000 __tests__/**/*_test.ts --exit",
       "runtest": "NODE_ENV=test nyc nyc --reporter=lcov mocha --require=ts-node/register --timeout=20000 $1",
       "build": "tsc",
@@ -82,7 +82,7 @@
       "nyc": "^15.1.0",
       "pkg": "^5.8.1",
       "shebang-trim": "^1.1.0",
-      "ts-node": "3.3.0",
+      "ts-node": "^3.3.0",
       "typescript": "^3.9.10"
    },
    "config": {
