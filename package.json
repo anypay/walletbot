@@ -6,10 +6,11 @@
    "description": "Your Money-Sending Robot Friend",
    "main": "./dist/index.js",
    "scripts": {
-      "start": "npx ts-node src/main.ts start",
+      "start": "node dist/main.js start",
       "test": "NODE_ENV=test nyc --reporter=lcov mocha --require=ts-node/register --timeout=20000 __tests__/**/*_test.ts --exit",
       "runtest": "NODE_ENV=test nyc nyc --reporter=lcov mocha --require=ts-node/register --timeout=20000 $1",
       "build": "tsc",
+      "heroku-postbuild": "tsc",
       "postbuild": "shebang-trim dist/bin/cli.js && chmod +x dist/bin/cli.js",
       "ci": "circleci local execute --job build",
       "commit": "npx cz",
