@@ -7,11 +7,6 @@ import * as nconf from 'nconf'
 
 import { homedir } from 'os'
 
-nconf.argv({
-  parseValues: true,
-  transform
-})
-
 nconf.env({
   parseValues: true,
   transform
@@ -63,10 +58,7 @@ nconf.defaults({
   loki_label_app: 'wallet-bot',
   api_base: 'https://walletbot.anypayx.com',
   wallets: [],
-  websocket_url: 'wss://wss.walletbot.anypayx.com',
-  socket_io_host: 'wss://wss.walletbot.anypayx.com',
-  socket_io_path: '/v1/apps/wallet-bot',
-  socket_io_reconnection_delay_max: 10000,
+  walletbot_websocket_url: 'wss://wss.walletbot.anypayx.com',
   btc_fee_rate: 'economyFee'
 })
 

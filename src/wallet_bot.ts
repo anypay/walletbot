@@ -49,7 +49,7 @@ const default_walletbot_options: WalletBotDefaultOptions = {
   api_base: 'https://walletbot.anypayx.com',
   http_api_enabled: true,
   websocket_enabled: true,
-  websocket_url: 'wss://wss.walletbot.anypayx.com'
+  websocket_url: 'wss://wss.walletbot.anypayx.com',
 }
 
 export {

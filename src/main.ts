@@ -1,5 +1,4 @@
-
-import { config } from './'
+import config from './config'
 
 import { WalletBot, WalletBotOptions, default_walletbot_options } from './wallet_bot'
 
@@ -31,6 +30,7 @@ program
   .command('start')
   .action(async () => {
 
+
     const options = program.opts();
 
     const seed_phrase = options.seedPhrase || config.get('walletbot_seed_phrase')
@@ -53,8 +53,6 @@ program
 
     const websocket_enabled: boolean = parseBoolean(options.websocketEnabled)
 
-    console.log({ websocket_enabled })
-
     var http_api_enabled = options.prometheusEnabled
 
     if (options.prometheusEnabled === undefined) {
@@ -62,20 +60,25 @@ program
       http_api_enabled = false
     }
 
-    console.log("CLI OPTIONS", options)
-
-    console.log('DEFAULTS', default_walletbot_options)
-
-    const wallet_bot_options: WalletBotOptions = Object.assign(default_walletbot_options, {
+    const newOptions = {
       seed_phrase,
       auth_token,
-      api_base,
-      http_api_enabled,
-      websocket_enabled,
-      websocket_url,
-    })
+      api_base: api_base || default_walletbot_options.api_base,
+      http_api_enabled: http_api_enabled || default_walletbot_options.http_api_enabled,
+      websocket_enabled: websocket_enabled != undefined ? websocket_enabled : config.get('websocket_enabled'),
+      websocket_url: websocket_url || default_walletbot_options.websocket_url
+    }
 
-    console.log({ wallet_bot_options })
+    const wallet_bot_options: WalletBotOptions = {
+      ...default_walletbot_options,
+      ...newOptions,
+      ...(newOptions.seed_phrase && { seed_phrase: newOptions.seed_phrase }),
+      ...(newOptions.auth_token && { auth_token: newOptions.auth_token }),
+      ...(newOptions.api_base && { api_base: newOptions.api_base }),
+      ...(newOptions.http_api_enabled !== undefined && { http_api_enabled: newOptions.http_api_enabled }),
+      ...(newOptions.websocket_enabled !== undefined && { websocket_enabled: newOptions.websocket_enabled }),
+      ...(newOptions.websocket_url !== undefined && { websocket_url: newOptions.websocket_url })
+    }
 
     const walletBot = new WalletBot(wallet_bot_options)
 

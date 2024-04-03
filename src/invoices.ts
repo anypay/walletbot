@@ -19,7 +19,11 @@ export async function listUnpaid(walletBot: WalletBot): Promise<any[]> {
         password: ''
       }
     })
-  
+
+    if (data.invoices.length > 0) {
+      console.log(`${data.invoices.length} unpaid invoices`)
+    }
+
     return data.invoices
 
   } catch(error) {
