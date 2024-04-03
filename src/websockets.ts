@@ -4,34 +4,27 @@ import { log } from './log';
 import { Log, Context } from './websockets/handlers';
 
 import { handlers } from './websockets/index'
+import { WalletBot } from './wallet_bot';
 
 let socket: WebSocket | undefined;
 
 export { socket }
 
-export async function connect(token?: string): Promise<WebSocket> {
+export async function connect(walletBot: WalletBot): Promise<WebSocket> {
   console.log('websocket.connect');
 
-  if (!token) {
-    token = config.get('anypay_access_token');
-  }
-
-  const host = config.get('socket_io_host') || 'wss://api.anypayx.com';
-
   log.info('socket.io.connect', {
-    host,
+    host: walletBot.options.websocket_url,
     transports: ['websocket'],
     reconnectionDelayMax: config.get('socket_io_reconnection_delay_max'),
     extraHeaders: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${walletBot.options.auth_token}`,
     },
   });
 
-  const websocket_url = config.get('socket_io_host');
-
-  socket = new WebSocket(config.get('socket_io_host'), {
+  socket = new WebSocket(String(walletBot.options.websocket_url), {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${walletBot.options.auth_token}`,
     },
   });
 

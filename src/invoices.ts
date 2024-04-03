@@ -1,22 +1,21 @@
 
 import axios from 'axios'
 
-import config from './config'
-
-const base = config.get('api_base') || 'https://api.anypayx.com'
-
 import anypay from './anypay'
+
 import log from './log'
 
-export async function listUnpaid(): Promise<any[]> {
+import { WalletBot } from './wallet_bot'
+
+export async function listUnpaid(walletBot: WalletBot): Promise<any[]> {
 
   try {
 
-    const url = `${base}/v1/api/apps/wallet-bot/invoices?status=unpaid`
+    const url = `${walletBot.options.api_base}/v1/api/apps/wallet-bot/invoices?status=unpaid`
 
     let { data } = await axios.get(url, {
       auth: {
-        username: config.get('walletbot_auth_token'),
+        username: walletBot.options.auth_token,
         password: ''
       }
     })
@@ -24,8 +23,10 @@ export async function listUnpaid(): Promise<any[]> {
     return data.invoices
 
   } catch(error) {
+    const { message } = error as Error
+    console.log({ message })
 
-    log.error('invoices.listUnpaid.error', error)
+    log.error('invoices.listUnpaid.error', message)
 
     return []
   }

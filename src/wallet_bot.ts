@@ -15,24 +15,58 @@ import { loadWallet } from './simple-wallet/src'
 import { shuffle } from './utils'
 
 import { Balance } from './balances'
+
+import { WebSocket } from 'ws'
   
 export interface WalletBotOptions {
     seed_phrase: string
     auth_token: string;
-    
+
+    api_base?: string;
     http_api_enabled?: boolean;
     websocket_enabled?: boolean;
     websocket_url?: string;
 }
 
+interface WalletBotDefaultOptions {
+  api_base: string;
+  http_api_enabled: boolean;
+  websocket_enabled: boolean;
+  websocket_url: string;
+}
+
+export interface WalletBotProps {
+  seed_phrase: string
+  auth_token: string;
+
+  api_base: string;
+  http_api_enabled: boolean;
+  websocket_enabled: boolean;
+  websocket_url: string;
+}
+
+const default_walletbot_options: WalletBotDefaultOptions = {
+  api_base: 'https://walletbot.anypayx.com',
+  http_api_enabled: true,
+  websocket_enabled: true,
+  websocket_url: 'wss://wss.walletbot.anypayx.com'
+}
+
+export {
+  default_walletbot_options
+}
+
 export class WalletBot {
 
-    options: WalletBotOptions
+    options: WalletBotProps;
 
     wallet?: Wallet;
   
     constructor(options: WalletBotOptions) {
-      this.options = options
+
+      if (!options.api_base) {
+        options.api_base = 'https://walletbot.anypayx.com'
+      }
 
       if (!options.seed_phrase) {
         throw new Error('seed_phrase is required')
@@ -42,8 +76,17 @@ export class WalletBot {
         throw new Error('auth_token is required')
       }
 
-      if (this.options.websocket_enabled === undefined) {
-        this.options.websocket_enabled = true
+
+      if (options.websocket_enabled === undefined) {
+        options.websocket_enabled = true
+      }
+
+      this.options = {
+        ...options,
+        api_base: String(options.api_base),
+        http_api_enabled: Boolean(options.http_api_enabled),
+        websocket_enabled: Boolean(options.websocket_enabled),
+        websocket_url: String(options.websocket_url)
       }
 
     }
@@ -88,7 +131,7 @@ export class WalletBot {
 
       if (this.options.websocket_enabled) {
   
-        //socket = await connect(this.options.auth_token)
+        socket = await connect(this)
 
       }
 
@@ -100,7 +143,7 @@ export class WalletBot {
     
         try {
     
-          let unpaid = await listUnpaid()
+          let unpaid = await listUnpaid(this)
     
           length = unpaid.length
         
@@ -108,7 +151,7 @@ export class WalletBot {
     
             try {
 
-              const url = `${config.get('api_base')}/r/${invoice.uid}`
+              const url = `${this.options.api_base}/r/${invoice.uid}`
     
               const { data: options } = await axios.get(url, {
                 headers: {
@@ -119,7 +162,7 @@ export class WalletBot {
     
               if (options.paymentOptions.length > 1) {
     
-                const result = await cancelPaymentRequest(invoice.uid, this.options.auth_token)
+                const result = await cancelPaymentRequest(this, invoice.uid)
     
                 log.info('payment-request.cancelled', result)
     
@@ -130,7 +173,7 @@ export class WalletBot {
     
               if (currency === 'XMR') {
     
-                const result = await cancelPaymentRequest(invoice.uid, this.options.auth_token)
+                const result = await cancelPaymentRequest(this, invoice.uid)
     
                 log.info('payment-request.cancelled', result)
     
@@ -140,7 +183,7 @@ export class WalletBot {
     
               log.info('invoice.pay', options.paymentOptions[0])
     
-              let result = await this.wallet.payUri(`${config.get('api_base')}/r/${invoice.uid}`, currency)
+              let result = await this.wallet.payUri(`${this.options.api_base}/r/${invoice.uid}`, currency)
     
               log.info('wallet.payInvoice.result', { uid: invoice.uid, result })
 
@@ -180,11 +223,11 @@ export class WalletBot {
   }
 
 
-async function cancelPaymentRequest(uid: string, token: string): Promise<any> {
+async function cancelPaymentRequest(walletBot: WalletBot, uid: string): Promise<any> {
 
-    const { data } = await axios.delete(`${config.get('api_base')}/r/${uid}`, {
+    const { data } = await axios.delete(`${walletBot.options.api_base}/r/${uid}`, {
       auth: {
-        username: token,
+        username: walletBot.options.auth_token,
         password: ''
       }
     }) 
