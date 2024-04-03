@@ -16,11 +16,9 @@ const Pack = require('../package');
 
 import handlers from './server/handlers'
 
-const port = config.get('port')
-
 export const server = new Server({
-  host: config.get('host'),
-  port: config.get('port') || 5200,
+  host: config.get('HOST'),
+  port: config.get("PORT"),
   routes: {
     cors: true,
     validate: {
@@ -39,13 +37,13 @@ export async function start() {
 
     validate: async (_: any, password: string) => {
 
-      if (config.get('prometheus_password') == undefined) {
+      if (config.get('PROMETHEUS_PASSWORD') == undefined) {
 
         return { isValid: true, credentials: {id: 'public'} }
 
       }
 
-      if (password === config.get('prometheus_password')) {
+      if (password === config.get('PROMETHEUS_PASSWORD')) {
 
         return { isValid: true, credentials: {id: 'prometheus'} }
 
@@ -58,7 +56,7 @@ export async function start() {
     }
   })
 
-  if (config.get('prometheus_enabled')) {
+  if (config.get('PROMETHEUS_ENABLED')) {
 
     log.debug('server.metrics.prometheus', { path: '/metrics' })
 

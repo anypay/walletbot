@@ -1,9 +1,9 @@
 
 import config from '../src/config'
 
-config.set('prometheus_enabled', true)
+config.set('PROMETHEUS_ENABLED', true)
 
-config.set('prometheus_password', 'letmein')
+config.set('PROMETHEUS_PASSWORD', 'letmein')
 
 import { server, start } from '../src/server'
 
