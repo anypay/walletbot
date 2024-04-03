@@ -1,6 +1,8 @@
 ![](https://plugins.whatsonchain.com/api/plugin/main/ea8205469186c12f6b23866d3ef50ab84f6f6b82dab43075e0229ab32ca6f5bc/0)
 
-# Wallet Bot
+# @anypay/walletbot
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/anypay/walletbot-heroku)
 
 Self-custody, headless wallet service that runs as a daemon process within your data center. It manages your software operation's private keys so that your apps can securely send payments on any peer to peer payments network.
 
@@ -16,19 +18,23 @@ The application runs as a long-running process which should be managed by k8s, d
 ```
 
 ```
-> walletbot
 Usage: walletbot [options] [command]
 
 Options:
-  -V, --version                     output the version number
-  -s --seed-phrase <seed_phrase>    seed phrase for wallet bot
-  -t --auth-token <auth_token>  anypay token for wallet bot
-  -h, --help                        display help for command
+  -V, --version                                 output the version number
+  -s --seed-phrase <seed_phrase>                12-work seed phrase for wallet bot
+  -t --auth-token <auth_token>                  anypay api auth token for wallet bot
+  -a --api-base <api_base>                      anypay walletbot backend api base url
+  -p --prometheus-enabled <prometheus_enabled>  enable prometheus metrics
+  -w --websocket-url <websocket_url>            url for websockets connection to server
+  -e --websocket-enabled <websocket_enabled>    true or false, connect to websocket server
+  -h, --help                                    display help for command
 
 Commands:
   start
   seed-phrase
-  help [command]                    display help for command
+  list-balances
+  help [command]                                display help for command
 ```
 
 ### Generating a 12-Word Seed Phrase

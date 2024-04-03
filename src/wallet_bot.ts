@@ -26,6 +26,7 @@ export interface WalletBotOptions {
     http_api_enabled?: boolean;
     websocket_enabled?: boolean;
     websocket_url?: string;
+    prometheus?: PrometheusOptions;
 }
 
 interface WalletBotDefaultOptions {
@@ -33,6 +34,12 @@ interface WalletBotDefaultOptions {
   http_api_enabled: boolean;
   websocket_enabled: boolean;
   websocket_url: string;
+}
+
+export interface PrometheusOptions {
+  enabled: boolean;
+  port: number;
+  secret?: string;
 }
 
 export interface WalletBotProps {

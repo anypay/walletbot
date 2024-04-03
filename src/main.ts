@@ -13,8 +13,9 @@ program
   .version(version)
   .option('-s --seed-phrase <seed_phrase>', '12-work seed phrase for wallet bot')
   .option('-t --auth-token <auth_token>', 'anypay api auth token for wallet bot')
-  .option('-a --api-base <api_base>', 'anypay api base url defaults to https://walletbot.anypayx.com')
+  .option('-a --api-base <api_base>', 'anypay walletbot backend api base url')
   .option('-p --prometheus-enabled <prometheus_enabled>', 'enable prometheus metrics')
+  .option('-h --http-api-enabled <http_api_enabled>', 'server json data over http api to clients')
   .option('-w --websocket-url <websocket_url>', 'url for websockets connection to server')
   .option('-e --websocket-enabled <websocket_enabled>', 'true or false, connect to websocket server')
 
@@ -53,12 +54,7 @@ program
 
     const websocket_enabled: boolean = parseBoolean(options.websocketEnabled)
 
-    var http_api_enabled = options.prometheusEnabled
-
-    if (options.prometheusEnabled === undefined) {
-
-      http_api_enabled = false
-    }
+    var http_api_enabled = options.httpApiEnabled
 
     const newOptions = {
       seed_phrase,
