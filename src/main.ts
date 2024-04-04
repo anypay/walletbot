@@ -31,26 +31,25 @@ program
   .command('start')
   .action(async () => {
 
-
     const options = program.opts();
 
-    const seed_phrase = options.seedPhrase || config.get('walletbot_seed_phrase')
+    const seed_phrase = options.seedPhrase || config.get('WALLETBOT_SEED_PHRASE')
 
     if (!seed_phrase) {
-      console.error('walletbot_seed_phrase environment variable or --seed-phrase command line option is required')
+      console.error('WALLETBOT_SEED_PHRASE environment variable or --seed-phrase command line option is required')
       process.exit(1)
     }
 
-    const auth_token = options.authToken || config.get('walletbot_auth_token')
+    const auth_token = options.authToken || config.get('WALLETBOT_AUTH_TOKEN')
 
     if (!auth_token) {
-      console.error('walletbot_auth_token environment variable or --auth-token command line option is required')
+      console.error('WALLETBOT_AUTH_TOKEN environment variable or --auth-token command line option is required')
       process.exit(1)
     }
 
-    const api_base = options.apiBase || config.get('walletbot_api_base')
+    const api_base = options.apiBase || config.get('WALLETBOT_API_BASE')
 
-    const websocket_url = options.websocketUrl || config.get('walletbot_websocket_url')
+    const websocket_url = options.websocketUrl || config.get('WALLETBOT_WEBSOCKET_URL')
 
     const websocket_enabled: boolean = parseBoolean(options.websocketEnabled)
 
@@ -61,7 +60,7 @@ program
       auth_token,
       api_base: api_base || default_walletbot_options.api_base,
       http_api_enabled: http_api_enabled || default_walletbot_options.http_api_enabled,
-      websocket_enabled: websocket_enabled != undefined ? websocket_enabled : config.get('websocket_enabled'),
+      websocket_enabled: websocket_enabled != undefined ? websocket_enabled : config.get('WALLETBOT_WEBSOCKET_ENABLED'),
       websocket_url: websocket_url || default_walletbot_options.websocket_url
     }
 
@@ -83,7 +82,6 @@ program
   })
 
 import { generateMnemonic } from 'bip39'
-import { listBalances } from './balances'
 
 program
   .command('seed-phrase')
@@ -100,26 +98,26 @@ program
 
     const options = program.opts();
 
-    const seed_phrase = options.seedPhrase || config.get('walletbot_seed_phrase')
+    const seed_phrase = options.seedPhrase || config.get('WALLETBOT_SEED_PHRASE')
 
     if (!seed_phrase) {
-      console.error('walletbot_seed_phrase environment variable or --seed-phrase command line option is required')
+      console.error('WALLETBOT_SEED_PHRASE environment variable or --seed-phrase command line option is required')
       process.exit(1)
     }
 
-    const auth_token = options.authToken || config.get('walletbot_auth_token')
+    const auth_token = options.authToken || config.get('WALLETBOT_AUTH_TOKEN')
 
     if (!auth_token) {
-      console.error('walletbot_auth_token environment variable or --auth-token command line option is required')
+      console.error('WALLETBOT_AUTH_TOKEN environment variable or --auth-token command line option is required')
       process.exit(1)
     }
 
     const walletBot = new WalletBot({
       seed_phrase,
       auth_token,
-      http_api_enabled: config.get('http_api_enabled'),
+      http_api_enabled: config.get('HTTP_API_ENABLED'),
       websocket_enabled: true,
-      websocket_url: config.get('websocket_url')
+      websocket_url: config.get('WALLETBOT_WEBSOCKET_URL'),
     })
 
     const balances = await walletBot.listBalances()

@@ -13,7 +13,7 @@ import config from './config';
 
 export async function load(): Promise<Wallet> {
 
-  const mnemonic = config.get('walletbot_seed_phrase')
+  const mnemonic = config.get('WALLETBOT_SEED_PHRASE')
 
   const mnemonicWallet = new MnemonicWallet(mnemonic)
 

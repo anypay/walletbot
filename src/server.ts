@@ -141,7 +141,7 @@ export async function start() {
 
   started = true
 
-  if (config.get('swagger_enabled')) {
+  if (config.get('SWAGGER_ENABLED')) {
 
     const swaggerOptions = {
       info: {

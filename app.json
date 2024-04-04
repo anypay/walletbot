@@ -1,0 +1,17 @@
+{
+  "name": "Wallet Bot",
+  "description": "Your Money-Sending Robot Friend",
+  "repository": "https://github.com/anypay/my-walletbot",
+  "logo": "https://plugins.whatsonchain.com/api/plugin/main/ea8205469186c12f6b23866d3ef50ab84f6f6b82dab43075e0229ab32ca6f5bc/0",
+  "keywords": ["wallet", "payments", "bot", "anypay", "bitcoin", "solana", "ethereum", "dogecoin"],
+  "env": {
+    "WALLETBOT_SEED_PHRASE": {
+      "required": true,
+      "description": "12 Word Mnemonic Wallet Backup Seed Phrase"
+    },
+    "WALLETBOT_AUTH_TOKEN": {
+      "required": true,
+      "description": "API auth token for your Wallet Bot from the Anypay dashboard"
+    }
+  }
+}

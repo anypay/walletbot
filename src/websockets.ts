@@ -11,12 +11,10 @@ let socket: WebSocket | undefined;
 export { socket }
 
 export async function connect(walletBot: WalletBot): Promise<WebSocket> {
-  console.log('websocket.connect');
 
-  log.info('socket.io.connect', {
+  log.info('websocket.connect', {
     host: walletBot.options.websocket_url,
     transports: ['websocket'],
-    reconnectionDelayMax: config.get('socket_io_reconnection_delay_max'),
     extraHeaders: {
       Authorization: `Bearer ${walletBot.options.auth_token}`,
     },
@@ -29,7 +27,7 @@ export async function connect(walletBot: WalletBot): Promise<WebSocket> {
   });
 
   socket.on('open', async () => {
-    log.info('socket.io.connected');
+    log.info('websocket.connected');
     if (socket) {
       const balances = await handlers.list_balances(socket, {});
       for (let balance of balances) {
@@ -40,12 +38,12 @@ export async function connect(walletBot: WalletBot): Promise<WebSocket> {
   });
 
   socket.on('close', (event) => {
-    log.info('socket.io.disconnected', event);
+    log.info('websocket.disconnected', event);
   });
 
   socket.on('error', (error: Error) => {
-    log.info('socket.io.error', error);
-    log.error('socket.io', error);
+    log.info('websocket.error', error);
+    log.error('websocket', error);
   });
 
   socket.on('ping', () => {

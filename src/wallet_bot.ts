@@ -127,7 +127,7 @@ export class WalletBot {
   
       if (!this.options.auth_token) {
         log.error(`Please visit https://anypayx.com/dashboard/apps/wallet-bot to get your token`)
-        throw new Error('walletbot_auth_token not set in environment variables')
+        throw new Error('WALLETBOT_AUTH_TOKEN not set in environment variables')
       }
   
       const { wallets } = MnemonicWallet.init(this.options.seed_phrase)

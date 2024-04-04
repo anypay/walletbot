@@ -2,7 +2,7 @@
 
 # @anypay/walletbot
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/anypay/walletbot-heroku)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/anypay/walletbot)
 
 Self-custody, headless wallet service that runs as a daemon process within your data center. It manages your software operation's private keys so that your apps can securely send payments on any peer to peer payments network.
 
@@ -56,8 +56,8 @@ In the same terminal shell tab or shell script first export the required environ
 then you can run walletbot without providing the equivalent command line arguments.
 
 ```
-export walletbot_seed_phrase="replace this with your twelve word seed phrase to start sending payments"
-export walletbot_auth_token=replacewith-your-anypay-apiauthtoken
+export WALLETBOT_SEED_PHRASE="replace this with your twelve word seed phrase to start sending payments"
+export WALLETBOT_AUTH_TOKEN=replacewith-your-anypay-apiauthtoken
 
 walletbot start
 ```

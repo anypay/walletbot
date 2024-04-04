@@ -5,7 +5,7 @@ import config from './config'
 
 export async function listUnspent(coin: string, address: string): Promise<Utxo[]> {
 
-    const key = config.get('crypto_apis_io_api_key')
+    const key = config.get('CRYPTO_APIS_IO_API_KEY')
 
     return []
 }

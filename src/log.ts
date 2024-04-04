@@ -56,7 +56,7 @@ if (socket) {
   )
 }
 
-if (config.get('loki_host')) {
+if (config.get('LOKI_HOST')) {
 
   const LokiTransport = require("winston-loki");
 
@@ -69,15 +69,15 @@ if (config.get('loki_host')) {
     basicAuth?: string
   } = {
     format: winston.format.json(),
-    host: config.get('loki_host'),
+    host: config.get('LOKI_HOST'),
     json: true,
     batching: false,
-    labels: { app: config.get('loki_label_app') },
+    labels: { app: config.get('LOKI_LABEL_APP') },
   }
 
-  if (config.get('loki_basic_auth')) {
+  if (config.get('LOKI_BASIC_AUTH')) {
 
-    lokiConfig['basicAuth'] = config.get('loki_basic_auth')
+    lokiConfig['basicAuth'] = config.get('LOKI_BASIC_AUTH')
   }
 
   transports.push(
@@ -92,7 +92,7 @@ const log = winston.createLogger({
   format: winston.format.json()
 });
 
-if (config.get('loki_host')) {
+if (config.get('LOKI_HOST')) {
 
   log.debug('loki.enabled')
 
