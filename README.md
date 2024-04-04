@@ -67,6 +67,35 @@ export WALLETBOT_AUTH_TOKEN=replacewith-your-anypay-apiauthtoken
 walletbot start
 ```
 
+### Sending a Basic Payment from CLI
+
+```
+> walletbot new-payment \
+  --address=12syqu1XwFzGVqTTK5U6EkJaqq2FPeLmRH \
+  --quote=USD \
+  --value=1.99 \
+  --currency=BSV
+```
+
+result:
+
+```
+{
+  id: 166150,
+  app_id: 160,
+  template: [ { currency: 'BSV', to: [Array] } ],
+  status: 'unpaid',
+  updatedAt: '2024-04-04T12:28:11.273Z',
+  createdAt: '2024-04-04T12:28:11.251Z',
+  invoice_uid: 'F28WujS5X',
+  webpage_url: 'https://anypayx.com/i/F28WujS5X',
+  uri: 'pay:?r=https://anypayx.com/r/F28WujS5X',
+  uid: 'F28WujS5X'
+}
+
+```
+
+
 ## Running in Nodejs (Typescript)
 
 ```
