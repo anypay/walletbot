@@ -1,8 +1,13 @@
 ![](https://plugins.whatsonchain.com/api/plugin/main/ea8205469186c12f6b23866d3ef50ab84f6f6b82dab43075e0229ab32ca6f5bc/0)
 
-# @anypay/walletbot
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/anypay/walletbot)
+![GitHub Release](https://img.shields.io/github/v/release/anypay/walletbot)
+![Docker Image Pulls](https://img.shields.io/docker/pulls/anypay/walletbot.svg)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/anypay/walletbot/total)
+![NPM Downloads](https://img.shields.io/npm/dy/%40anypay%2Fwalletbot)
+
+
 
 Self-custody, headless wallet service that runs as a daemon process within your data center. It manages your software operation's private keys so that your apps can securely send payments on any peer to peer payments network.
 

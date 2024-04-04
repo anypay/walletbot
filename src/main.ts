@@ -8,6 +8,8 @@ const program = new Command()
 
 const { version } = require('../package')
 
+import * as anypay from 'anypay'
+
 program
   .name('walletbot')
   .version(version)
@@ -90,6 +92,78 @@ program
     const mnemonic = generateMnemonic()
 
     console.log(mnemonic)
+  })
+
+
+program
+  .command('new-payment [template]')
+  .requiredOption('-v --value <value>', 'value amount to pay in the quote currency (default to satoshis)')
+  .requiredOption('-q --quote <currency>', 'quote currency for determining the amount')
+  .requiredOption('-a --address <address>', 'address to send payment to')
+  .requiredOption('-c --currency <currency>', 'bitcoin currency to pay in')  
+  .option('-b --blockchain <blockchain>', 'blockchain to pay on')
+  .option('-w --webhook-url <webhook_url>', 'url of server to send payment notification')
+  .action(async (template, options) => {
+
+    let { authToken } = program.opts() as { authToken?: string }
+
+    if (!authToken) {
+      authToken = config.get('WALLETBOT_AUTH_TOKEN')
+    }
+
+    if (!authToken) {
+      console.error('WALLETBOT_AUTH_TOKEN environment variable or --auth-token command line option is required')
+      process.exit(1)
+    }
+
+    const app = anypay.app({ apiKey: authToken })
+
+    if (template) {
+
+      const json = JSON.parse(template)
+
+      let paymentRequest = await app.request(json)
+
+      console.log(paymentRequest)
+
+    } else {
+
+      const templateJson = [{
+
+        currency: options.currency,
+      
+        to: [{
+          address: options.address,
+          amount: options.value,
+          currency: options.quote
+        }]
+      
+      }]
+
+      let paymentRequest = await app.request(templateJson)
+
+      console.log(paymentRequest)
+
+    }
+
+  })
+
+  program
+  .command('cancel-payment')
+  .requiredOption('-u --uid <invoice_uid>', 'uid of anypay wallet bot invoice to cancel')
+  .action(() => {
+
+    const options = program.opts();
+
+    const auth_token = options.authToken || config.get('WALLETBOT_AUTH_TOKEN')
+
+    if (!auth_token) {
+      console.error('WALLETBOT_AUTH_TOKEN environment variable or --auth-token command line option is required')
+      process.exit(1)
+    }
+
+    // TODO: Implement cancel payment request using anypay.cancelInvoice
+
   })
 
 program
