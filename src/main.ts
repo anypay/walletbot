@@ -134,7 +134,7 @@ program
       
         to: [{
           address: options.address,
-          amount: options.value,
+          amount: Number(options.value),
           currency: options.quote
         }]
       

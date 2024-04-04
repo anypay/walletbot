@@ -2,7 +2,7 @@
   "name": "Wallet Bot",
   "description": "Your Money-Sending Robot Friend",
   "repository": "https://github.com/anypay/my-walletbot",
-  "logo": "https://plugins.whatsonchain.com/api/plugin/main/ea8205469186c12f6b23866d3ef50ab84f6f6b82dab43075e0229ab32ca6f5bc/0",
+  "logo": "https://avatars.githubusercontent.com/u/12125403?s=400&u=9a89b1d9b8883a1d99da0273ef018c392c42b32e&v=4",
   "keywords": ["wallet", "payments", "bot", "anypay", "bitcoin", "solana", "ethereum", "dogecoin"],
   "env": {
     "WALLETBOT_SEED_PHRASE": {
@@ -12,6 +12,14 @@
     "WALLETBOT_AUTH_TOKEN": {
       "required": true,
       "description": "API auth token for your Wallet Bot from the Anypay dashboard"
+    },
+    "PROMETHEUS_ENABLED": {
+      "required": false,
+      "description": "Optional: Allow remote metrics scraping from a Prometheus server"
+    },
+    "PROMETHEUS_PASSWORD": {
+      "required": false,
+      "description": "Optional: Authenticate prometheus scraper using http basic auth"
     }
   }
 }
