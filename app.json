@@ -1,7 +1,7 @@
 {
   "name": "Wallet Bot",
   "description": "Your Money-Sending Robot Friend",
-  "repository": "https://github.com/anypay/my-walletbot",
+  "repository": "https://github.com/anypay/walletbot",
   "logo": "https://avatars.githubusercontent.com/u/12125403?s=400&u=9a89b1d9b8883a1d99da0273ef018c392c42b32e&v=4",
   "keywords": [
     "wallet",
