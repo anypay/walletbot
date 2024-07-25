@@ -15,4 +15,6 @@ RUN npm install -g seed-phrase
 # Bundle app source
 COPY . /usr/src/app
 
+RUN npm run build
+
 ENTRYPOINT ["node", "dist/main.js"]
