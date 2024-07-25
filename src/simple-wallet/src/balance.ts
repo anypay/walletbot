@@ -16,45 +16,43 @@
 */
 //==============================================================================
 
-import axios from 'axios'
+import axios from "axios"
 
-import { Currency, Currencies } from './currency'
+import { Currency, Currencies } from "./currency"
 
-import config from './config'
+import config from "./config"
 
-import BigNumber from 'bignumber.js'
+import BigNumber from "bignumber.js"
 
 export interface Balance {
+  currency: Currency
 
-  currency: Currency;
-
-  amount: number;
-
+  amount: number
 }
 
-export async function convertBalance(balance: Balance, currency: Currency): Promise<Balance> {
-
-  const api = config.get('api_base')
+export async function convertBalance(
+  balance: Balance,
+  currency: Currency,
+): Promise<Balance> {
+  const api = config.get("api_base")
 
   if (balance.currency === Currencies.Satoshis) {
-
-    balance.amount = new BigNumber(balance.amount).dividedBy(100000000).toNumber()
+    balance.amount = new BigNumber(balance.amount)
+      .dividedBy(100000000)
+      .toNumber()
 
     balance.currency = Currencies.BSV
-
   }
 
-  let { data } = await axios.get(`${api}/convert/${balance.amount}-${balance.currency}/to-${currency}`)
+  let { data } = await axios.get(
+    `${api}/convert/${balance.amount}-${balance.currency}/to-${currency}`,
+  )
 
   let amount = data.conversion.output.value
 
   return {
-
     amount,
 
-    currency
-
+    currency,
   }
-
 }
-

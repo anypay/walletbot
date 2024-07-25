@@ -1,23 +1,20 @@
+import axios from "axios"
 
-import axios from 'axios'
+import anypay from "./anypay"
 
-import anypay from './anypay'
+import log from "./log"
 
-import log from './log'
-
-import { WalletBot } from './wallet_bot'
+import { WalletBot } from "./wallet_bot"
 
 export async function listUnpaid(walletBot: WalletBot): Promise<any[]> {
-
   try {
-
     const url = `${walletBot.options.api_base}/v1/api/apps/wallet-bot/invoices?status=unpaid`
 
     let { data } = await axios.get(url, {
       auth: {
         username: walletBot.options.auth_token,
-        password: ''
-      }
+        password: "",
+      },
     })
 
     if (data.invoices.length > 0) {
@@ -25,38 +22,40 @@ export async function listUnpaid(walletBot: WalletBot): Promise<any[]> {
     }
 
     return data.invoices
+  } catch (error) {
 
-  } catch(error) {
     const { message } = error as Error
     console.log({ message })
 
-    log.error('invoices.listUnpaid.error', message)
+    log.error("invoices.listUnpaid.error", message)
+    console.log(error)
 
     return []
   }
-
 }
 
 interface NewInvoice {
-  currency: string;
-  address: string;
-  value: number;
-  denomination: string;
+  currency: string
+  address: string
+  value: number
+  denomination: string
 }
 
 export async function createInvoice(params: NewInvoice): Promise<any> {
-
   const { currency, address, denomination, value } = params
 
-  const paymentRequest = await anypay.request([{
-    currency,
-    to: [{
-      address,
-      amount: value,
-      currency: denomination
-    }]
-  }])
+  const paymentRequest = await anypay.request([
+    {
+      currency,
+      to: [
+        {
+          address,
+          amount: value,
+          currency: denomination,
+        },
+      ],
+    },
+  ])
 
   return paymentRequest
-
 }

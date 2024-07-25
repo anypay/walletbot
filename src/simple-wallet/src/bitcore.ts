@@ -16,29 +16,25 @@
 */
 //==============================================================================
 
-import { BigNumber } from 'bignumber.js';
+import { BigNumber } from "bignumber.js"
 
-import { join } from 'path'
+import { join } from "path"
 
-import { assets } from './wallet'
+import { assets } from "./wallet"
 
 export function getBitcore(assetName: string): any {
-
   const asset = assets[assetName]
 
   if (!asset.bitcore) {
-
     throw new Error(`bitcore not available for ${assetName}`)
   }
 
   return asset.bitcore
-
 }
 
-export function toSatoshis(amount: number): number{
-  let amt = new BigNumber(amount); 
-  let scalar = new BigNumber(100000000);
+export function toSatoshis(amount: number): number {
+  let amt = new BigNumber(amount)
+  let scalar = new BigNumber(100000000)
 
-  return amt.times(amount).toNumber();
+  return amt.times(amount).toNumber()
 }
-

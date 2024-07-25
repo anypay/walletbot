@@ -16,60 +16,51 @@
 */
 //==============================================================================
 
-import * as winston from 'winston';
+import * as winston from "winston"
 
-import config from './config'
+import config from "./config"
 
 const transports = [
   new winston.transports.Console({
-    format: winston.format.json()
-  })
+    format: winston.format.json(),
+  }),
 ]
 
-if (config.get('loki_host')) {
-
-  const LokiTransport = require("winston-loki");
+if (config.get("loki_host")) {
+  const LokiTransport = require("winston-loki")
 
   const lokiConfig: {
-    format: winston.Logform.Format,
-    host: string,
-    json: boolean,
-    batching: boolean,
-    labels: { app: string },
+    format: winston.Logform.Format
+    host: string
+    json: boolean
+    batching: boolean
+    labels: { app: string }
     basicAuth?: string
-  
   } = {
     format: winston.format.json(),
-    host: config.get('loki_host'),
+    host: config.get("loki_host"),
     json: true,
     batching: false,
-    labels: { app: config.get('loki_label_app') }
+    labels: { app: config.get("loki_label_app") },
   }
 
-  if (config.get('loki_basic_auth')) {
-
-    lokiConfig['basicAuth'] = config.get('loki_basic_auth')
+  if (config.get("loki_basic_auth")) {
+    lokiConfig["basicAuth"] = config.get("loki_basic_auth")
   }
 
-  transports.push(
-    new LokiTransport(lokiConfig)
-  )
-
+  transports.push(new LokiTransport(lokiConfig))
 }
 
 const log = winston.createLogger({
-  level: 'info',
+  level: "info",
   transports,
-  format: winston.format.json()
-});
+  format: winston.format.json(),
+})
 
-if (config.get('loki_host')) {
-
-  log.debug('loki.enabled')
-
+if (config.get("loki_host")) {
+  log.debug("loki.enabled")
 }
 
 export default log
 
 export { log }
-

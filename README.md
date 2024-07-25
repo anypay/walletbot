@@ -1,13 +1,10 @@
 ![](https://plugins.whatsonchain.com/api/plugin/main/ea8205469186c12f6b23866d3ef50ab84f6f6b82dab43075e0229ab32ca6f5bc/0)
 
-
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/anypay/walletbot)
 ![GitHub Release](https://img.shields.io/github/v/release/anypay/walletbot)
 ![Docker Image Pulls](https://img.shields.io/docker/pulls/anypay/walletbot.svg)
 ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/anypay/walletbot/total)
 ![NPM Downloads](https://img.shields.io/npm/dy/%40anypay%2Fwalletbot)
-
-
 
 Self-custody, headless wallet service that runs as a daemon process within your data center. It manages your software operation's private keys so that your apps can securely send payments on any peer to peer payments network.
 
@@ -15,12 +12,20 @@ Self-custody, headless wallet service that runs as a daemon process within your 
 
 The application runs as a long-running process which should be managed by k8s, docker, or your system service manager such as systemd or similar. It may be run in a node.js environment or as an isolated docker container. The single process requires no additional services such as database servers to be run.
 
-## Installation with Homebrew for Mac (AMD64 and x86_64)
+## Installation with Homebrew (Intel or Apple Silicon)
 
 ```
 > brew tap anypay/walletbot
 > brew install walletbot
 ```
+
+## Installation with NPM
+
+```
+> npm install -g @anypay/walletbot
+```
+
+## Basic Usage
 
 ```
 Usage: walletbot [options] [command]
@@ -57,6 +62,7 @@ Commands:
 ```
 
 ### Configuring with Environment Variables
+
 In the same terminal shell tab or shell script first export the required environment variables,
 then you can run walletbot without providing the equivalent command line arguments.
 
@@ -68,6 +74,19 @@ walletbot start
 ```
 
 ### Sending a Basic Payment from CLI
+
+```
+Usage: walletbot new-payment [options] [template]
+
+Options:
+  -v --value <value>              value amount to pay in the quote currency (default to satoshis)
+  -q --quote <currency>           quote currency for determining the amount
+  -a --address <address>          address to send payment to
+  -c --currency <currency>        bitcoin currency to pay in
+  -b --blockchain <blockchain>    blockchain to pay on
+  -w --webhook-url <webhook_url>  url of server to send payment notification
+  -h, --help                      display help for command
+```
 
 ```
 > walletbot new-payment \
@@ -95,7 +114,6 @@ result:
 
 ```
 
-
 ## Running in Nodejs (Typescript)
 
 ```
@@ -121,5 +139,3 @@ To run tests run `npm run test`
 ## Development
 
 To commit new code run `npm run commit`
-
-

@@ -17,20 +17,18 @@
 */
 //==============================================================================
 
-import { program } from 'commander'
+import { program } from "commander"
 
-import { getRPC } from '../rpc'
+import { getRPC } from "../rpc"
 
 program
-  .command('listunspent <chain> <address>')
+  .command("listunspent <chain> <address>")
   .action(async (chain, address) => {
-
-    let {listUnspent} = getRPC(chain)
+    let { listUnspent } = getRPC(chain)
 
     let utxos = await listUnspent(address)
 
     console.log(utxos)
-
   })
 
 program.parse(process.argv)

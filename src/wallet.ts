@@ -1,32 +1,28 @@
+import { loadWallet, getBitcore } from "./simple-wallet/src"
 
-import { loadWallet, getBitcore } from './simple-wallet/src'
+export { getBitcore }
 
-export { getBitcore } 
-
-import { Card, Wallet } from './simple-wallet/src/wallet';
+import { Card, Wallet } from "./simple-wallet/src/wallet"
 
 export { Card, Wallet }
 
-import { MnemonicWallet } from './mnemonic_wallet';
+import { MnemonicWallet } from "./mnemonic_wallet"
 
-import config from './config';
+import config from "./config"
 
 export async function load(): Promise<Wallet> {
-
-  const mnemonic = config.get('WALLETBOT_SEED_PHRASE')
+  const mnemonic = config.get("WALLETBOT_SEED_PHRASE")
 
   const mnemonicWallet = new MnemonicWallet(mnemonic)
 
-  const cards = mnemonicWallet.wallets.map(wallet => {
-
+  const cards = mnemonicWallet.wallets.map((wallet) => {
     const card: Card = new Card({
       asset: wallet.asset,
       privatekey: wallet.privatekey,
-      address: wallet.address
+      address: wallet.address,
     })
 
     return card
-
   })
 
   /*const card = cards.filter(card => card.asset === 'DASH')[0]
@@ -35,6 +31,4 @@ export async function load(): Promise<Wallet> {
   */
 
   return loadWallet(cards)
-
 }
-

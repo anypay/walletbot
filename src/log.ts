@@ -1,104 +1,84 @@
+import * as winston from "winston"
 
-import * as winston from 'winston';
+import * as Transport from "winston-transport"
 
-import * as Transport from 'winston-transport'
+import config from "./config"
 
-import config from './config'
+import { socket } from "./websockets"
 
-import { socket } from './websockets'
-
-import { WebSocket } from 'ws'
+import { WebSocket } from "ws"
 
 class WebsocketTransport extends Transport {
-
-  socket: WebSocket;
+  socket: WebSocket
 
   constructor(socket: WebSocket, opts: winston.LoggerOptions) {
+    super(opts)
 
-    super(opts);
-
-    this.socket = socket;
-
+    this.socket = socket
   }
 
   log(info: string, callback: Function) {
-
     try {
-
       if (this.socket) {
-
-        this.socket.emit('log', info)
-
+        this.socket.emit("log", info)
       }
-
-    } catch(error) {
-
-      console.log('log.websocket.error', error)
+    } catch (error) {
+      console.log("log.websocket.error", error)
     }
 
-    callback();
+    callback()
   }
-};
-
+}
 
 const transports: winston.transport[] = [
   new winston.transports.Console({
-    format: winston.format.json()
+    format: winston.format.json(),
   }),
- 
 ]
 
 if (socket) {
   transports.push(
     new WebsocketTransport(socket, {
-      format: winston.format.json()
-    }) 
+      format: winston.format.json(),
+    }),
   )
 }
 
-if (config.get('LOKI_HOST')) {
-
-  const LokiTransport = require("winston-loki");
+if (config.get("LOKI_HOST")) {
+  const LokiTransport = require("winston-loki")
 
   const lokiConfig: {
-    format: winston.Logform.Format,
-    host: string,
-    json: boolean,
-    batching: boolean,
-    labels: { app: string },
+    format: winston.Logform.Format
+    host: string
+    json: boolean
+    batching: boolean
+    labels: { app: string }
     basicAuth?: string
   } = {
     format: winston.format.json(),
-    host: config.get('LOKI_HOST'),
+    host: config.get("LOKI_HOST"),
     json: true,
     batching: false,
-    labels: { app: config.get('LOKI_LABEL_APP') },
+    labels: { app: config.get("LOKI_LABEL_APP") },
   }
 
-  if (config.get('LOKI_BASIC_AUTH')) {
-
-    lokiConfig['basicAuth'] = config.get('LOKI_BASIC_AUTH')
+  if (config.get("LOKI_BASIC_AUTH")) {
+    lokiConfig["basicAuth"] = config.get("LOKI_BASIC_AUTH")
   }
 
-  transports.push(
-    new LokiTransport(lokiConfig)
-  )
-
+  transports.push(new LokiTransport(lokiConfig))
 }
 
 const log = winston.createLogger({
-  level: 'info',
+  level: "info",
   transports,
-  format: winston.format.json()
-});
+  format: winston.format.json(),
+})
 
-if (config.get('LOKI_HOST')) {
-
-  log.debug('loki.enabled')
-
+if (config.get("LOKI_HOST")) {
+  log.debug("loki.enabled")
 }
 
 export default log
 
 export { log }
-

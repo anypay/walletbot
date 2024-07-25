@@ -2,7 +2,7 @@ global:
   scrape_interval: 1s
   evaluation_interval: 1s
 scrape_configs:
-  - job_name: 'anypay-wallet'
+  - job_name: "anypay-wallet"
     scheme: http
     static_configs:
-      - targets: ['wallet:5200']
+      - targets: ["wallet:5200"]

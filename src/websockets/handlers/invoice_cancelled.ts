@@ -1,6 +1,3 @@
+import { WebSocket } from "ws"
 
-import { WebSocket } from 'ws'
-
-export default async function invoiceCancelled (socket: WebSocket, json: any) {
-
-}
+export default async function invoiceCancelled(socket: WebSocket, json: any) {}

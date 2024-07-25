@@ -3,7 +3,7 @@ name: Publish to NPM
 on:
   push:
     tags:
-      - 'v*.*.*' # Trigger the workflow on tag pushes with the pattern v1.2.3
+      - "v*.*.*" # Trigger the workflow on tag pushes with the pattern v1.2.3
 
 jobs:
   publish:
@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: "16"
 
       - name: Install dependencies
         run: npm install

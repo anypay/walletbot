@@ -1,23 +1,22 @@
+import { WebSocket } from "ws"
 
-import { WebSocket } from 'ws'
+import { listBalances, Balance } from "../../balances"
 
-import { listBalances, Balance } from '../../balances'
+import { log } from "../../log"
 
-import { log } from '../../log'
+export default async function (
+  socket: WebSocket,
+  json?: any,
+): Promise<Balance[]> {
+  log.info(`wallet-bot.websocket.handlers.inventory.balances`, json)
 
-export default async function (socket: WebSocket, json?: any): Promise<Balance[]> {
+  const balances = await listBalances()
 
-    log.info(`wallet-bot.websocket.handlers.inventory.balances`, json)
+  for (let balance of balances) {
+    log.info("wallet-bot.balance", balance)
+  }
 
-    const balances = await listBalances()
+  socket?.emit("inventory.balances", balances)
 
-    for (let balance of balances) {
-
-        log.info('wallet-bot.balance', balance)
-    }
-
-    socket?.emit('inventory.balances', balances)
-
-    return balances
-
+  return balances
 }

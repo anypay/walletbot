@@ -1,4 +1,3 @@
-
 # Anypay Simple Wallet
 
 For building apps which control money and most importantly
@@ -25,7 +24,6 @@ npm install --save anypay-simple-wallet
 
 The Wallet implements the JSON Payment Protocol V2 Spec
 compatible with AnypayX.com and Bitpay.com
-
 
 ```
 import { Wallet } from 'anypay-simple-wallet'
@@ -83,4 +81,3 @@ const client = new TestClient(server, `/i/3kbn9ids`)
 let { paymentOptions } = await client.getPaymentOptions()
 
 ```
-

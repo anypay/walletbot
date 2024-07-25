@@ -18,3 +18,4 @@ wallet.json
 release/
 .DS_Store
 .env.*
+.dev.env

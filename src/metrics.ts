@@ -1,13 +1,11 @@
+const client = require("prom-client")
 
-const client = require('prom-client');
+const collectDefaultMetrics = client.collectDefaultMetrics
 
-const collectDefaultMetrics = client.collectDefaultMetrics;
+const Registry = client.Registry
 
-const Registry = client.Registry;
+const register = new Registry()
 
-const register = new Registry();
+collectDefaultMetrics({ register })
 
-collectDefaultMetrics({ register });
-
-export { client, register } 
-
+export { client, register }

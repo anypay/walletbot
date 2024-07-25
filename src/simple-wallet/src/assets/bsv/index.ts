@@ -17,11 +17,10 @@
 */
 //==============================================================================
 
-import { bsv as bitcore } from 'scrypt-ts'
+import { bsv as bitcore } from "scrypt-ts"
 
 export { bitcore }
 
-import * as rpc from './rpc'
+import * as rpc from "./rpc"
 
 export { rpc }
-

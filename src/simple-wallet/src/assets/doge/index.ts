@@ -17,84 +17,75 @@
 */
 //==============================================================================
 //@ts-ignore
-import * as bitcore from 'bitcore-lib-doge';
+import * as bitcore from "bitcore-lib-doge"
 
 export { bitcore }
 
-const bitcore_io = 'https://api.bitcore.io/api'
+const bitcore_io = "https://api.bitcore.io/api"
 
-import axios from 'axios'
+import axios from "axios"
 
-import { log } from '../../log'
+import { log } from "../../log"
 
-import { Utxo } from '../../wallet'
+import { Utxo } from "../../wallet"
 
-import { BitcoreIoUtxo } from '../../bitcore_io'
+import { BitcoreIoUtxo } from "../../bitcore_io"
 
-import { v4 as uuid } from 'uuid'
+import { v4 as uuid } from "uuid"
 
 export const rpc = {
+  listUnspent: async (address: string, trace?: string): Promise<Utxo[]> => {
+    trace = trace || uuid()
 
-    listUnspent: async (address: string, trace?: string): Promise<Utxo[]> => {
+    try {
+      log.debug("doge.listUnspent.bitcore_io", { address, trace })
 
-        trace =  trace || uuid()
- 
-        try {
+      if (address.match(/:/)) {
+        address = address.split(":")[1]
+      }
 
-            log.debug('doge.listUnspent.bitcore_io', { address, trace })
+      const url = `${bitcore_io}/DOGE/mainnet/address/${address}/?unspent=true`
 
-            if (address.match(/:/)) {
-                address = address.split(':')[1]
-            }
+      const response = await axios.get(url)
 
-            const url = `${bitcore_io}/DOGE/mainnet/address/${address}/?unspent=true`
+      const { data } = response
 
-            const response = await axios.get(url)
+      log.debug("doge.listUnspent.bitcore_io.response", {
+        address,
+        trace,
+        data: data,
+      })
 
-            const { data } = response
+      const utxos: BitcoreIoUtxo[] = data
 
-            log.debug('doge.listUnspent.bitcore_io.response', { address, trace, data: data })
-
-            const utxos: BitcoreIoUtxo[] = data
-
-            return utxos.map(utxo => {
-                return {
-                    scriptPubKey: utxo.script,
-                    value: utxo.value,
-                    txid: utxo.mintTxid,
-                    vout: utxo.mintIndex
-                }
-            })
-
-        } catch(error) {
-
-            log.error('doge.listUnspent.error', error)
-            
-            throw error
-
+      return utxos.map((utxo) => {
+        return {
+          scriptPubKey: utxo.script,
+          value: utxo.value,
+          txid: utxo.mintTxid,
+          vout: utxo.mintIndex,
         }
+      })
+    } catch (error) {
+      log.error("doge.listUnspent.error", error)
 
-
-    },
-
-    getBalance: async (address: string) => {
-
-        const trace = uuid()
-
-        log.debug('doge.getBalance', { address, trace })
-
-        const utxos: Utxo[] = await rpc.listUnspent(address, trace)
-
-        const result = utxos.reduce((sum, utxo) => {
-
-            return sum + utxo.value
-
-        }, 0)
-
-        log.debug('doge.getBalance.result', { address, trace, result })
-
-        return result
-        
+      throw error
     }
+  },
 
+  getBalance: async (address: string) => {
+    const trace = uuid()
+
+    log.debug("doge.getBalance", { address, trace })
+
+    const utxos: Utxo[] = await rpc.listUnspent(address, trace)
+
+    const result = utxos.reduce((sum, utxo) => {
+      return sum + utxo.value
+    }, 0)
+
+    log.debug("doge.getBalance.result", { address, trace, result })
+
+    return result
+  },
 }

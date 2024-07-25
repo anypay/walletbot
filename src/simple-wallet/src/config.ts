@@ -16,16 +16,15 @@
 */
 //==============================================================================
 
-require('dotenv').config()
+require("dotenv").config()
 
-var config = require('nconf');
+var config = require("nconf")
 
-config.argv()
-   .env()
+config.argv().env()
 
 config.defaults({
-  'domain': 'api.anypayx.com',
-  'api_base': 'https://api.anypayx.com'
+  domain: "api.anypayx.com",
+  api_base: "https://api.anypayx.com",
 })
 
-export default config 
+export default config

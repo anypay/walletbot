@@ -16,71 +16,67 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 //==============================================================================
-import { log } from '../../log'
+import { log } from "../../log"
 
-import { v4 as uuid } from 'uuid'
+import { v4 as uuid } from "uuid"
 
 //@ts-ignore
-import * as dash from '@dashevo/dashcore-lib';
+import * as dash from "@dashevo/dashcore-lib"
 
 export { dash as bitcore }
 
-import axios from 'axios'
+import axios from "axios"
 
-const insight = 'https://insight.dash.org/insight-api'
+const insight = "https://insight.dash.org/insight-api"
 
-import { Utxo } from '../../wallet'
+import { Utxo } from "../../wallet"
 
 interface InsightUtxo {
-    address: string;
-    txid: string;
-    vout: number;
-    scriptPubKey: string;
-    amount: number;
-    satoshis: number;
-    height: number;
-    confirmations: number;
+  address: string
+  txid: string
+  vout: number
+  scriptPubKey: string
+  amount: number
+  satoshis: number
+  height: number
+  confirmations: number
 }
 
 export const rpc = {
+  listUnspent: async (address: string, trace?: string): Promise<Utxo[]> => {
+    trace = trace || uuid()
 
-    listUnspent: async (address: string, trace?: string): Promise<Utxo[]> => {
+    log.debug("dash.listUnspent.insight", { address, trace })
 
-        trace =  trace || uuid()
+    const response = await axios.get(`${insight}/addr/${address}/utxo`)
 
-        log.debug('dash.listUnspent.insight', { address, trace })
+    log.debug("dash.listUnspent.insight.response", {
+      address,
+      trace,
+      data: response.data,
+    })
 
-        const response = await axios.get(`${insight}/addr/${address}/utxo`)
+    const utxos: InsightUtxo[] = response.data
 
-        log.debug('dash.listUnspent.insight.response', { address, trace, data: response.data })
+    return utxos.map((utxo) => {
+      return {
+        scriptPubKey: utxo.scriptPubKey,
+        value: utxo.satoshis,
+        txid: utxo.txid,
+        vout: utxo.vout,
+      }
+    })
+  },
 
-        const utxos: InsightUtxo[] = response.data
+  getBalance: async (address: string) => {
+    const trace = uuid()
 
-        return utxos.map(utxo => {
-            return {
-                scriptPubKey: utxo.scriptPubKey,
-                value: utxo.satoshis,
-                txid: utxo.txid,
-                vout: utxo.vout
-            }
-        })
+    log.debug("dash.getBalance", { address, trace })
 
-    },
+    const utxos: Utxo[] = await rpc.listUnspent(address, trace)
 
-    getBalance: async (address: string) => {
-
-        const trace = uuid()
-
-        log.debug('dash.getBalance', { address, trace })
-
-        const utxos: Utxo[] = await rpc.listUnspent(address, trace)
-
-        return utxos.reduce((sum, utxo) => {
-
-            return sum + utxo.value
-
-        }, 0)
-        
-    }
+    return utxos.reduce((sum, utxo) => {
+      return sum + utxo.value
+    }, 0)
+  },
 }
-

@@ -15,58 +15,54 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 //==============================================================================
-import axios from 'axios'
+import axios from "axios"
 
 export interface UTXO {
-  txid: string;
-  vout: number;
-  address: string;
-  account: string;
-  scriptPubKey: string;
-  amount: number;
-  confirmations: number;
-  spendable: boolean;
-  solvable: boolean;
-  safe: boolean;
+  txid: string
+  vout: number
+  address: string
+  account: string
+  scriptPubKey: string
+  amount: number
+  confirmations: number
+  spendable: boolean
+  solvable: boolean
+  safe: boolean
 }
 
 interface RpcOptions {
-  url: string;
-  username?: string;
-  password?: string;
+  url: string
+  username?: string
+  password?: string
 }
 
 export class RpcClient {
-
-  url: string;
-  username: string;
+  url: string
+  username: string
   password: string
 
   constructor(params: RpcOptions) {
-
     this.url = params.url
     this.username = String(params.username || process.env.LTC_RPC_USER)
     this.password = String(params.password || process.env.LTC_RPC_PASSWORD)
   }
 
   async listUnspent(address: string): Promise<UTXO[]> {
-
-    let method = 'listunspent'
+    let method = "listunspent"
 
     let params = [0, 9999999, [`${address}`]]
 
-    let response = await axios.post(this.url, {method, params}, {
-
-      auth: {
-        username: this.username,
-        password: this.password
-      }
-
-    })
+    let response = await axios.post(
+      this.url,
+      { method, params },
+      {
+        auth: {
+          username: this.username,
+          password: this.password,
+        },
+      },
+    )
 
     return response.data.result
-
   }
-
 }
-

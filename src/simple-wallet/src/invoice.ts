@@ -16,13 +16,13 @@
 */
 //==============================================================================
 export interface Invoice {
-  uri: string;
-  uid: string;
-  status: string;
-  payment?: Payment;
+  uri: string
+  uid: string
+  status: string
+  payment?: Payment
 }
 
 export interface Payment {
-  invoice: Invoice;
-  txid: string;
+  invoice: Invoice
+  txid: string
 }

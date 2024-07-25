@@ -1,43 +1,33 @@
+import config from "../src/config"
 
-import config from '../src/config'
+config.set("PROMETHEUS_ENABLED", true)
 
-config.set('PROMETHEUS_ENABLED', true)
+config.set("PROMETHEUS_PASSWORD", "letmein")
 
-config.set('PROMETHEUS_PASSWORD', 'letmein')
+import { server, start } from "../src/server"
 
-import { server, start } from '../src/server'
+import { expect, authRequest } from "./utils"
 
-import { expect, authRequest } from './utils'
-
-describe('Scraping Prometheus Metrics', () => {
-
+describe("Scraping Prometheus Metrics", () => {
   before(async () => {
-
     await start()
-
   })
 
-  it('GET /metrics should not provide the metrics without a password', async () => {
-
+  it("GET /metrics should not provide the metrics without a password", async () => {
     const response = await server.inject({
-      method: 'GET',
-      url: '/metrics'
+      method: "GET",
+      url: "/metrics",
     })
 
     expect(response.statusCode).to.be.equal(401)
-
   })
 
-
-  it('GET /metrics should provide the metrics with a password', async () => {
-
-    const response = await authRequest(server, 'letmein', {
-      method: 'GET',
-      url: '/metrics'
+  it("GET /metrics should provide the metrics with a password", async () => {
+    const response = await authRequest(server, "letmein", {
+      method: "GET",
+      url: "/metrics",
     })
 
     expect(response.statusCode).to.be.equal(200)
-
   })
-
 })

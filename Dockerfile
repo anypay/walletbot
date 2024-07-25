@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:22-alpine
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
@@ -15,5 +15,4 @@ RUN npm install -g seed-phrase
 # Bundle app source
 COPY . /usr/src/app
 
-CMD npm start
-
+ENTRYPOINT ["node", "dist/main.js"]
